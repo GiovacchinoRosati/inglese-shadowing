@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shadowing Inglese B1→C1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Literata:opsz,wght@7..72,500;7..72,600&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Il corpo è identico a header.html (usato anche dalla build per claude.ai). -->
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#" data-act="go" data-to="home">Shadowing <span>B1→C1</span></a>
+    <nav id="nav">
+      <a href="#" data-act="go" data-to="home" data-v="home">Oggi</a>
+      <a href="#" data-act="go" data-to="path" data-v="path">Percorso</a>
+      <a href="#" data-act="go" data-to="review" data-v="review">Ripasso <b id="due-badge"></b></a>
+      <a href="#" data-act="go" data-to="stats" data-v="stats">Difficoltà</a>
+      <a href="#" data-act="go" data-to="yt" data-v="yt">Fonti</a>
+      <a href="#" data-act="go" data-to="settings" data-v="settings">Impostazioni</a>
+    </nav>
+    <span id="sync" class="sync"></span>
+  </div>
+</header>
+<main id="app"></main>
+<div id="toast" role="status"></div>
+<script src="data.js"></script>
+<script src="data-tech.js"></script>
+<script src="data-ted.js"></script>
+<script src="audio-index.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
