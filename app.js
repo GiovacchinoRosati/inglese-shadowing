@@ -5,8 +5,8 @@ const HAS_MIC = HOST!=="artifact" && !!(navigator.mediaDevices && window.MediaRe
 const HAS_YT = HOST!=="artifact";
 /* ---------------- Stato e persistenza ---------------- */
 const LS_KEY = "shadowing-en-v1";
-const DEFAULTS = { cards:{}, yt:[], days:{}, dict:{}, comp:{}, miss:{}, ev:{}, full:{}, prog:{},
-  settings:{ voice:"", neural:true, original:true, rate:0.9, reps:3, gap:1.3, blindLast:true, unlockAll:false, remindTime:"19:00" } };
+const DEFAULTS = { cards:{}, yt:[], days:{}, dict:{}, comp:{}, miss:{}, ev:{}, full:{}, prog:{}, voice:{},
+  settings:{ voice:"", neural:true, original:true, judge:true, rate:0.9, reps:3, gap:1.3, blindLast:true, unlockAll:false, remindTime:"19:00" } };
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
 function load(){
   try{
@@ -119,7 +119,7 @@ function parseTime(v){ v=String(v||"").trim(); if(!v) return NaN; if(v.includes(
 const SENT = {};
 UNITS.forEach(u => u.s.forEach((x,i) => { const id=`${u.id}-${i+1}`;
   SENT[id]={ id, unit:u, en:x[0], it:x[1], note:x[2]||"", type:"tts" };
-  if(u.track==="tech" || u.track==="ted"){ const e=x[3]||{}; Object.assign(SENT[id], { tech:true, x:e, videoId:u.src.yt,
+  if(u.track==="tech" || u.track==="ted" || u.track==="prog"){ const e=x[3]||{}; Object.assign(SENT[id], { tech:true, x:e, videoId:u.src.yt,
     start: e.t!=null && !u.src.approx ? e.t : null,
     end: e.t!=null ? (e.tEnd || e.t + Math.ceil(x[0].split(/\s+/).length/2.6) + 2) : null }); }
 }));
@@ -130,7 +130,7 @@ function item(id){
 }
 const unitIds = u => u.s.map((_,i)=>`${u.id}-${i+1}`);
 const unitLearned = u => unitIds(u).filter(id=>S.cards[id]).length;
-const unitDone = u => u.track==="ted" && u.full ? progOf(u).b>=u.full.length : unitLearned(u)===u.s.length;
+const unitDone = u => u.full ? progOf(u).b>=u.full.length : unitLearned(u)===u.s.length;
 const unitIdx = id => UNITS.findIndex(u=>u.id===id);
 const trackOf = u => u.track || "grammar";
 function prevSame(i){ for(let j=i-1;j>=0;j--) if(trackOf(UNITS[j])===trackOf(UNITS[i])) return UNITS[j]; return null; }
@@ -202,7 +202,7 @@ function getBuf(name){
 }
 function prefetch(it){ if(!it || !audioCtx()) return; if(hasOrig(it)) getBuf(origName(it.unit)).catch(()=>{}); if(HAS_NEURAL && S.settings.neural && AUDIO[it.id]) getBuf(AUDIO[it.id][0]).catch(()=>{}); }
 function stopNeural(){ if(curSrc){ try{ curSrc.onended=null; curSrc.stop(); }catch(e){} curSrc=null; } curPlay=null; }
-let curPlay=null; // { t0 (tempo del contesto audio all'avvio), st, en } per mostrare l'avanzamento
+let curPlay=null, lastRef=null; // { t0 (tempo del contesto audio all'avvio), st, en } per mostrare l'avanzamento
 async function playRange(name, st, en, my){
   const c=audioCtx(); if(!c) return -1;
   let buf; try{ buf=await getBuf(name); }catch(x){ return -1; }
@@ -213,7 +213,7 @@ async function playRange(name, st, en, my){
     const src=c.createBufferSource(); src.buffer=buf; src.connect(c.destination);
     const dur=Math.max(0.05, en-st);
     src.onended=()=>{ if(curSrc===src){ curSrc=null; curPlay=null; } res(dur*1000); };
-    curSrc=src; curPlay={ t0:c.currentTime, st, en }; src.start(0, st, dur);
+    curSrc=src; curPlay={ t0:c.currentTime, st, en }; lastRef={ buf, st, en }; src.start(0, st, dur);
     const h=setInterval(()=>{ if(my!==runId){ clearInterval(h); stopNeural(); res(0); } else if(curSrc!==src) clearInterval(h); },50);
   });
 }
@@ -319,14 +319,97 @@ async function shadowLoop(it){
     const blind = S.settings.blindLast && n>1 && k===n-1;
     setBlind(blind);
     setPhase(`Ascolta ${k+1}/${n} · velocità ${rate.toFixed(2)}${blind?" · senza testo":""} — sussurra insieme alla voce`);
+    lastRef=null;
     const d = await play(it, rate, my);
     if(my!==runId) return;
     const gap = Math.round(Math.max(d,1200)*S.settings.gap)+400;
     setPhase("Tocca a te: ripeti ad alta voce, stessa intonazione e ritmo", gap);
+    const ref=lastRef, refDur=d/1000;
+    const cap = judgeOn() ? await startCapture() : null;
     await sleep(gap);
+    if(cap){ const res=await cap.stop(); if(my!==runId) return; showVote(it, k+1, scoreVoice(it, res, ref, refDur)); }
   }
   if(my!==runId) return;
-  keepAwake(false); setBlind(false); setPhase("Ciclo completato. Registrati e confronta, oppure verifica la pronuncia.");
+  keepAwake(false); setBlind(false); setPhase(judgeOn() ? "Ciclo completato. I voti sono qui sotto." : "Ciclo completato. Registrati e confronta, oppure verifica la pronuncia.");
+  markActivity(); save();
+}
+
+/* ---------------- Voto automatico della tua voce durante lo shadowing ----------------
+   Nessuna registrazione viene salvata. Mentre ripeti nella pausa:
+   - parole: riconoscimento vocale del browser confrontato con il testo originale;
+   - ritmo: inviluppo dell'energia della tua voce (pause, accenti, durata) confrontato con quello
+     dell'audio appena ascoltato (voce originale TED o voce neurale) con allineamento DTW. */
+let micStream=null, srBroken=false;
+const judgeOn = () => HAS_MIC && S.settings.judge;
+async function mic(){
+  if(micStream && micStream.getTracks().some(t=>t.readyState==="live")) return micStream;
+  micStream=await navigator.mediaDevices.getUserMedia({ audio:{ echoCancellation:true, noiseSuppression:true } });
+  return micStream;
+}
+function releaseMic(){ if(micStream){ micStream.getTracks().forEach(t=>t.stop()); micStream=null; } }
+async function startCapture(){
+  let stream; try{ stream=await mic(); }catch(e){ toast("Microfono non disponibile: il voto della voce è disattivato."); S.settings.judge=false; return null; }
+  const c=audioCtx(); const srcN=c.createMediaStreamSource(stream), an=c.createAnalyser(); an.fftSize=1024; srcN.connect(an);
+  const buf=new Float32Array(an.fftSize), env=[];
+  const h=setInterval(()=>{ an.getFloatTimeDomainData(buf); let s2=0; for(const v of buf) s2+=v*v; env.push(Math.sqrt(s2/buf.length)); },40);
+  let words=null, r=null;
+  if(SR && !srBroken){
+    try{ r=new SR(); r.lang="en-US"; r.continuous=true; r.interimResults=false; r.maxAlternatives=3;
+      const got=[]; r.onresult=e=>{ for(let i=e.resultIndex;i<e.results.length;i++) got.push([...e.results[i]].map(a=>a.transcript)); words=got; };
+      r.onerror=e=>{ if(e.error==="not-allowed"||e.error==="service-not-allowed"||e.error==="audio-capture") srBroken=true; };
+      r.start(); }catch(e){ srBroken=true; r=null; }
+  }
+  return { stop: async()=>{
+    clearInterval(h); try{ srcN.disconnect(); }catch(e){}
+    if(r){ try{ r.stop(); }catch(e){} await sleep(900); }
+    const said = words ? words.map(alts=>alts[0]).join(" ") : null;
+    return { env, said, alts: words };
+  } };
+}
+function refEnvelope(ref){
+  if(!ref) return null;
+  const d=ref.buf.getChannelData(0), sr=ref.buf.sampleRate, step=Math.round(sr*0.04), a=Math.floor(ref.st*sr), z=Math.min(d.length, Math.floor(ref.en*sr)), out=[];
+  for(let i=a;i+step<=z;i+=step){ let s2=0; for(let j=i;j<i+step;j++) s2+=d[j]*d[j]; out.push(Math.sqrt(s2/step)); }
+  return out;
+}
+function trimNorm(env){
+  if(!env || !env.length) return [];
+  const mx=Math.max(...env); if(mx<=0) return [];
+  const thr=mx*0.12; let a=0, z=env.length-1;
+  while(a<z && env[a]<thr) a++; while(z>a && env[z]<thr) z--;
+  return env.slice(a,z+1).map(v=>v/mx);
+}
+function dtw(a,b){
+  const n=a.length, m=b.length, w=Math.max(Math.abs(n-m), Math.ceil(Math.max(n,m)*0.25)), INF=1e9;
+  let prev=new Float64Array(m+1).fill(INF); prev[0]=0;
+  for(let i=1;i<=n;i++){ const cur=new Float64Array(m+1).fill(INF);
+    for(let j=Math.max(1,i-w); j<=Math.min(m,i+w); j++){ const c=Math.abs(a[i-1]-b[j-1]); cur[j]=c+Math.min(prev[j], cur[j-1], prev[j-1]); }
+    prev=cur; }
+  return prev[m]/(n+m);
+}
+function scoreVoice(it, res, ref, refDur){
+  const me=trimNorm(res.env), mxRaw=res.env.length?Math.max(...res.env):0;
+  if(mxRaw<0.01 || me.length<5) return { silent:true };
+  const myDur=me.length*0.04, ro=trimNorm(refEnvelope(ref));
+  const target = ro.length ? ro.length*0.04 : refDur*0.9;
+  const durScore=Math.round(100*Math.exp(-Math.abs(Math.log(myDur/target))*2.5));
+  let shape=null; if(ro.length>4){ shape=Math.round(Math.max(0, 100*(1-dtw(me,ro)/0.2))); }
+  const rhythm = shape==null ? durScore : Math.round(0.4*durScore+0.6*shape);
+  let words=null;
+  if(res.alts && res.alts.length){
+    const cands=[res.said, ...res.alts.flat()].filter(Boolean);
+    words=Math.round(100*Math.max(...cands.map(t=>matchWords(it.en,t).score)));
+  }
+  const vote = words==null ? rhythm : Math.round(0.6*words+0.4*rhythm);
+  return { vote, words, rhythm, said:res.said };
+}
+function showVote(it, rep, v){
+  const box=$("#votes"); if(!box) return;
+  if(v.silent){ box.insertAdjacentHTML("beforeend", `<div class="vote small muted">Ripetizione ${rep}: non ti ho sentito. Parla più vicino al telefono.</div>`); return; }
+  const cls=v.vote>=80?"ok":v.vote>=60?"mid":"low";
+  box.insertAdjacentHTML("beforeend", `<div class="vote"><b class="${cls}">${v.vote}</b><span class="small">Ripetizione ${rep} · ${v.words!=null?`parole ${v.words}% · `:""}ritmo ${v.rhythm}%</span>${v.said?`<div class="small muted">Ho capito: “${esc(v.said)}”</div>`:""}</div>`);
+  const r=S.voice[it.id]||(S.voice[it.id]={ n:0, best:0 });
+  r.n++; r.last=v.vote; r.best=Math.max(r.best,v.vote); r.words=v.words; r.rhythm=v.rhythm; r.at=Date.now();
   markActivity(); save();
 }
 
@@ -454,10 +537,13 @@ function aggregates(){
 function coachSummary(){
   const a=aggregates();
   const evs=Object.values(S.ev).filter(e=>e.pre0!=null);
-  return { updated:Date.now(), learned:Object.keys(S.cards).length, streak:streak(), level:levelEstimate(),
+  const vv=Object.values(S.voice||{});
+  const voiceAgg = vv.length ? { sentences:vv.length, avgLast:Math.round(vv.reduce((a,x)=>a+x.last,0)/vv.length), avgWords: (w=>w.length?Math.round(w.reduce((a,b)=>a+b,0)/w.length):null)(vv.map(x=>x.words).filter(x=>x!=null)), avgRhythm:Math.round(vv.reduce((a,x)=>a+(x.rhythm||0),0)/vv.length) } : null;
+  return { updated:Date.now(), learned:Object.keys(S.cards).length, streak:streak(), level:levelEstimate(), voice:voiceAgg,
+    voiceWeak:Object.entries(S.voice||{}).filter(([id,x])=>SENT[id] && x.best<65).slice(0,20).map(([id,x])=>({ id, en:SENT[id].en, best:x.best, words:x.words, rhythm:x.rhythm })),
     listening:{ items:evs.length, avgListensBeforeText: evs.length? +(evs.reduce((a,e)=>a+e.pre0,0)/evs.length).toFixed(2) : null, slowShare: evs.length? +(evs.filter(e=>e.slow0>0).length/evs.length).toFixed(2) : null },
     units:a.units, topMissed:a.topMissed,
-    tedProgress:TED_UNITS.filter(u=>u.full).map(u=>({ id:u.id, blocks:u.full.length, done:progOf(u).b, lastDay:progOf(u).day })),
+    tedProgress:UNITS.filter(u=>u.full).map(u=>({ id:u.id, blocks:u.full.length, done:progOf(u).b, lastDay:progOf(u).day })),
     full:Object.entries(S.full).map(([uid,f])=>{ const u=UNITS[unitIdx(uid)], r=Object.entries(f).filter(([k,x])=>!k.startsWith("peek") && x && x.r!=null).map(([,x])=>x); return { id:uid, title:u?u.title:uid, wpm:u&&u.src?u.src.wpm||null:null, blocks:u&&u.full?u.full.length:1, rated:r.length, avg: r.length? +(r.reduce((s,x)=>s+x.r,0)/r.length).toFixed(2) : null, peeked:r.filter(x=>x.peek).length }; }), hard:a.hardIds.slice(0,40).map(id=>({ id, en:SENT[id].en, dict:S.dict[id]?S.dict[id].score:null, comp:S.comp[id]??null, lapses:S.cards[id]?S.cards[id].lapses||0:0, missed:S.dict[id]?S.dict[id].missed:[] })) };
 }
 function vStats(){
@@ -471,6 +557,10 @@ function vStats(){
     ${Object.keys(lv.grammar).length?`<p class="small" style="margin:.6em 0 0">Grammatica ripassata, frasi solide: ${["B1","B2","C1"].filter(l=>lv.grammar[l]).map(l=>`${l} ${lv.grammar[l].ok}/${lv.grammar[l].n}`).join(" · ")}</p>`:""}</div>
   <p class="muted small">Calcolate da dettati, autovalutazioni e ripassi. Il giro giornaliero le legge per scegliere il talk successivo e le frasi di rinforzo.</p>
   <div class="row"><button class="pri" data-act="drill" ${a.hardIds.length?"":"disabled"}>Allenamento mirato (${Math.min(a.hardIds.length,10)} frasi)</button></div>
+  ${(()=>{ const vv=Object.entries(S.voice||{}).filter(([id])=>SENT[id]); if(!vv.length) return HAS_MIC?`<h2>La tua voce</h2><p class="muted">Ancora nessun voto: fai uno shadowing e ripeti ad alta voce nelle pause.</p>`:""; const avg=k=>{ const a=vv.map(([,x])=>x[k]).filter(x=>x!=null); return a.length?Math.round(a.reduce((p,q)=>p+q,0)/a.length):null; };
+    const weak=vv.sort((a,b)=>a[1].best-b[1].best).slice(0,5);
+    return `<h2>La tua voce</h2><div class="card"><div class="row"><div><div class="tag">Voto medio</div><div class="stat-big">${avg("last")}</div></div><div class="small">Parole ${avg("words")??"—"}% · Ritmo ${avg("rhythm")}% · ${vv.length} frasi</div></div>
+      <p class="small muted" style="margin:.5em 0 0">Più difficili da riprodurre:</p>${weak.map(([id,x])=>`<div class="small">${esc(SENT[id].en.slice(0,70))}${SENT[id].en.length>70?"…":""} <b>${x.best}</b></div>`).join("")}</div>`; })()}
   <h2>Comprensione per oratore</h2>
   ${auth.length?`<div class="card tbl"><table><thead><tr><th>Oratore</th><th>Parole/min</th><th>Dettato</th><th>Capito al 1° ascolto</th></tr></thead><tbody>
     ${auth.map(u=>`<tr><td>${esc(u.title.split(" · ")[0].split(" (")[0])}</td><td>${u.wpm||"—"}</td><td>${cell(u.dictAvg)}</td><td>${cell(u.compAvg)}</td></tr>`).join("")}</tbody></table></div>`
@@ -489,7 +579,7 @@ function go(to){ const i=to.indexOf("/"); NAV = i<0 ? { v:to, arg:null } : { v:t
 const inSession = () => (NAV.v==="learn" && L) || (NAV.v==="review" && R && R.done>0);
 let L=null, R=null; // sessioni: apprendimento e ripasso
 function render(){
-  stopAll();
+  stopAll(); if(!(NAV.v==="learn" || NAV.v==="review")) releaseMic();
   const [v,arg]=parts();
   const sy=document.getElementById("sync"); if(sy) sy.textContent=SYNC.status;
   document.querySelectorAll("#nav a").forEach(a=>a.classList.toggle("on", a.dataset.v===v || (v==="unit"||v==="learn") && a.dataset.v==="path"));
@@ -501,7 +591,7 @@ function render(){
 
 /* ---------------- Viste ---------------- */
 function vHome(){
-  const total=Object.keys(SENT).length, learned=Object.keys(S.cards).filter(id=>SENT[id]).length, due=dueIds().length, nu=nextUnit(), nt=nextUnit("tech"), nd=nextUnit("ted");
+  const total=Object.keys(SENT).length, learned=Object.keys(S.cards).filter(id=>SENT[id]).length, due=dueIds().length, nu=nextUnit(), nt=nextUnit("tech"), nd=nextUnit("ted"), np=nextUnit("prog");
   const lv=["TECH","TED","B1","B2","C1"].map(l=>{ const us=UNITS.filter(u=>u.level===l), t=us.reduce((a,u)=>a+u.s.length,0), d=us.reduce((a,u)=>a+unitLearned(u),0);
     return `<div class="stat"><span class="lvl ${l}">${l==="TECH"?"Voci tech":l==="TED"?"TED":l}</span> <span class="small muted">${d}/${t} frasi</span><div class="bar" style="margin-top:8px"><i style="width:${t?d/t*100:0}%"></i></div></div>`; }).join("");
   $("#app").innerHTML=`
@@ -518,6 +608,7 @@ function vHome(){
     <ol class="steps">
       <li><b>Ripasso</b> — ${due? `${due} frasi da richiamare.` : "nessuna frase in scadenza."} ${due?`<a class="btn pri" href="#" data-act="go" data-to="review">Inizia ripasso</a>`:""}</li>
       <li><b>Voci della tecnologia</b> — ${nt? `${esc(nt.title)} <a class="btn" href="#" data-act="go" data-to="unit/${nt.id}">Apri</a>` : "percorso completato."}</li>
+      ${np?(()=>{ const st=tedState(np); return `<li><b>Voce tech, ascolto progressivo</b> — ${esc(np.title.split(" · ")[0])} · ${st.waiting?`pezzo ${st.p.b} fatto oggi, il prossimo domani`:`oggi: pezzo ${st.k+1} di ${st.N}`} <a class="btn" href="#" data-act="go" data-to="unit/${np.id}">Apri</a></li>`; })():""}
       <li><b>Talk TED</b> — ${nd? (()=>{ const st=nd.full?tedState(nd):null; return `${esc(nd.title)} <span class="small muted">(${nd.src.wpm} parole/min)</span>${st?` · ${st.waiting?`pezzo ${st.p.b} completato oggi, il ${st.p.b+1} si apre domani`:`oggi: pezzo ${st.k+1} di ${st.N}`}`:""} <a class="btn" href="#" data-act="go" data-to="unit/${nd.id}">Apri</a>`; })() : "nessun talk nuovo: il prossimo arriva domattina."}</li>
       ${(()=>{ const pend=UNITS.find(u=>u.track==="tech" && unitDone(u) && !fullStatus(u).done); return pend?`<li><b>Ascolto integrale</b> — ${esc(pend.title.split(" · ")[0].split(" (")[0])}: lo speech originale completo. <a class="btn" href="#" data-act="go" data-to="full/${pend.id}">Ascolta</a></li>`:""; })()}
       <li><b>Grammatica</b> — ${nu? `<span class="lvl ${nu.level}">${nu.level}</span> ${esc(nu.title)} <a class="btn ${due?"":"pri"}" href="#" data-act="go" data-to="unit/${nu.id}">Apri</a>` : "percorso completato."}</li>
@@ -540,12 +631,13 @@ function vHome(){
 
 function vPath(){
   let h=`<h1>Percorso</h1><p class="muted">Ogni unità si sblocca completando la precedente. ${S.settings.unlockAll?"<b>Sblocco totale attivo.</b>":""}</p>`;
-  ["TECH","TED","B1","B2","C1"].forEach(l=>{
-    h+= l==="TECH" ? `<h2>Voci della tecnologia</h2><p class="small muted">${esc(LEVELS.TECH)}</p>` : l==="TED" ? `<h2>Talk TED</h2><p class="small muted">${esc(LEVELS.TED)}</p>` : `<h2><span class="lvl ${l}">${l}</span> Grammatica</h2><p class="small muted">${esc(LEVELS[l])}</p>`;
+  ["TECH","PROG","TED","B1","B2","C1"].forEach(l=>{
+    if(l==="PROG" && typeof LEVELS.PROG==="undefined") return;
+    h+= l==="TECH" ? `<h2>Voci della tecnologia</h2><p class="small muted">${esc(LEVELS.TECH)}</p>` : l==="PROG" ? `<h2>Voci tech: ascolto progressivo</h2><p class="small muted">${esc(LEVELS.PROG)}</p>` : l==="TED" ? `<h2>Talk TED</h2><p class="small muted">${esc(LEVELS.TED)}</p>` : `<h2><span class="lvl ${l}">${l}</span> Grammatica</h2><p class="small muted">${esc(LEVELS[l])}</p>`;
     UNITS.forEach((u,i)=>{ if(u.level!==l) return;
       const ok=unitUnlocked(i), dueU=dueIds().filter(id=>id.startsWith(u.id+"-")).length;
-      const tedP = u.track==="ted" && u.full ? progOf(u).b : null, d = tedP!=null ? tedP : unitLearned(u), tot = tedP!=null ? u.full.length : u.s.length;
-      h+=`<a class="unit ${ok?"":"locked"}" href="#" data-act="go" data-to="unit/${u.id}"><span class="n">${u.track==="tech"?"VOCE "+(+u.id.slice(2)):u.track==="ted"?"TED "+(+u.id.slice(4)):u.id.toUpperCase()}</span>
+      const tedP = u.full ? progOf(u).b : null, d = tedP!=null ? tedP : unitLearned(u), tot = tedP!=null ? u.full.length : u.s.length;
+      h+=`<a class="unit ${ok?"":"locked"}" href="#" data-act="go" data-to="unit/${u.id}"><span class="n">${u.track==="tech"?"VOCE "+(+u.id.slice(2)):u.track==="ted"?"TED "+(+u.id.slice(4)):u.track==="prog"?"PROG "+(+u.id.slice(3)):u.id.toUpperCase()}</span>
         <span class="t">${esc(u.title)}<div class="bar" style="margin-top:6px"><i style="width:${d/tot*100}%"></i></div></span>
         <span class="p">${ok? `${d}/${tot}${tedP!=null?" pezzi":""}${dueU?` · ${dueU} da ripassare`:""}` : "🔒"}</span></a>`;
     });
@@ -557,7 +649,7 @@ function ytSearch(q){ return `https://www.youtube.com/results?search_query=${enc
 function vUnit(id){
   const i=unitIdx(id), u=UNITS[i]; if(!u){ go("path"); return; }
   if(!unitUnlocked(i)){ const p=prevSame(i); $("#app").innerHTML=`<p>Unità bloccata. Completa prima <a href="#" data-act="go" data-to="unit/${p.id}">${esc(p.title)}</a>.</p>`; return; }
-  if(u.track==="ted" && u.full) return vTedUnit(u);
+  if(u.full) return vTedUnit(u);
   if(u.track==="tech" || u.track==="ted") return vTechUnit(u);
   const segs=S.yt.filter(y=>y.unitId===u.id);
   $("#app").innerHTML=`
@@ -616,7 +708,7 @@ function vTechUnit(u){
 
 /* ----- TED: percorso progressivo a pezzi con ascolto cumulativo dell'originale ----- */
 function progOf(u){ return S.prog[u.id] || (S.prog[u.id]={ b:0, day:null }); }
-function blockIds(u,k){ const [,,a,z]=u.full[k]; return u.s.map((x,i)=>[`${u.id}-${i+1}`, (x[3]||{}).ot]).filter(([,t])=>t!=null && t>=a-0.5 && t<z-0.5).map(([id])=>id); }
+function blockIds(u,k){ const [,,a,z]=u.full[k]; return u.s.map((x,i)=>[`${u.id}-${i+1}`, (x[3]||{}).ot ?? (x[3]||{}).t]).filter(([,t])=>t!=null && t>=a-0.5 && t<z-0.5).map(([id])=>id); }
 function tedState(u){
   const p=progOf(u), N=u.full.length, today=dayKey();
   const done=p.b>=N, waiting=!done && p.b>0 && p.day===today && p.force!==today;
@@ -637,11 +729,11 @@ function vTedUnit(u){
   $("#app").innerHTML=`
   <p class="small"><a href="#" data-act="go" data-to="path">← Percorso</a></p>
   <h1>${esc(u.title)}</h1>
-  <p class="small muted">${esc(src.name)}, ${esc(src.date)} · ${src.wpm} parole/min · audio originale TED</p>
+  <p class="small muted">${esc(src.name)}, ${esc(src.date)}${src.wpm?` · ${src.wpm} parole/min`:""} · ${src.orig?"audio originale TED":HAS_YT?"video originale incorporato":"video originale su YouTube"}</p>
   ${today}
   <div class="card"><dl class="rules"><dt>Come parla</dt><dd>${esc(u.f)}</dd><dt>Cosa allenare</dt><dd>${esc(u.u)}</dd></dl></div>
   <h2>I pezzi</h2><div class="card">${blocks}</div>
-  <p class="small muted">Audio e trascrizione © TED, licenza <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>, uso personale non commerciale. <a target="_blank" rel="noopener" href="${esc(src.talk)}">Talk su TED.com</a></p>`;
+  <p class="small muted">${src.orig?`Audio e trascrizione © TED, licenza <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>, uso personale non commerciale. <a target="_blank" rel="noopener" href="${esc(src.talk)}">Talk su TED.com</a>`:`Video ufficiale riprodotto con il player YouTube; frasi citate dalla <a target="_blank" rel="noopener" href="${esc(src.tx)}">trascrizione ufficiale</a>.`}</p>`;
 }
 let CUM=null;
 function vCum(uid){
@@ -649,20 +741,25 @@ function vCum(uid){
   const st=tedState(u), k=st.k, end=u.full[k][3], newA=u.full[k][2];
   const rated=(S.full[u.id]||{})[k];
   CUM={ u, k, pos:0 };
-  const tx=u.full.slice(0,k+1).map((b,j)=>`<p class="${j===k?"newblk":""}"><span class="small muted">Pezzo ${j+1} · ${clock(b[2])}</span><br>${markStudied(u,b[1])}</p>`).join("");
+  const blockText=(b,j)=> b[1] ? markStudied(u,b[1]) : blockIds(u,j).map(id=>`<mark>${esc(SENT[id].en)}</mark>`).join(" … ");
+  const tx=u.full.slice(0,k+1).map((b,j)=>`<p class="${j===k?"newblk":""}"><span class="small muted">Pezzo ${j+1} · ${clock(b[2])}</span><br>${blockText(b,j)}</p>`).join("")
+    + (u.src.orig?"":`<p class="small muted">Qui compaiono solo le frasi studiate; il testo completo è nella <a target="_blank" rel="noopener" href="${esc(u.src.tx)}">trascrizione ufficiale</a>.</p>`);
+  const yt=!u.src.orig, canPlay=!yt || HAS_YT;
   $("#app").innerHTML=`
   <p class="small"><a href="#" data-act="go" data-to="unit/${u.id}">← ${esc(u.title.split(" · ")[0])}</a></p>
   <h1>${st.done?"Il discorso intero":`Ascolto cumulativo · pezzo ${k+1} di ${st.N}`}</h1>
-  <p class="muted">Voce originale, ${st.done?"dall'inizio alla fine":`dall'inizio fino a ${clock(end)}`}. Ascolta senza leggere: i pezzi già studiati ti fanno da appoggio per capire quello nuovo.</p>
-  <div class="card">
+  <p class="muted">Voce originale, ${st.done?"dall'inizio alla fine":`dall'inizio${u.src.orig?"":" dell'estratto"} fino a ${clock(end)}`}. Ascolta senza leggere: i pezzi già studiati ti fanno da appoggio per capire quello nuovo.</p>
+  ${yt&&HAS_YT?`<div class="yt-wrap"><div id="yt-player"></div></div>`:""}
+  ${canPlay?"":`<div class="card"><p style="margin:0 0 8px">Qui il video non si può incorporare: aprilo su YouTube e ascolta da <b>${clock(u.full[0][2])}</b> a <b>${clock(end)}</b>, senza leggere.</p><a class="btn pri" target="_blank" rel="noopener" href="${ytLink(u.src.yt,Math.floor(u.full[0][2]))}">▶ Apri su YouTube da ${clock(u.full[0][2])}</a></div>`}
+  <div class="card" ${canPlay?"":"hidden"}>
     <div class="row">
-      <button class="pri" data-act="cumplay" data-from="0">▶ Dall'inizio</button>
+      <button class="pri" data-act="cumplay" data-from="${u.full[0][2]}">▶ Dall'inizio</button>
       ${k>0?`<button data-act="cumplay" data-from="${newA}">▶ Solo il pezzo nuovo</button>`:""}
       <button data-act="cumresume">⏯ Riprendi</button>
       <button data-act="stop">■ Stop</button>
     </div>
     <div class="bar" style="margin-top:12px"><i id="cum-bar" style="width:0;background:var(--link)"></i></div>
-    <div class="row small" style="justify-content:space-between;margin-top:4px"><span id="cum-pos">0:00 / ${clock(end)}</span><span id="cum-blk" class="muted"></span></div>
+    <div class="row small" style="justify-content:space-between;margin-top:4px"><span id="cum-pos">${clock(u.full[0][2])} / ${clock(end)}</span><span id="cum-blk" class="muted"></span></div>
   </div>
   <div class="card">
     <p style="margin:0 0 6px"><b>${st.done?"Quanto hai capito del discorso?":"Quanto hai capito, soprattutto del pezzo nuovo?"}</b></p>
@@ -671,20 +768,25 @@ function vCum(uid){
   </div>
   <div class="row"><button class="mini" data-act="cumtx">📄 Mostra la trascrizione</button></div>
   <div class="ftx" id="cum-tx" hidden>${tx}</div>
-  <p class="small muted">Audio e trascrizione © TED, licenza CC BY-NC-ND 4.0.</p>`;
-  getBuf(origName(u)).catch(()=>toast("Audio originale non disponibile in questa vista."));
+  <p class="small muted">${u.src.orig?"Audio e trascrizione © TED, licenza CC BY-NC-ND 4.0.":"Video ufficiale tramite player YouTube."}</p>`;
+  if(u.src.orig) getBuf(origName(u)).catch(()=>toast("Audio originale non disponibile in questa vista."));
+  else if(HAS_YT) ensurePlayer().then(p=>p.cueVideoById({ videoId:u.src.yt, startSeconds:Math.floor(u.full[0][2]) })).catch(()=>{});
 }
 async function cumPlay(from){
   if(!CUM) return; const { u, k }=CUM, end=u.full[k][3];
   stopAll(); const my=runId; keepAwake(true);
+  const yt=!u.src.orig, a0=u.full[0][2], span=end-a0;
   const tick=setInterval(()=>{
-    if(my!==runId || !curPlay){ return; }
-    const pos=curPlay.st + (actx.currentTime-curPlay.t0); CUM.pos=pos;
+    if(my!==runId) return;
+    let pos;
+    if(yt){ if(!ytPlayer || !ytPlayer.getCurrentTime) return; pos=ytPlayer.getCurrentTime(); if(pos<a0-1) return; }
+    else { if(!curPlay) return; pos=curPlay.st + (actx.currentTime-curPlay.t0); }
+    CUM.pos=pos;
     const b=$("#cum-bar"), l=$("#cum-pos"), z=$("#cum-blk"); if(!b){ clearInterval(tick); return; }
-    b.style.width=Math.min(100,pos/end*100)+"%"; l.textContent=`${clock(pos)} / ${clock(end)}`;
+    b.style.width=Math.max(0,Math.min(100,(pos-a0)/span*100))+"%"; l.textContent=`${clock(pos)} / ${clock(end)}`;
     const j=u.full.findIndex(x=>pos>=x[2] && pos<x[3]); z.textContent= j>=0 ? `pezzo ${j+1}${j===k?" (nuovo)":""}` : "";
   },250);
-  const d=await playRange(origName(u), from, end, my);
+  const d= yt ? await playSegment({ videoId:u.src.yt, start:from, end }, 1, my) : await playRange(origName(u), from, end, my);
   clearInterval(tick); keepAwake(false);
   if(d<0) toast("Audio originale non disponibile.");
   if(my===runId){ CUM.pos=0; const l=$("#cum-pos"); if(l) l.textContent=`fine · ${clock(end)}`; const t=$("#cum-blk"); if(t) t.textContent="Ora valuta quanto hai capito."; }
@@ -703,7 +805,7 @@ function markStudied(u, text){
 }
 function vFull(uid){
   const u=UNITS[unitIdx(uid)]; if(!u || !(u.track==="ted"||u.track==="tech")){ go("path"); return; }
-  if(u.track==="ted" && u.src.orig) return vCum(uid);
+  if(u.full) return vCum(uid);
   const f=fullOf(u.id), st=fullStatus(u), src=u.src;
   const rate=(k,lbl,v)=>`<button class="mini${f[k]&&f[k].r===v?" on-ok":""}" data-act="frate" data-u="${u.id}" data-k="${k}" data-v="${v}">${lbl}</button>`;
   let body;
@@ -746,7 +848,7 @@ function vLearnStart(arg){
     const ids=blockIds(u,k), first=ids.findIndex(id=>!S.cards[id]); if(!ids.length){ go("cum/"+u.id); return; }
     L={ ids, idx:first<0?0:first, unit:u, block:k, back:`unit/${u.id}` }; }
   else{ const u=UNITS[unitIdx(arg)]; if(!u || !unitUnlocked(unitIdx(arg))){ go("path"); return; }
-    if(u.track==="ted" && u.full){ go("unit/"+u.id); return; }
+    if(u.full){ go("unit/"+u.id); return; }
     const ids=unitIds(u), first=ids.findIndex(id=>!S.cards[id]);
     L={ ids:[...ids, ...S.yt.filter(y=>y.unitId===u.id && !S.cards[y.id]).map(y=>y.id)], idx:first<0?0:first, unit:u, back:`unit/${u.id}` }; }
   renderLearn();
@@ -773,7 +875,7 @@ function controls(){
     <div class="row" style="margin-top:6px"><button class="pri" data-act="dictcheck">Correggi</button></div>
     <div id="dict-out"></div>
   </div>
-  <div id="phase" class="phase"></div><div id="pron"></div>`;
+  <div id="phase" class="phase"></div><div id="votes" class="votes"></div><div id="pron"></div>`;
 }
 function itemCard(it, showEn=true){
   const vid = it.type==="yt" || (it.tech && it.start!=null && HAS_YT);
@@ -939,6 +1041,7 @@ function vSettings(){
       <div><label>Pausa per ripetere (× durata frase)</label><input type="number" id="s-gap" min="0.5" max="3" step="0.1" value="${st.gap}"></div>
     </div>
     <label><input type="checkbox" id="s-blind" ${st.blindLast?"checked":""}> Ultimo giro senza testo</label>
+    ${HAS_MIC?`<label><input type="checkbox" id="s-judge" ${st.judge?"checked":""}> Voto automatico della mia voce durante lo shadowing (nessuna registrazione salvata)</label>`:""}
     ${HAS_YT?`<label><input type="checkbox" id="s-orig" ${st.original?"checked":""}> Voci tech: usa l'audio originale di YouTube (altrimenti voce sintetica americana)</label>`:""}
     <label><input type="checkbox" id="s-unlock" ${st.unlockAll?"checked":""}> Sblocca tutte le unità (sconsigliato)</label>
     <div class="row" style="margin-top:10px"><button class="pri" data-act="ssave">Salva</button><button data-act="stest">▶ Prova voce</button></div>
@@ -965,7 +1068,7 @@ function vSettings(){
 }
 function saveSettings(){ const st0=S.settings;
   Object.assign(S.settings,{ neural: $("#s-neural") ? $("#s-neural").checked : st0.neural, voice:$("#s-voice").value, rate:+$("#s-rate").value, reps:Math.min(8,Math.max(1,+$("#s-reps").value||3)),
-    gap:Math.min(3,Math.max(0.5,+$("#s-gap").value||1.3)), blindLast:$("#s-blind").checked, original: $("#s-orig") ? $("#s-orig").checked : st0.original, unlockAll:$("#s-unlock").checked });
+    gap:Math.min(3,Math.max(0.5,+$("#s-gap").value||1.3)), blindLast:$("#s-blind").checked, judge: $("#s-judge") ? $("#s-judge").checked : st0.judge, original: $("#s-orig") ? $("#s-orig").checked : st0.original, unlockAll:$("#s-unlock").checked });
   save(); toast("Impostazioni salvate.");
 }
 async function download(name, text, type){
@@ -1036,7 +1139,7 @@ const ACTS={
     await initSync(); toast(SYNC.gh?"Collegato a GitHub.":"Collegamento non riuscito: controlla nome del repository e permessi del token."); vSettings(); },
   ghoff:()=>{ lsSet("gh-token",""); SYNC.gh=false; syncLabel("Solo su questo dispositivo"); vSettings(); toast("Token rimosso da questo telefono."); },
   cumplay:b=>cumPlay(+b.dataset.from),
-  cumresume:()=>cumPlay(CUM && CUM.pos>1 ? Math.max(0,CUM.pos-2) : 0),
+  cumresume:()=>cumPlay(CUM && CUM.pos>CUM.u.full[0][2]+1 ? Math.max(CUM.u.full[0][2],CUM.pos-2) : CUM.u.full[0][2]),
   cumtx:b=>{ const x=$("#cum-tx"); x.hidden=!x.hidden; b.textContent=x.hidden?"📄 Mostra la trascrizione":"📄 Nascondi la trascrizione"; if(!x.hidden && CUM){ const f=fullOf(CUM.u.id); f["peek"+CUM.k]=true; } },
   cumrate:b=>{ if(!CUM) return; const { u, k }=CUM, f=fullOf(u.id), st=tedState(u);
     f[k]={ r:+b.dataset.v, at:Date.now(), peek: !!f["peek"+k] };

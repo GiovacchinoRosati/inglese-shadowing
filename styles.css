@@ -55,7 +55,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 button.on{outline:2px solid var(--bad)}
 
 .lvl{display:inline-block;font-size:12px;font-weight:600;color:#fff;border-radius:6px;padding:1px 7px;letter-spacing:.03em}
-.lvl.TECH{background:var(--tech)} .lvl.TED{background:var(--ted)} .lvl.B1{background:var(--b1)} .lvl.B2{background:var(--b2)} .lvl.C1{background:var(--c1)}
+.lvl.TECH{background:var(--tech)} .lvl.TED{background:var(--ted)} .lvl.PROG{background:var(--tech)} .lvl.B1{background:var(--b1)} .lvl.B2{background:var(--b2)} .lvl.C1{background:var(--c1)}
 .bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
 .bar i{display:block;height:100%;background:var(--ok)}
 
@@ -116,3 +116,8 @@ dl.rules.tech{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 button.on-ok{outline:2px solid var(--ok)}
 .newblk{border-left:3px solid var(--ted);padding-left:10px}
 .ftx p{margin:0 0 12px}
+.votes{display:flex;flex-direction:column;gap:6px;margin:6px 0}
+.vote{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px}
+.vote b{font-size:20px;font-variant-numeric:tabular-nums}
+.vote b.ok{color:var(--ok)} .vote b.mid{color:var(--link)} .vote b.low{color:var(--bad)}
+.vote .small.muted{flex-basis:100%}

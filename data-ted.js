@@ -67,6 +67,20 @@ const TED_UNITS = [
     }
    ],
    [
+    "In all those very different contexts, one characteristic emerged as a significant predictor of success.",
+    "In tutti questi contesti così diversi, una caratteristica è emersa come fattore predittivo significativo del successo.",
+    "Il risultato comune di tutte le ricerche.",
+    {
+     "t": 152,
+     "tEnd": 161,
+     "ot": 151.45,
+     "oe": 161.09,
+     "sound": "“emerged as a” si lega in “emergdasa”; accento forte su “one”.",
+     "build": "X emerged as a significant predictor of Y.",
+     "reuse": "Across all our bridges, one factor emerged as a significant predictor of failure: drainage."
+    }
+   ],
+   [
     "Grit is passion and perseverance for very long-term goals. Grit is having stamina.",
     "La grinta è passione e perseveranza per obiettivi di lunghissimo periodo. La grinta è avere resistenza.",
     "La definizione del concetto.",
@@ -95,6 +109,34 @@ const TED_UNITS = [
     }
    ],
    [
+    "So it's not just at West Point or the National Spelling Bee that grit matters. It's also in school, especially for kids at risk for dropping out.",
+    "Quindi la grinta non conta solo a West Point o al National Spelling Bee. Conta anche a scuola, soprattutto per i ragazzi a rischio di abbandono.",
+    "La grinta vale in ogni contesto.",
+    {
+     "t": 227,
+     "tEnd": 238,
+     "ot": 227.4,
+     "oe": 236.68,
+     "sound": "“It's not just at” → “itsnodjustat”; la frase si chiude con “that grit matters”.",
+     "build": "It's not just in X that Y matters. It's also in Z.",
+     "reuse": "It's not just on large bridges that monitoring matters. It's also on small culverts."
+    }
+   ],
+   [
+    "Every day, parents and teachers ask me, \"How do I build grit in kids? What do I do to teach kids a solid work ethic? How do I keep them motivated for the long run?\"",
+    "Ogni giorno genitori e insegnanti mi chiedono: “Come sviluppo la grinta nei ragazzi? Cosa faccio per insegnare un'etica del lavoro solida? Come li tengo motivati nel lungo periodo?”",
+    "Domande riportate in discorso diretto.",
+    {
+     "t": 244,
+     "tEnd": 256,
+     "ot": 243.73,
+     "oe": 255.93,
+     "sound": "Tre domande con intonazione che sale e scende: “How do I…?” ripetuto.",
+     "build": "How do I keep them motivated for the long run? = nel lungo periodo.",
+     "reuse": "How do I keep the team motivated for the long run?"
+    }
+   ],
+   [
     "What I do know is that talent doesn't make you gritty. Our data show very clearly that there are many talented individuals who simply do not follow through on their commitments.",
     "Quello che so è che il talento non ti rende grintoso. I nostri dati mostrano molto chiaramente che ci sono tante persone di talento che semplicemente non portano a termine i propri impegni.",
     "Talento e grinta non vanno di pari passo.",
@@ -109,6 +151,20 @@ const TED_UNITS = [
     }
    ],
    [
+    "This is an idea developed at Stanford University by Carol Dweck, and it is the belief that the ability to learn is not fixed, that it can change with your effort.",
+    "È un'idea sviluppata alla Stanford University da Carol Dweck: è la convinzione che la capacità di imparare non sia fissa, che possa cambiare con l'impegno.",
+    "La “growth mindset”.",
+    {
+     "t": 287,
+     "tEnd": 300,
+     "ot": 287.05,
+     "oe": 299.63,
+     "sound": "“developed at” → “developdat”; “it is the belief” con accento su belief.",
+     "build": "the belief that X is not fixed, that it can change with Y.",
+     "reuse": "It's the belief that a team's skills are not fixed, that they can change with training."
+    }
+   ],
+   [
     "We need to measure whether we've been successful, and we have to be willing to fail, to be wrong, to start over again with lessons learned.",
     "Dobbiamo misurare se abbiamo avuto successo, e dobbiamo essere disposti a fallire, a sbagliare, a ricominciare da capo con le lezioni imparate.",
     "La chiusura: metodo sperimentale applicato all'educazione.",
@@ -120,6 +176,20 @@ const TED_UNITS = [
      "sound": "“we've been” → “weev bin”; elenco “to fail, to be wrong, to start over” in tre tempi.",
      "build": "be willing to X = essere disposti a X; start over = ricominciare.",
      "reuse": "We have to be willing to fail on small pilots and start over with lessons learned."
+    }
+   ],
+   [
+    "In other words, we need to be gritty about getting our kids grittier.",
+    "In altre parole, dobbiamo essere grintosi nel rendere i nostri ragazzi più grintosi.",
+    "Chiusura con gioco di parole gritty/grittier.",
+    {
+     "t": 344,
+     "tEnd": 351,
+     "ot": 344.6,
+     "oe": 350.44,
+     "sound": "“In other words” → “inotherwords”, tutto legato.",
+     "build": "In other words, we need to be X about Y.",
+     "reuse": "In other words, we need to be rigorous about making our data more rigorous."
     }
    ]
   ],
@@ -186,6 +256,20 @@ const TED_UNITS = [
     }
    ],
    [
+    "But we've actually invested very little in a system to stop an epidemic. We're not ready for the next epidemic.",
+    "Ma in realtà abbiamo investito pochissimo in un sistema per fermare un'epidemia. Non siamo pronti per la prossima epidemia.",
+    "Il contrasto con la spesa nucleare.",
+    {
+     "t": 58,
+     "tEnd": 69,
+     "ot": 57.89,
+     "oe": 66.79,
+     "sound": "“we've actually” → “weevactually”; “invested very little” con accento su little.",
+     "build": "invest very little in X; We're not ready for Y.",
+     "reuse": "We've invested very little in a system to monitor ageing bridges. We're not ready."
+    }
+   ],
+   [
     "And as you look at what went on, the problem wasn't that there was a system that didn't work well enough, the problem was that we didn't have a system at all.",
     "E guardando cosa è successo, il problema non era che ci fosse un sistema che non funzionava abbastanza bene, il problema era che non avevamo proprio un sistema.",
     "Sull'epidemia di Ebola del 2014.",
@@ -214,6 +298,34 @@ const TED_UNITS = [
     }
    ],
    [
+    "So there was a lot that was missing. And these things are really a global failure.",
+    "Quindi mancavano molte cose. E queste cose sono davvero un fallimento globale.",
+    "Sintesi del caso Ebola.",
+    {
+     "t": 161,
+     "tEnd": 169,
+     "ot": 161.59,
+     "oe": 166.95,
+     "sound": "“a lot that was” → “alodthatwas”.",
+     "build": "there was a lot that was missing = mancavano molte cose.",
+     "reuse": "So there was a lot that was missing in the tender documents."
+    }
+   ],
+   [
+    "There's three reasons why it didn't spread more. The first is that there was a lot of heroic work by the health workers. They found the people and they prevented more infections.",
+    "Ci sono tre motivi per cui non si è diffuso di più. Il primo è che c'è stato tanto lavoro eroico da parte degli operatori sanitari. Hanno trovato le persone e hanno impedito altri contagi.",
+    "Nota “There's three reasons”: nel parlato americano si usa there's anche con il plurale.",
+    {
+     "t": 211,
+     "tEnd": 223,
+     "ot": 211.65,
+     "oe": 221.25,
+     "sound": "“There's three” invece di “There are three”: colloquiale, molto comune.",
+     "build": "There's three reasons why X. The first is that Y.",
+     "reuse": "There's three reasons why the project was delayed. The first is that permits came late."
+    }
+   ],
+   [
     "If it had gotten into a lot more urban areas, the case numbers would have been much larger. So next time, we might not be so lucky.",
     "Se fosse arrivato in molte più aree urbane, i numeri dei casi sarebbero stati molto più alti. Quindi la prossima volta potremmo non essere così fortunati.",
     "Perché l'Ebola non si è diffusa di più.",
@@ -228,6 +340,20 @@ const TED_UNITS = [
     }
    ],
    [
+    "So this is a serious problem. We should be concerned. But in fact, we can build a really good response system.",
+    "Quindi è un problema serio. Dobbiamo preoccuparci. Ma in realtà possiamo costruire un ottimo sistema di risposta.",
+    "Dal problema alla soluzione.",
+    {
+     "t": 288,
+     "tEnd": 297,
+     "ot": 288.48,
+     "oe": 296.12,
+     "sound": "Tre frasi corte con pausa netta tra una e l'altra: ritmo da presentazione.",
+     "build": "X. We should be concerned. But in fact, we can Y.",
+     "reuse": "This is a serious problem. We should be concerned. But in fact, we can build a really good monitoring system."
+    }
+   ],
+   [
     "So we can have tools, but those tools need to be put into an overall global health system. And we need preparedness.",
     "Quindi possiamo avere gli strumenti, ma quegli strumenti vanno inseriti in un sistema sanitario globale complessivo. E serve preparazione.",
     "La proposta: tecnologia sì, ma dentro un sistema.",
@@ -239,6 +365,20 @@ const TED_UNITS = [
      "sound": "“put into an” → “puddintoan”.",
      "build": "X need to be put into Y: passivo con need.",
      "reuse": "Sensors are tools, but those tools need to be put into an overall asset management system."
+    }
+   ],
+   [
+    "We need to do simulations, germ games, not war games, so that we see where the holes are.",
+    "Dobbiamo fare simulazioni, giochi dei germi, non giochi di guerra, così vediamo dove sono le falle.",
+    "Il gioco di parole germ games / war games.",
+    {
+     "t": 396,
+     "tEnd": 404,
+     "ot": 396.34,
+     "oe": 404.16,
+     "sound": "“so that we see” → “sothatwe see”; “where the holes are” con accento su holes.",
+     "build": "so that we see where the holes are = per vedere dove sono le falle.",
+     "reuse": "We need to run simulations on the digital twin, so that we see where the holes are."
     }
    ],
    [
@@ -267,6 +407,20 @@ const TED_UNITS = [
      "sound": "“get going” → “gedgoin”; “not on our side” → “nadonour side”.",
      "build": "get going = mettersi in moto; time is not on our side = il tempo non gioca a nostro favore.",
      "reuse": "We need to get going on the bid, because time is not on our side."
+    }
+   ],
+   [
+    "In fact, if there's one positive thing that can come out of the Ebola epidemic, it's that it can serve as an early warning, a wake-up call, to get ready.",
+    "Anzi, se c'è una cosa positiva che può venire dall'epidemia di Ebola, è che può servire da primo avvertimento, da campanello d'allarme, per prepararsi.",
+    "Chiusura positiva.",
+    {
+     "t": 477,
+     "tEnd": 490,
+     "ot": 477.78,
+     "oe": 488.8,
+     "sound": "“can come out of” → “cancomeoudof”; “wake-up call” con accento su wake.",
+     "build": "If there's one positive thing that can come out of X, it's that Y.",
+     "reuse": "If there's one positive thing that can come out of this failure, it's that it can serve as a wake-up call."
     }
    ]
   ],
@@ -345,6 +499,20 @@ const TED_UNITS = [
     }
    ],
    [
+    "And that was kind of a weird experience for me. For one thing, I wasn't the most maternal person at the time.",
+    "E per me è stata un'esperienza un po' strana. Per dirne una, all'epoca non ero la persona più materna del mondo.",
+    "Autoironia sul suo comportamento.",
+    {
+     "t": 66,
+     "tEnd": 75,
+     "ot": 65.77,
+     "oe": 75.27,
+     "sound": "“kind of a” → “kinda”; “for one thing” = per dirne una.",
+     "build": "For one thing, I wasn't the most X at the time.",
+     "reuse": "For one thing, I wasn't the most patient engineer at the time."
+    }
+   ],
+   [
     "But my response to this robot was also interesting because I knew exactly how this machine worked, and yet I still felt compelled to be kind to it.",
     "Ma la mia reazione a questo robot era interessante anche perché sapevo esattamente come funzionava questa macchina, eppure mi sentivo comunque spinta a essere gentile con lei.",
     "Il paradosso che apre la sua ricerca.",
@@ -370,6 +538,20 @@ const TED_UNITS = [
      "sound": "“It turns out that” → “it turnzout that”, molto frequente.",
      "build": "It turns out that X = viene fuori che, si scopre che; be hardwired to = essere programmati per.",
      "reuse": "It turns out that inspectors are hardwired to trust what they see over what the sensors say."
+    }
+   ],
+   [
+    "And we can design robots specifically to evoke this response, using eyes and faces or movements that people automatically, subconsciously associate with states of mind.",
+    "E possiamo progettare robot apposta per suscitare questa reazione, usando occhi e volti o movimenti che le persone associano automaticamente, inconsciamente, a stati d'animo.",
+    "Il design dei robot sociali.",
+    {
+     "t": 222,
+     "tEnd": 235,
+     "ot": 222.06,
+     "oe": 234.54,
+     "sound": "“specifically” in quattro sillabe veloci: “spe-SI-fi-klee”.",
+     "build": "design X specifically to evoke Y = progettare apposta per.",
+     "reuse": "We can design dashboards specifically to evoke a quick response from operators."
     }
    ],
    [
@@ -401,6 +583,20 @@ const TED_UNITS = [
     }
    ],
    [
+    "And this is a really common response, and I think it's absolutely correct, because that would be terrible.",
+    "Ed è una reazione molto comune, e credo sia assolutamente corretta, perché sarebbe terribile.",
+    "Sulla paura di sostituire l'assistenza umana con i robot.",
+    {
+     "t": 398,
+     "tEnd": 406,
+     "ot": 398.16,
+     "oe": 404.78,
+     "sound": "“I think it's absolutely correct” con accento su absolutely.",
+     "build": "this is a really common response, and I think it's correct, because…",
+     "reuse": "This is a really common objection, and I think it's absolutely fair, because data can be wrong."
+    }
+   ],
+   [
     "Because robots plus capitalism equals questions around consumer protection and privacy.",
     "Perché robot più capitalismo significa domande sulla tutela dei consumatori e sulla privacy.",
     "Battuta ironica sulle questioni etiche.",
@@ -415,6 +611,48 @@ const TED_UNITS = [
     }
    ],
    [
+    "A few years after that first initial experience I had with this baby dinosaur robot, I did a workshop with my friend Hannes Gassert.",
+    "Qualche anno dopo quella prima esperienza con il dinosauro robot, ho fatto un workshop con il mio amico Hannes Gassert.",
+    "Inizio dell'esperimento con i robot.",
+    {
+     "t": 456,
+     "tEnd": 465,
+     "ot": 456.37,
+     "oe": 465.24,
+     "sound": "“that first initial experience” è ridondante: succede nel parlato spontaneo.",
+     "build": "A few years after X, I did Y with Z.",
+     "reuse": "A few years after that first project, I did a pilot with a local contractor."
+    }
+   ],
+   [
+    "And even that didn't work. They couldn't do it.",
+    "E nemmeno quello ha funzionato. Non ci riuscivano.",
+    "Nessuno voleva distruggere i robot.",
+    {
+     "t": 504,
+     "tEnd": 508,
+     "ot": 504.46,
+     "oe": 507.34,
+     "sound": "“didn't work” → “didn'work”, la t quasi sparisce.",
+     "build": "even that didn't work = nemmeno quello ha funzionato.",
+     "reuse": "We offered a discount, and even that didn't work."
+    }
+   ],
+   [
+    "Now this is just a little study, but it's part of a larger body of research that is starting to indicate that there may be a connection between people's tendencies for empathy and their behavior around robots.",
+    "È solo un piccolo studio, ma fa parte di un insieme più ampio di ricerche che inizia a indicare che potrebbe esserci un legame tra la tendenza delle persone all'empatia e il loro comportamento verso i robot.",
+    "Prudenza scientifica: hedging (unità C1-08).",
+    {
+     "t": 561,
+     "tEnd": 574,
+     "ot": 561.2,
+     "oe": 574.21,
+     "sound": "“there may be a connection” con tono più basso: è la parte prudente.",
+     "build": "it's part of a larger body of research that is starting to indicate that…",
+     "reuse": "It's just a small pilot, but it's part of a larger body of evidence that is starting to indicate a pattern."
+    }
+   ],
+   [
     "Because even if robots can't feel, our behavior towards them might matter for us.",
     "Perché anche se i robot non possono provare nulla, il nostro comportamento verso di loro potrebbe contare per noi.",
     "La tesi finale.",
@@ -426,6 +664,20 @@ const TED_UNITS = [
      "sound": "“can't” americano [kænt], quasi uguale a “can”: distingui dalla t finale appena accennata e dall'accento.",
      "build": "even if X can't…, Y might… = anche se…, potrebbe…",
      "reuse": "Even if the client can't see the model, our rigor in building it might matter for us."
+    }
+   ],
+   [
+    "Most of what I've learned over the past 10 years has not been about technology at all. It's been about human psychology and empathy and how we relate to others.",
+    "La maggior parte di quello che ho imparato negli ultimi 10 anni non riguarda affatto la tecnologia. Riguarda la psicologia umana, l'empatia e il modo in cui ci relazioniamo agli altri.",
+    "La conclusione personale del talk.",
+    {
+     "t": 662,
+     "tEnd": 674,
+     "ot": 661.9,
+     "oe": 672.26,
+     "sound": "“not been about technology at all” → “nadbin about… adall”.",
+     "build": "Most of what I've learned has not been about X at all. It's been about Y.",
+     "reuse": "Most of what I've learned has not been about software at all. It's been about people."
     }
    ]
   ],
