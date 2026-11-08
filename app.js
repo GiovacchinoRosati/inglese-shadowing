@@ -662,6 +662,7 @@ function vHome(){
     <p class="small muted">Ritmo consigliato: prima il ripasso, poi un talk TED o una voce tech con dettato, e una unità di grammatica ogni 1-2 giorni. Le tue difficoltà sono in <a href="#" data-act="go" data-to="stats">Difficoltà</a>. Non aprire unità nuove se i ripassi arretrati superano 40 frasi.</p>
   </div>
   <h2>Livelli</h2><div class="grid">${lv}</div>
+  ${window.APP_VERSION?`<p class="small muted">Versione dell'app: ${esc(window.APP_VERSION.replace(/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})/,"$3/$2/$1 $4:$5 UTC"))}</p>`:""}
   <div class="card small">
     <h3 style="margin-top:0">Il metodo</h3>
     <ol class="steps">
