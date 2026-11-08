@@ -335,32 +335,51 @@ function setPhase(text, ms){
 }
 function setBlind(on){ const e=$("#en-text"); if(e) e.classList.toggle("blind", on); }
 
+/* Mostra solo le parole chiave (nomi, verbi, aggettivi): le parole grammaticali brevi diventano «·». */
+function keywordsHTML(en){ return en.split(/\s+/).map(w=>{ const c=w.toLowerCase().replace(/[^a-z']/g,"").replace(/'/g,""); return /\d/.test(w) ? esc(w) : (FUNC.has(c) || c.length<3) ? `<span class="kwh">·</span>` : esc(w); }).join(" "); }
+async function oneRound(it, my, rate, label, mode){
+  const e=$("#en-text");
+  if(e){ if(mode==="kw"){ e.dataset.full=e.dataset.full||e.innerHTML; e.innerHTML=keywordsHTML(it.en); e.classList.remove("blind"); e.classList.add("kw"); }
+         else { if(e.dataset.full){ e.innerHTML=e.dataset.full; delete e.dataset.full; } e.classList.remove("kw"); setBlind(mode==="blind"); } }
+  setPhase(label); setTurn("listen","ASCOLTA — non parlare");
+  lastRef=null;
+  const d = await play(it, rate, my);
+  if(my!==runId) return { stop:true };
+  if(d<0) return { stop:true };
+  const gap = Math.round(Math.max(d,1200)*S.settings.gap)+400;
+  const ref=lastRef, refDur=d/1000;
+  beep(); await sleep(180);
+  const cap = judgeOn() ? await startCapture() : null;
+  setPhase("Ripeti la frase ad alta voce, stessa intonazione e ritmo", gap);
+  setTurn("speak", cap ? "PARLA ORA — ti sto ascoltando" : "PARLA ORA", gap);
+  await sleep(gap);
+  setTurn("idle", cap ? "Stop — sto valutando…" : "Stop");
+  if(!cap) return {};
+  const res=await cap.stop(); if(my!==runId) return { stop:true };
+  return { v: scoreVoice(it, res, ref, refDur) };
+}
 async function shadowLoop(it){
   stopAll(); const my=runId; keepAwake(true); const n=Math.max(1,+S.settings.reps), base=+S.settings.rate;
+  let lastVote=null;
   for(let k=0;k<n;k++){
     if(my!==runId) return;
     const rate = n===1 ? base : Math.max(0.6, base-0.15 + 0.3*k/(n-1));
     const blind = S.settings.blindLast && n>1 && k===n-1;
-    setBlind(blind);
-    setPhase(`Giro ${k+1} di ${n} · velocità ${rate.toFixed(2)}${blind?" · senza testo":""}`);
-    setTurn("listen","ASCOLTA — non parlare");
-    lastRef=null;
-    const d = await play(it, rate, my);
-    if(my!==runId) return;
-    if(d<0){ keepAwake(false); setBlind(false); return; }
-    const gap = Math.round(Math.max(d,1200)*S.settings.gap)+400;
-    const ref=lastRef, refDur=d/1000;
-    beep();
-    await sleep(180);
-    const cap = judgeOn() ? await startCapture() : null;
-    setPhase("Ripeti la frase ad alta voce, stessa intonazione e ritmo", gap);
-    setTurn("speak", cap ? "PARLA ORA — ti sto ascoltando" : "PARLA ORA", gap);
-    await sleep(gap);
-    setTurn("idle", cap ? "Stop — sto valutando…" : "Stop");
-    if(cap){ const res=await cap.stop(); if(my!==runId) return; showVote(it, k+1, scoreVoice(it, res, ref, refDur)); }
+    const r=await oneRound(it, my, rate, `Giro ${k+1} di ${n} · velocità ${rate.toFixed(2)}${blind?" · senza testo":""}`, blind?"blind":"text");
+    if(r.stop){ keepAwake(false); setBlind(false); return; }
+    if(r.v){ showVote(it, k+1, r.v); lastVote=r.v; }
+  }
+  // 4° giro adattivo: frase lunga e terzo giro (senza testo) andato male → si riprova con le sole parole chiave
+  const long = it.en.split(/\s+/).length>=12;
+  if(my===runId && judgeOn() && long && lastVote && (lastVote.silent || lastVote.vote<65)){
+    const r=await oneRound(it, my, Math.max(0.85,+S.settings.rate), `Giro in più: solo le parole chiave (la frase è lunga)`, "kw");
+    if(r.stop){ keepAwake(false); return; }
+    if(r.v) showVote(it, n+1, r.v, "parole chiave");
   }
   if(my!==runId) return;
-  keepAwake(false); setBlind(false); beep(520,160); setTurn("done","Fine dello shadowing: non devi più parlare"); setPhase(judgeOn() ? "I voti sono qui sotto." : "Registrati e confronta, oppure verifica la pronuncia.");
+  { const e=$("#en-text"); if(e && e.dataset.full){ e.innerHTML=e.dataset.full; delete e.dataset.full; e.classList.remove("kw"); } }
+  if(my!==runId) return;
+  keepAwake(false); setBlind(false); beep(520,160); setTurn("done","Fine dello shadowing: non devi più parlare"); setPhase(judgeOn() ? "I voti di ogni giro sono qui sotto." : "");
   markActivity(); save();
 }
 
@@ -445,13 +464,15 @@ function scoreVoice(it, res, ref, refDur){
     words=Math.round(100*Math.max(...cands.map(t=>matchWords(it.en,t).score)));
   }
   const vote = words==null ? rhythm : Math.round(0.6*words+0.4*rhythm);
-  return { vote, words, rhythm, said:res.said };
+  let missed=null;
+  if(res.said){ const m=matchWords(it.en, res.said); missed=m.words.filter((w,i)=>!m.ok.has(i) && !FUNC.has(w)).slice(0,8); }
+  return { vote, words, rhythm, said:res.said, missed };
 }
-function showVote(it, rep, v){
+function showVote(it, rep, v, tag){
   const box=$("#votes"); if(!box) return;
   if(v.silent){ box.insertAdjacentHTML("beforeend", `<div class="vote small muted">Ripetizione ${rep}: non ti ho sentito. Parla più vicino al telefono.</div>`); return; }
   const cls=v.vote>=80?"ok":v.vote>=60?"mid":"low";
-  box.insertAdjacentHTML("beforeend", `<div class="vote"><b class="${cls}">${v.vote}</b><span class="small">Ripetizione ${rep} · ${v.words!=null?`parole ${v.words}% · `:""}ritmo ${v.rhythm}%</span>${v.said?`<div class="small muted">Ho capito: “${esc(v.said)}”</div>`:""}</div>`);
+  box.insertAdjacentHTML("beforeend", `<div class="vote"><b class="${cls}">${v.vote}</b><span class="small">Giro ${rep}${tag?` (${tag})`:""} · ${v.words!=null?`parole ${v.words}% · `:"parole non disponibili su questo telefono · "}ritmo ${v.rhythm}%</span>${v.missed&&v.missed.length?`<div class="small">Non ho sentito: <b>${esc(v.missed.join(", "))}</b></div>`:""}${v.said?`<div class="small muted">Ho capito: “${esc(v.said)}”</div>`:""}</div>`);
   const r=S.voice[it.id]||(S.voice[it.id]={ n:0, best:0 });
   r.n++; r.last=v.vote; r.best=Math.max(r.best,v.vote); r.words=v.words; r.rhythm=v.rhythm; r.at=Date.now();
   markActivity(); save();
@@ -1039,12 +1060,7 @@ function controls(){
     <button data-act="blind">👁 Testo</button>
     <button data-act="ita">🇮🇹 Traduzione</button>
   </div>
-  ${HAS_MIC?`<div class="row" style="margin-top:8px">
-    <button id="btn-rec" data-act="rec">🎙 Registrati</button>
-    <button id="btn-me" data-act="me" ${recUrl?"":"disabled"}>▶ La mia voce</button>
-    <button id="btn-cmp" data-act="cmp" ${recUrl?"":"disabled"}>⇄ Modello + me</button>
-    <button data-act="pron">✓ Verifica pronuncia</button>
-  </div>`:""}
+  ${HAS_MIC?`<p class="small muted" style="margin:8px 0 0">La verifica della pronuncia è dentro lo shadowing: ogni giro ha il suo voto.</p>`:""}
   <div class="row" style="margin-top:8px"><button data-act="dict">✍ Dettato</button></div>
   <div id="dict-box" hidden>
     <label for="dict-in">Scrivi quello che senti (numeri in cifre; puoi riascoltare quante volte vuoi)</label>

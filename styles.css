@@ -141,3 +141,5 @@ button.on-ok{outline:2px solid var(--ok)}
 .czin.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--bg))}
 .czin.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg));text-decoration:line-through}
 .czfix{color:var(--ok);font-weight:600}
+.big.kw{letter-spacing:.01em}
+.kwh{color:var(--muted);opacity:.6}
