@@ -508,12 +508,11 @@ const UNITS = [
 ]}
 ];
 
-/* Fonti autentiche: link di ricerca YouTube (sempre validi), non minutaggi inventati. */
+/* Fonti verificate: audio ufficiale, trascrizione, licenza aperta (Creative Commons). */
 const SOURCES = [
-  { name:"BBC Learning English", q:"BBC Learning English", note:"Grammatica e lessico, inglese britannico chiaro. Ideale B1-B2." },
-  { name:"6 Minute English (BBC)", q:"6 Minute English BBC", note:"Podcast/video brevi a due voci: ottimi per lo shadowing di dialoghi." },
-  { name:"The English We Speak (BBC)", q:"The English We Speak BBC", note:"Espressioni idiomatiche in 3 minuti. B2-C1." },
-  { name:"Luke's English Podcast", q:"Luke's English Podcast", note:"Conversazione lunga e naturale, britannico. B2-C1." },
-  { name:"All Ears English", q:"All Ears English podcast", note:"Inglese americano conversazionale. B2-C1." },
-  { name:"TED Talks", q:"TED talk", note:"Discorsi strutturati: perfetti per hedging, enfasi e marcatori. C1." }
+  { name:"TED — Technology", url:"https://www.ted.com/topics/technology", note:"Licenza CC BY-NC-ND 4.0, trascrizione umana con tempi e traduzione italiana ufficiale. È la fonte del percorso." },
+  { name:"TED — Artificial intelligence", url:"https://www.ted.com/topics/ai", note:"Talk su intelligenza artificiale: Fei-Fei Li, Hassabis, Altman, Brockman, Sal Khan." },
+  { name:"TED — Robots", url:"https://www.ted.com/topics/robots", note:"Robotica: Marc Raibert (Boston Dynamics), Kate Darling, Daniela Rus." },
+  { name:"Intelligent Machines (TWiT)", url:"https://twit.tv/shows/intelligent-machines", note:"Podcast settimanale sull'AI, licenza CC BY-NC-ND 4.0. Trascrizione generata da AI e minuti riferiti alla versione con pubblicità: solo ascolto libero." },
+  { name:"Security Now (TWiT)", url:"https://twit.tv/shows/security-now", note:"Sicurezza informatica, CC BY-NC-ND 4.0; inglese americano tecnico e lento. Solo ascolto libero." }
 ];

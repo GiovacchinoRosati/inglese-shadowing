@@ -163,8 +163,4 @@ const TECH_UNITS = [
 ];
 UNITS.push(...TECH_UNITS);
 
-SOURCES.unshift(
-  { name:"Lex Fridman Podcast", q:"Lex Fridman Podcast", note:"Conversazioni lunghe con i leader dell'AI, trascrizioni complete con minutaggi su lexfridman.com." },
-  { name:"Dwarkesh Podcast", q:"Dwarkesh Patel podcast", note:"Interviste tecniche a CEO e ricercatori AI, trascrizioni su dwarkesh.com." },
-  { name:"Acquired", q:"Acquired podcast NVIDIA", note:"Storie di aziende tech, con interviste ai fondatori (es. Jensen Huang)." }
-);
+

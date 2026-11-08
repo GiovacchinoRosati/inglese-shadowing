@@ -2,7 +2,7 @@
 /* HOST: "web" (GitHub Pages / locale) oppure "artifact" (pagina claude.ai: niente microfono né iframe YouTube, progressi sincronizzati online). */
 const HOST = window.SHADOW_HOST || "web";
 const HAS_MIC = HOST!=="artifact" && !!(navigator.mediaDevices && window.MediaRecorder);
-const HAS_YT = HOST!=="artifact";
+const HAS_YT = false; // niente YouTube: pubblicità e minuti non sincronizzabili. Audio originale solo da TED (file ufficiali).
 /* ---------------- Stato e persistenza ---------------- */
 const LS_KEY = "shadowing-en-v1";
 const DEFAULTS = { cards:{}, yt:[], days:{}, dict:{}, comp:{}, miss:{}, ev:{}, full:{}, prog:{}, voice:{},
@@ -705,13 +705,7 @@ function vUnit(id){
     <span class="small muted">${unitLearned(u)}/${u.s.length} frasi acquisite</span><button class="mini" data-act="tr">🇮🇹 Mostra traduzioni</button></div>
   <div class="card">${u.s.map((x,k)=>{ const c=S.cards[`${u.id}-${k+1}`];
     return `<div class="sent"><div class="en">${esc(x[0])}</div><div class="it tr" hidden>${esc(x[1])}</div><div class="small muted">${esc(x[2])}${c?` · prossimo richiamo: ${new Date(c.due).toLocaleDateString("it-IT")}`:""}</div></div>`; }).join("")}</div>
-  <h2>Ascolto autentico</h2>
-  <p class="small muted">${HAS_YT?"Cerca la struttura in contenuti reali, poi salva lo spezzone (inizio-fine): diventa una scheda di shadowing con richiami programmati.":"Cerca la struttura in contenuti reali e fai shadowing direttamente su YouTube. Il salvataggio degli spezzoni con loop è disponibile nella versione GitHub dell'app."}</p>
-  <div class="row">
-    <a class="btn" target="_blank" rel="noopener" href="${ytSearch("BBC Learning English "+u.yt)}">BBC Learning English: “${esc(u.yt)}”</a>
-    <a class="btn" target="_blank" rel="noopener" href="${ytSearch(u.yt+" English grammar")}">Lezioni su YouTube</a>
-    ${HAS_YT?`<a class="btn" href="#" data-act="go" data-to="yt/${u.id}">+ Aggiungi spezzone</a>`:""}
-  </div>
+  <p class="small muted">Ascolto autentico: la stessa struttura la ritrovi nei talk TED del <a href="#" data-act="go" data-to="path">percorso</a>, con la voce originale.</p>
   ${segs.length?`<div class="card">${segs.map(y=>`<div class="sent"><div class="en">${esc(y.en)}</div><div class="it">${esc(y.it)}</div>
      <div class="row small"><a href="#" data-act="go" data-to="learn/yt:${y.id}">Shadowing</a><span class="muted">${mmss(y.start)}–${mmss(y.end)}</span></div></div>`).join("")}</div>`:""}`;
 }
@@ -731,7 +725,6 @@ function techBox(it){
     </dl>
     <div class="row small" style="margin-top:10px">
       ${useOriginal(it)||hasOrig(it)?`<button class="mini" data-act="synth">🤖 Voce chiara (sintetica)</button>`:""}
-      <a class="btn" target="_blank" rel="noopener" href="${ytLink(s.yt,x.t)}">▶ Originale su YouTube${when}</a>
       ${isTed?`<a target="_blank" rel="noopener" href="${esc(s.talk)}">Talk su TED.com</a>`:""}
       <a target="_blank" rel="noopener" href="${esc(s.tx)}">Trascrizione</a>
     </div>
@@ -741,7 +734,7 @@ function vTechUnit(u){
   $("#app").innerHTML=`
   <p class="small"><a href="#" data-act="go" data-to="path">← Percorso</a></p>
   <h1>${esc(u.title)}</h1>
-  <p class="small muted">${esc(u.src.name)}, ${esc(u.src.date)}${u.src.wpm?` · ${u.src.wpm} parole/min`:""} · <a target="_blank" rel="noopener" href="${ytLink(u.src.yt,null)}">Video su YouTube</a> · <a target="_blank" rel="noopener" href="${esc(u.src.tx)}">Trascrizione ufficiale</a></p>
+  <p class="small muted">${esc(u.src.name)}, ${esc(u.src.date)}${u.src.wpm?` · ${u.src.wpm} parole/min`:""} · <a target="_blank" rel="noopener" href="${esc(u.src.tx)}">Trascrizione ufficiale</a></p>
   <div class="card"><dl class="rules"><dt>Come parla</dt><dd>${esc(u.f)}</dd><dt>Cosa allenare</dt><dd>${esc(u.u)}</dd><dt>Attenzione</dt><dd>${esc(u.t)}</dd></dl></div>
   <div class="row"><a class="btn ${unitDone(u)?"":"pri"}" href="#" data-act="go" data-to="learn/${u.id}">${unitDone(u)?"Ripeti":unitLearned(u)?"Continua":"Inizia"}: ascolto, comprensione, shadowing</a>
     ${unitDone(u)?`<a class="btn pri" href="#" data-act="go" data-to="full/${u.id}">🎧 Ascolto integrale (${fullStatus(u).rated}/${fullStatus(u).n})</a>`:`<span class="small muted">L'ascolto integrale si apre dopo lo shadowing.</span>`}
@@ -1034,10 +1027,10 @@ function grade(g){
 /* ----- Spezzoni YouTube ----- */
 function vYT(unitPre){
   if(!HAS_YT){
-    $("#app").innerHTML=`<h1>Fonti autentiche</h1>
-    <p class="muted">Ascolto reale per lo shadowing: apri il video, scegli 1-2 frasi da 3-8 secondi, mettile in loop e ripetile sopra la voce. Ogni unità del percorso ha anche ricerche mirate sulla sua struttura.</p>
-    <div class="card">${SOURCES.map(s=>`<div class="sent"><a target="_blank" rel="noopener" href="${ytSearch(s.q)}">${esc(s.name)}</a><div class="small muted">${esc(s.note)}</div></div>`).join("")}</div>
-    <p class="small muted">Su claude.ai i video non possono essere incorporati nella pagina. La versione GitHub dell'app riproduce gli spezzoni in loop e li inserisce nei richiami.</p>`;
+    $("#app").innerHTML=`<h1>Fonti</h1>
+    <p class="muted">Solo fonti con audio ufficiale, trascrizione e licenza che permette l'uso a fini di studio. I talk TED sono già nel percorso con la voce originale; le altre sono per l'ascolto libero.</p>
+    <div class="card">${SOURCES.map(s=>`<div class="sent"><a target="_blank" rel="noopener" href="${esc(s.url)}">${esc(s.name)}</a><div class="small muted">${esc(s.note)}</div></div>`).join("")}</div>
+    <p class="small muted">Esclusi YouTube e i podcast senza licenza aperta: pubblicità inserite e minuti non sincronizzabili.</p>`;
     return;
   }
   const opts=UNITS.map(u=>`<option value="${u.id}" ${u.id===unitPre?"selected":""}>${u.id.toUpperCase()} · ${esc(u.title)}</option>`).join("");
