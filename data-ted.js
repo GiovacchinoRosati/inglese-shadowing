@@ -17,7 +17,29 @@ const TED_UNITS = [
    "yt": "H14bBuluwB8",
    "approx": true,
    "wpm": 147,
-   "orig": "audio/orig/ted-01.mp3"
+   "orig": "audio/orig/ted-01",
+   "parts": [
+    [
+     "orig/ted-01-p1",
+     0.0,
+     99.61
+    ],
+    [
+     "orig/ted-01-p2",
+     99.61,
+     199.77
+    ],
+    [
+     "orig/ted-01-p3",
+     199.77,
+     284.02
+    ],
+    [
+     "orig/ted-01-p4",
+     284.02,
+     359.42
+    ]
+   ]
   },
   "yt": "Grit: The power of passion and perseverance",
   "f": "Psicologa americana (Filadelfia). Ritmo regolare, frasi brevi, pause studiate: un discorso preparato e provato.",
@@ -31,8 +53,8 @@ const TED_UNITS = [
     {
      "t": 0,
      "tEnd": 12,
-     "ot": 0.48,
-     "oe": 11.22,
+     "ot": 4.39,
+     "oe": 14.46,
      "sound": "“27” = “twenty-seven” con la t morbida: “twenny-seven”. Pausa netta prima di “teaching”: la parola chiave arriva per ultima.",
      "build": "I left X for Y that was even more Z: comparativo con even.",
      "reuse": "I left a large engineering group for a company that was even more demanding: a scale-up."
@@ -45,8 +67,8 @@ const TED_UNITS = [
     {
      "t": 64,
      "tEnd": 80,
-     "ot": 64.3,
-     "oe": 80.19,
+     "ot": 68.4,
+     "oe": 84.41,
      "sound": "“what we need” → “whadwe need”. Le due “perspective” finali hanno la stessa melodia: ripetizione voluta.",
      "build": "I came to the conclusion that what we need is X: frase scissa con what (unità C1-02).",
      "reuse": "We came to the conclusion that what we need in maintenance is a much better understanding of real loads."
@@ -59,8 +81,8 @@ const TED_UNITS = [
     {
      "t": 86,
      "tEnd": 97,
-     "ot": 85.71,
-     "oe": 95.69,
+     "ot": 89.7,
+     "oe": 99.87,
      "sound": "“what if” → “wadif”: la t diventa una d e si lega alla i.",
      "build": "But what if X depends on Y? = e se…? Formula per introdurre un'ipotesi provocatoria.",
      "reuse": "But what if the real cost of a bridge depends on much more than its construction price?"
@@ -73,8 +95,8 @@ const TED_UNITS = [
     {
      "t": 152,
      "tEnd": 161,
-     "ot": 151.45,
-     "oe": 161.09,
+     "ot": 156.33,
+     "oe": 163.52,
      "sound": "“emerged as a” si lega in “emergdasa”; accento forte su “one”.",
      "build": "X emerged as a significant predictor of Y.",
      "reuse": "Across all our bridges, one factor emerged as a significant predictor of failure: drainage."
@@ -87,8 +109,8 @@ const TED_UNITS = [
     {
      "t": 169,
      "tEnd": 178,
-     "ot": 169.19,
-     "oe": 177.15,
+     "ot": 173.5,
+     "oe": 180.26,
      "sound": "“long-term” con l'accento su “long”. “stamina” = “STA-mi-na”.",
      "build": "X is Y. X is Z: definizione per ripetizione.",
      "reuse": "Resilience is redundancy. Resilience is having a plan B for every critical asset."
@@ -101,8 +123,8 @@ const TED_UNITS = [
     {
      "t": 190,
      "tEnd": 197,
-     "ot": 190.04,
-     "oe": 196.08,
+     "ot": 194.59,
+     "oe": 199.51,
      "sound": "“like it's a” → “likitsa”, tutto legato.",
      "build": "like it's X, not Y: contrapposizione secca.",
      "reuse": "Running a tender is like a marathon, not a sprint."
@@ -115,8 +137,8 @@ const TED_UNITS = [
     {
      "t": 227,
      "tEnd": 238,
-     "ot": 227.4,
-     "oe": 236.68,
+     "ot": 230.95,
+     "oe": 241.13,
      "sound": "“It's not just at” → “itsnodjustat”; la frase si chiude con “that grit matters”.",
      "build": "It's not just in X that Y matters. It's also in Z.",
      "reuse": "It's not just on large bridges that monitoring matters. It's also on small culverts."
@@ -129,8 +151,8 @@ const TED_UNITS = [
     {
      "t": 244,
      "tEnd": 256,
-     "ot": 243.73,
-     "oe": 255.93,
+     "ot": 248.57,
+     "oe": 258.66,
      "sound": "Tre domande con intonazione che sale e scende: “How do I…?” ripetuto.",
      "build": "How do I keep them motivated for the long run? = nel lungo periodo.",
      "reuse": "How do I keep the team motivated for the long run?"
@@ -143,8 +165,8 @@ const TED_UNITS = [
     {
      "t": 260,
      "tEnd": 272,
-     "ot": 259.4,
-     "oe": 271.85,
+     "ot": 264.04,
+     "oe": 275.0,
      "sound": "“What I do know” con accento forte su “do”: è il do enfatico (unità C1-11).",
      "build": "What I do know is that… = quello che invece so è che…; follow through on = portare a termine.",
      "reuse": "What I do know is that good engineers who don't follow through on commitments lose tenders."
@@ -157,8 +179,8 @@ const TED_UNITS = [
     {
      "t": 287,
      "tEnd": 300,
-     "ot": 287.05,
-     "oe": 299.63,
+     "ot": 291.0,
+     "oe": 302.2,
      "sound": "“developed at” → “developdat”; “it is the belief” con accento su belief.",
      "build": "the belief that X is not fixed, that it can change with Y.",
      "reuse": "It's the belief that a team's skills are not fixed, that they can change with training."
@@ -171,8 +193,8 @@ const TED_UNITS = [
     {
      "t": 334,
      "tEnd": 345,
-     "ot": 334.21,
-     "oe": 344.33,
+     "ot": 338.05,
+     "oe": 347.58,
      "sound": "“we've been” → “weev bin”; elenco “to fail, to be wrong, to start over” in tre tempi.",
      "build": "be willing to X = essere disposti a X; start over = ricominciare.",
      "reuse": "We have to be willing to fail on small pilots and start over with lessons learned."
@@ -185,8 +207,8 @@ const TED_UNITS = [
     {
      "t": 344,
      "tEnd": 351,
-     "ot": 344.6,
-     "oe": 350.44,
+     "ot": 347.95,
+     "oe": 353.37,
      "sound": "“In other words” → “inotherwords”, tutto legato.",
      "build": "In other words, we need to be X about Y.",
      "reuse": "In other words, we need to be rigorous about making our data more rigorous."
@@ -195,27 +217,27 @@ const TED_UNITS = [
   ],
   "full": [
    [
-    0,
+    4,
     "When I was 27 years old, I left a very demanding job in management consulting for a job that was even more demanding: teaching. I went to teach seventh graders math in the New York City public schools. And like any teacher, I made quizzes and tests. I gave out homework assignments. When the work came back, I calculated grades. What struck me was that IQ was not the only difference between my best and my worst students. Some of my strongest performers did not have stratospheric IQ scores. Some of my smartest kids weren't doing so well. And that got me thinking. The kinds of things you need to learn in seventh grade math, sure, they're hard: ratios, decimals, the area of a parallelogram. But these concepts are not impossible, and I was firmly convinced that every one of my students could learn the material if they worked hard and long enough. After several more years of teaching, I came to the conclusion that what we need in education is a much better understanding of students and learning from a motivational perspective, from a psychological perspective. In education, the one thing we know how to measure best is IQ. But what if doing well in school and in life depends on much more than your ability to learn quickly and easily?",
     0.0,
-    95.69
+    99.87
    ],
    [
-    96,
+    100,
     "So I left the classroom, and I went to graduate school to become a psychologist. I started studying kids and adults in all kinds of super challenging settings, and in every study my question was, who is successful here and why? My research team and I went to West Point Military Academy. We tried to predict which cadets would stay in military training and which would drop out. We went to the National Spelling Bee and tried to predict which children would advance farthest in competition. We studied rookie teachers working in really tough neighborhoods, asking which teachers are still going to be here in teaching by the end of the school year, and of those, who will be the most effective at improving learning outcomes for their students? We partnered with private companies, asking, which of these salespeople is going to keep their jobs? And who's going to earn the most money? In all those very different contexts, one characteristic emerged as a significant predictor of success. And it wasn't social intelligence. It wasn't good looks, physical health, and it wasn't IQ. It was grit. Grit is passion and perseverance for very long-term goals. Grit is having stamina. Grit is sticking with your future, day in, day out, not just for the week, not just for the month, but for years, and working really hard to make that future a reality. Grit is living life like it's a marathon, not a sprint.",
-    95.67,
-    195.92
+    99.61,
+    199.51
    ],
    [
-    196,
+    200,
     "A few years ago, I started studying grit in the Chicago public schools. I asked thousands of high school juniors to take grit questionnaires, and then waited around more than a year to see who would graduate. Turns out that grittier kids were significantly more likely to graduate, even when I matched them on every characteristic I could measure, things like family income, standardized achievement test scores, even how safe kids felt when they were at school. So it's not just at West Point or the National Spelling Bee that grit matters. It's also in school, especially for kids at risk for dropping out. To me, the most shocking thing about grit is how little we know, how little science knows, about building it. Every day, parents and teachers ask me, \"How do I build grit in kids? What do I do to teach kids a solid work ethic? How do I keep them motivated for the long run?\" The honest answer is, I don't know. What I do know is that talent doesn't make you gritty. Our data show very clearly that there are many talented individuals who simply do not follow through on their commitments. In fact, in our data, grit is usually unrelated or even inversely related to measures of talent.",
-    194.59,
-    279.31
+    199.77,
+    282.75
    ],
    [
-    280,
+    284,
     "So far, the best idea I've heard about building grit in kids is something called \"growth mindset.\" This is an idea developed at Stanford University by Carol Dweck, and it is the belief that the ability to learn is not fixed, that it can change with your effort. Dr. Dweck has shown that when kids read and learn about the brain and how it changes and grows in response to challenge, they're much more likely to persevere when they fail, because they don't believe that failure is a permanent condition. So growth mindset is a great idea for building grit. But we need more. And that's where I'm going to end my remarks, because that's where we are. That's the work that stands before us. We need to take our best ideas, our strongest intuitions, and we need to test them. We need to measure whether we've been successful, and we have to be willing to fail, to be wrong, to start over again with lessons learned. In other words, we need to be gritty about getting our kids grittier. Thank you.",
-    279.67,
+    284.02,
     359.42
    ]
   ]
@@ -234,7 +256,39 @@ const TED_UNITS = [
    "yt": "6Af6b_wyiwI",
    "approx": true,
    "wpm": 149,
-   "orig": "audio/orig/ted-02.mp3"
+   "orig": "audio/orig/ted-02",
+   "parts": [
+    [
+     "orig/ted-02-p1",
+     0.0,
+     98.83
+    ],
+    [
+     "orig/ted-02-p2",
+     98.83,
+     189.94
+    ],
+    [
+     "orig/ted-02-p3",
+     189.94,
+     266.62
+    ],
+    [
+     "orig/ted-02-p4",
+     266.62,
+     361.39
+    ],
+    [
+     "orig/ted-02-p5",
+     361.39,
+     463.1
+    ],
+    [
+     "orig/ted-02-p6",
+     463.1,
+     499.73
+    ]
+   ]
   },
   "yt": "The next outbreak? We're not ready",
   "f": "Americano di Seattle. Tono piatto, poca enfasi, frasi lineari; parla da imprenditore, non da oratore.",
@@ -477,7 +531,44 @@ const TED_UNITS = [
    "yt": "Uq6XgrYBugo",
    "approx": true,
    "wpm": 154,
-   "orig": "audio/orig/ted-03.mp3"
+   "orig": "audio/orig/ted-03",
+   "parts": [
+    [
+     "orig/ted-03-p1",
+     0.0,
+     86.54
+    ],
+    [
+     "orig/ted-03-p2",
+     86.54,
+     212.9
+    ],
+    [
+     "orig/ted-03-p3",
+     212.9,
+     312.97
+    ],
+    [
+     "orig/ted-03-p4",
+     312.97,
+     427.0
+    ],
+    [
+     "orig/ted-03-p5",
+     427.0,
+     507.38
+    ],
+    [
+     "orig/ted-03-p6",
+     507.38,
+     602.0
+    ],
+    [
+     "orig/ted-03-p7",
+     602.0,
+     701.74
+    ]
+   ]
   },
   "yt": "Why we have an emotional connection to robots",
   "f": "Ricercatrice americana (MIT Media Lab), esperta di interazione uomo-robot. Tono colloquiale e ironico, molti “really”, “kind of”, “super”.",
@@ -491,8 +582,8 @@ const TED_UNITS = [
     {
      "t": 34,
      "tEnd": 44,
-     "ot": 33.2,
-     "oe": 43.87,
+     "ot": 38.01,
+     "oe": 47.13,
      "sound": "“super cool” è colloquiale americano; “showing it off” → “showin'idoff”; “hold it up” → “holdidup”.",
      "build": "show off = mettere in mostra; discorso diretto con I said, “…”.",
      "reuse": "I thought the digital twin was super cool, so I was showing it off to the client."
@@ -505,8 +596,8 @@ const TED_UNITS = [
     {
      "t": 66,
      "tEnd": 75,
-     "ot": 65.77,
-     "oe": 75.27,
+     "ot": 70.48,
+     "oe": 77.41,
      "sound": "“kind of a” → “kinda”; “for one thing” = per dirne una.",
      "build": "For one thing, I wasn't the most X at the time.",
      "reuse": "For one thing, I wasn't the most patient engineer at the time."
@@ -519,8 +610,8 @@ const TED_UNITS = [
     {
      "t": 83,
      "tEnd": 95,
-     "ot": 82.64,
-     "oe": 94.37,
+     "ot": 86.54,
+     "oe": 98.31,
      "sound": "“and yet” con pausa prima: segnala il contrasto.",
      "build": "I knew X, and yet I still felt Y: and yet = eppure.",
      "reuse": "We knew exactly how the model worked, and yet we still felt compelled to check it by hand."
@@ -533,8 +624,8 @@ const TED_UNITS = [
     {
      "t": 180,
      "tEnd": 192,
-     "ot": 180.53,
-     "oe": 189.85,
+     "ot": 183.76,
+     "oe": 193.94,
      "sound": "“It turns out that” → “it turnzout that”, molto frequente.",
      "build": "It turns out that X = viene fuori che, si scopre che; be hardwired to = essere programmati per.",
      "reuse": "It turns out that inspectors are hardwired to trust what they see over what the sensors say."
@@ -547,8 +638,8 @@ const TED_UNITS = [
     {
      "t": 222,
      "tEnd": 235,
-     "ot": 222.06,
-     "oe": 234.54,
+     "ot": 225.46,
+     "oe": 237.4,
      "sound": "“specifically” in quattro sillabe veloci: “spe-SI-fi-klee”.",
      "build": "design X specifically to evoke Y = progettare apposta per.",
      "reuse": "We can design dashboards specifically to evoke a quick response from operators."
@@ -561,8 +652,8 @@ const TED_UNITS = [
     {
      "t": 261,
      "tEnd": 272,
-     "ot": 261.41,
-     "oe": 271.78,
+     "ot": 265.16,
+     "oe": 275.39,
      "sound": "“we're headed” → “weer heddid”; “factory” → “FAC-tree” (due sillabe nel parlato).",
      "build": "be headed towards = andare verso; moving out from behind = uscire da dietro.",
      "reuse": "We're headed towards a world where every bridge has a digital twin."
@@ -575,8 +666,8 @@ const TED_UNITS = [
     {
      "t": 315,
      "tEnd": 324,
-     "ot": 314.55,
-     "oe": 321.64,
+     "ot": 319.12,
+     "oe": 326.93,
      "sound": "“pretty far away” → “priddy far away”: pretty = piuttosto, con t morbida.",
      "build": "I can tell you, from working with X, that Y: autorità dall'esperienza.",
      "reuse": "I can tell you, from working with contractors, that we're pretty far away from fully autonomous inspections."
@@ -589,8 +680,8 @@ const TED_UNITS = [
     {
      "t": 398,
      "tEnd": 406,
-     "ot": 398.16,
-     "oe": 404.78,
+     "ot": 402.04,
+     "oe": 408.55,
      "sound": "“I think it's absolutely correct” con accento su absolutely.",
      "build": "this is a really common response, and I think it's correct, because…",
      "reuse": "This is a really common objection, and I think it's absolutely fair, because data can be wrong."
@@ -603,8 +694,8 @@ const TED_UNITS = [
     {
      "t": 443,
      "tEnd": 451,
-     "ot": 442.93,
-     "oe": 451.09,
+     "ot": 446.8,
+     "oe": 453.12,
      "sound": "“plus… equals” come un'equazione: ritmo lento, accento sulle parole chiave.",
      "build": "X plus Y equals Z: struttura matematica usata per una battuta.",
      "reuse": "Sensors plus public money equals questions around data ownership."
@@ -617,8 +708,8 @@ const TED_UNITS = [
     {
      "t": 456,
      "tEnd": 465,
-     "ot": 456.37,
-     "oe": 465.24,
+     "ot": 460.25,
+     "oe": 468.87,
      "sound": "“that first initial experience” è ridondante: succede nel parlato spontaneo.",
      "build": "A few years after X, I did Y with Z.",
      "reuse": "A few years after that first project, I did a pilot with a local contractor."
@@ -631,8 +722,8 @@ const TED_UNITS = [
     {
      "t": 504,
      "tEnd": 508,
-     "ot": 504.46,
-     "oe": 507.34,
+     "ot": 508.33,
+     "oe": 511.35,
      "sound": "“didn't work” → “didn'work”, la t quasi sparisce.",
      "build": "even that didn't work = nemmeno quello ha funzionato.",
      "reuse": "We offered a discount, and even that didn't work."
@@ -645,8 +736,8 @@ const TED_UNITS = [
     {
      "t": 561,
      "tEnd": 574,
-     "ot": 561.2,
-     "oe": 574.21,
+     "ot": 565.08,
+     "oe": 576.51,
      "sound": "“there may be a connection” con tono più basso: è la parte prudente.",
      "build": "it's part of a larger body of research that is starting to indicate that…",
      "reuse": "It's just a small pilot, but it's part of a larger body of evidence that is starting to indicate a pattern."
@@ -659,8 +750,8 @@ const TED_UNITS = [
     {
      "t": 645,
      "tEnd": 653,
-     "ot": 643.82,
-     "oe": 652.81,
+     "ot": 648.73,
+     "oe": 656.75,
      "sound": "“can't” americano [kænt], quasi uguale a “can”: distingui dalla t finale appena accennata e dall'accento.",
      "build": "even if X can't…, Y might… = anche se…, potrebbe…",
      "reuse": "Even if the client can't see the model, our rigor in building it might matter for us."
@@ -673,8 +764,8 @@ const TED_UNITS = [
     {
      "t": 662,
      "tEnd": 674,
-     "ot": 661.9,
-     "oe": 672.26,
+     "ot": 665.75,
+     "oe": 677.38,
      "sound": "“not been about technology at all” → “nadbin about… adall”.",
      "build": "Most of what I've learned has not been about X at all. It's been about Y.",
      "reuse": "Most of what I've learned has not been about software at all. It's been about people."
@@ -683,45 +774,45 @@ const TED_UNITS = [
   ],
   "full": [
    [
-    1,
+    4,
     "There was a day, about 10 years ago, when I asked a friend to hold a baby dinosaur robot upside down. It was this toy called a Pleo that I had ordered, and I was really excited about it because I've always loved robots. And this one has really cool technical features. It had motors and touch sensors and it had an infrared camera. And one of the things it had was a tilt sensor, so it knew what direction it was facing. And when you held it upside down, it would start to cry. And I thought this was super cool, so I was showing it off to my friend, and I said, \"Oh, hold it up by the tail. See what it does.\" So we're watching the theatrics of this robot struggle and cry out. And after a few seconds, it starts to bother me a little, and I said, \"OK, that's enough now. Let's put him back down.\" And then I pet the robot to make it stop crying. And that was kind of a weird experience for me. For one thing, I wasn't the most maternal person at the time. Although since then I've become a mother, nine months ago, and I've learned that babies also squirm when you hold them upside down.",
     0.0,
-    82.92
+    85.61
    ],
    [
-    83,
+    86,
     "But my response to this robot was also interesting because I knew exactly how this machine worked, and yet I still felt compelled to be kind to it. And that observation sparked a curiosity that I've spent the past decade pursuing. Why did I comfort this robot? And one of the things I discovered was that my treatment of this machine was more than just an awkward moment in my living room, that in a world where we're increasingly integrating robots into our lives, an instinct like that might actually have consequences, because the first thing that I discovered is that it's not just me. In 2007, the Washington Post reported that the United States military was testing this robot that defused land mines. And the way it worked was it was shaped like a stick insect and it would walk around a minefield on its legs, and every time it stepped on a mine, one of the legs would blow up, and it would continue on the other legs to blow up more mines. And the colonel who was in charge of this testing exercise ends up calling it off, because, he says, it's too inhumane to watch this damaged robot drag itself along the minefield. Now, what would cause a hardened military officer and someone like myself to have this response to robots? Well, of course, we're primed by science fiction and pop culture to really want to personify these things, but it goes a little bit deeper than that. It turns out that we're biologically hardwired to project intent and life onto any movement in our physical space that seems autonomous to us. So people will treat all sorts of robots like they're alive. These bomb-disposal units get names. They get medals of honor. They've had funerals for them with gun salutes. And research shows that we do this even with very simple household robots, like the Roomba vacuum cleaner.",
-    82.62,
-    208.92
+    86.54,
+    212.85
    ],
    [
-    209,
+    213,
     "It's just a disc that roams around your floor to clean it, but just the fact it's moving around on its own will cause people to name the Roomba and feel bad for the Roomba when it gets stuck under the couch. And we can design robots specifically to evoke this response, using eyes and faces or movements that people automatically, subconsciously associate with states of mind. And there's an entire body of research called human-robot interaction that really shows how well this works. So for example, researchers at Stanford University found out that it makes people really uncomfortable when you ask them to touch a robot's private parts. So from this, but from many other studies, we know, we know that people respond to the cues given to them by these lifelike machines, even if they know that they're not real. Now, we're headed towards a world where robots are everywhere. Robotic technology is moving out from behind factory walls. It's entering workplaces, households. And as these machines that can sense and make autonomous decisions and learn enter into these shared spaces, I think that maybe the best analogy we have for this is our relationship with animals. Thousands of years ago, we started to domesticate animals, and we trained them for work and weaponry and companionship. And throughout history, we've treated some animals like tools or like products, and other animals, we've treated with kindness and we've given a place in society as our companions. I think it's plausible we might start to integrate robots in similar ways.",
-    208.62,
-    308.92
+    212.9,
+    313.63
    ],
    [
-    309,
+    313,
     "And sure, animals are alive. Robots are not. And I can tell you, from working with roboticists, that we're pretty far away from developing robots that can feel anything. But we feel for them, and that matters, because if we're trying to integrate robots into these shared spaces, we need to understand that people will treat them differently than other devices, and that in some cases, for example, the case of a soldier who becomes emotionally attached to the robot that they work with, that can be anything from inefficient to dangerous. But in other cases, it can actually be useful to foster this emotional connection to robots. We're already seeing some great use cases, for example, robots working with autistic children to engage them in ways that we haven't seen previously, or robots working with teachers to engage kids in learning with new results. And it's not just for kids. Early studies show that robots can help doctors and patients in health care settings. This is the PARO baby seal robot. It's used in nursing homes and with dementia patients. It's been around for a while. And I remember, years ago, being at a party and telling someone about this robot, and her response was, \"Oh my gosh. That's horrible. I can't believe we're giving people robots instead of human care.\" And this is a really common response, and I think it's absolutely correct, because that would be terrible. But in this case, it's not what this robot replaces. What this robot replaces is animal therapy in contexts where we can't use real animals but we can use robots, because people will consistently treat them more like an animal than a device.",
-    308.62,
-    422.95
+    312.97,
+    426.58
    ],
    [
-    423,
+    427,
     "Acknowledging this emotional connection to robots can also help us anticipate challenges as these devices move into more intimate areas of people's lives. For example, is it OK if your child's teddy bear robot records private conversations? Is it OK if your sex robot has compelling in-app purchases? Because robots plus capitalism equals questions around consumer protection and privacy. And those aren't the only reasons that our behavior around these machines could matter. A few years after that first initial experience I had with this baby dinosaur robot, I did a workshop with my friend Hannes Gassert. And we took five of these baby dinosaur robots and we gave them to five teams of people. And we had them name them and play with them and interact with them for about an hour. And then we unveiled a hammer and a hatchet and we told them to torture and kill the robots. And this turned out to be a little more dramatic than we expected it to be, because none of the participants would even so much as strike these baby dinosaur robots, so we had to improvise a little, and at some point, we said, \"OK, you can save your team's robot if you destroy another team's robot.\"",
-    423.2,
-    503.92
+    427.0,
+    507.73
    ],
    [
-    504,
+    508,
     "And even that didn't work. They couldn't do it. So finally, we said, \"We're going to destroy all of the robots unless someone takes a hatchet to one of them.\" And this guy stood up, and he took the hatchet, and the whole room winced as he brought the hatchet down on the robot's neck, and there was this half-joking, half-serious moment of silence in the room for this fallen robot. So that was a really interesting experience. Now, it wasn't a controlled study, obviously, but it did lead to some later research that I did at MIT with Palash Nandy and Cynthia Breazeal, where we had people come into the lab and smash these HEXBUGs that move around in a really lifelike way, like insects. So instead of choosing something cute that people are drawn to, we chose something more basic, and what we found was that high-empathy people would hesitate more to hit the HEXBUGS. Now this is just a little study, but it's part of a larger body of research that is starting to indicate that there may be a connection between people's tendencies for empathy and their behavior around robots. But my question for the coming era of human-robot interaction is not: \"Do we empathize with robots?\" It's: \"Can robots change people's empathy?\" Is there reason to, for example, prevent your child from kicking a robotic dog, not just out of respect for property, but because the child might be more likely to kick a real dog?",
-    503.62,
-    597.07
+    507.38,
+    600.59
    ],
    [
-    598,
+    602,
     "And again, it's not just kids. This is the violent video games question, but it's on a completely new level because of this visceral physicality that we respond more intensely to than to images on a screen. When we behave violently towards robots, specifically robots that are designed to mimic life, is that a healthy outlet for violent behavior or is that training our cruelty muscles? We don't know ... But the answer to this question has the potential to impact human behavior, it has the potential to impact social norms, it has the potential to inspire rules around what we can and can't do with certain robots, similar to our animal cruelty laws. Because even if robots can't feel, our behavior towards them might matter for us. And regardless of whether we end up changing our rules, robots might be able to help us come to a new understanding of ourselves. Most of what I've learned over the past 10 years has not been about technology at all. It's been about human psychology and empathy and how we relate to others. Because when a child is kind to a Roomba, when a soldier tries to save a robot on the battlefield, or when a group of people refuses to harm a robotic baby dinosaur, those robots aren't just motors and gears and algorithms. They're reflections of our own humanity. Thank you.",
-    597.65,
+    602.0,
     701.74
    ]
   ]

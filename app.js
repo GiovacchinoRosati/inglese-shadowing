@@ -185,7 +185,10 @@ const bufs={};
 /* Web Audio: il file dell'unità viene decodificato per intero e la frase è tagliata al campione esatto
    (il seek sugli MP3 dei browser mobili è impreciso di qualche centinaio di millisecondi). */
 /* iPhone: senza questa impostazione l'audio Web Audio tace con l'interruttore silenzioso attivo. */
-try{ if(navigator.audioSession) navigator.audioSession.type="playback"; }catch(e){}
+/* "playback" fa suonare l'audio anche con l'interruttore silenzioso, ma impedisce di usare il microfono:
+   si passa a "play-and-record" solo mentre il microfono è aperto. */
+function audioSession(t){ try{ if(navigator.audioSession) navigator.audioSession.type=t; }catch(e){} }
+audioSession("playback");
 let wakeLock=null;
 async function keepAwake(on){
   try{
@@ -200,10 +203,10 @@ function getBuf(name){
   bufs[name].catch(()=>{ delete bufs[name]; });
   return bufs[name];
 }
-function prefetch(it){ if(!it || !audioCtx()) return; if(hasOrig(it)) getBuf(origName(it.unit)).catch(()=>{}); if(HAS_NEURAL && S.settings.neural && AUDIO[it.id]) getBuf(AUDIO[it.id][0]).catch(()=>{}); }
+function prefetch(it){ if(!it || !audioCtx()) return; if(hasOrig(it)) prefetchOrig(it.unit, it.x.ot, it.x.oe); if(HAS_NEURAL && S.settings.neural && AUDIO[it.id]) getBuf(AUDIO[it.id][0]).catch(()=>{}); }
 function stopNeural(){ if(curSrc){ try{ curSrc.onended=null; curSrc.stop(); }catch(e){} curSrc=null; } curPlay=null; }
 let curPlay=null, lastRef=null; // { t0 (tempo del contesto audio all'avvio), st, en } per mostrare l'avanzamento
-async function playRange(name, st, en, my){
+async function playRange(name, st, en, my, base=0){
   const c=audioCtx(); if(!c) return -1;
   let buf; try{ buf=await getBuf(name); }catch(x){ return -1; }
   if(my!==runId) return 0;
@@ -213,7 +216,7 @@ async function playRange(name, st, en, my){
     const src=c.createBufferSource(); src.buffer=buf; src.connect(c.destination);
     const dur=Math.max(0.05, en-st);
     src.onended=()=>{ if(curSrc===src){ curSrc=null; curPlay=null; } res(dur*1000); };
-    curSrc=src; curPlay={ t0:c.currentTime, st, en }; lastRef={ buf, st, en }; src.start(0, st, dur);
+    curSrc=src; curPlay={ t0:c.currentTime, st:st+base, en:en+base }; lastRef={ buf, st, en }; src.start(0, st, dur);
     const h=setInterval(()=>{ if(my!==runId){ clearInterval(h); stopNeural(); res(0); } else if(curSrc!==src) clearInterval(h); },50);
   });
 }
@@ -224,9 +227,24 @@ async function playNeural(key, rate, my){
   if(d<0) neuralBroken=true;
   return d;
 }
-/* Audio originale dei talk TED (file intero, licenza CC BY-NC-ND). */
-const hasOrig = it => it && it.unit && it.unit.track==="ted" && it.unit.src.orig && it.x && it.x.ot!=null;
-const origName = u => u.src.orig.replace(/^audio\//,"").replace(/\.mp3$/,"");
+/* Audio originale dei talk TED (licenza CC BY-NC-ND), in un file per pezzo: su iPhone decodificare il talk
+   intero in memoria fallisce. playTimeline suona un intervallo del talk passando da un file al successivo. */
+const hasOrig = it => it && it.unit && it.unit.track==="ted" && it.unit.src.parts && it.x && it.x.ot!=null;
+const partsIn = (u,a,z) => u.src.parts.filter(p=>p[2]>a+0.01 && p[1]<z-0.01);
+function prefetchOrig(u,a,z){ for(const p of partsIn(u,a,z).slice(0,2)) getBuf(p[0]).catch(()=>{}); }
+async function playTimeline(u, a, z, my){
+  const ps=partsIn(u,a,z); if(!ps.length) return -1;
+  let total=0;
+  for(let i=0;i<ps.length;i++){
+    const [name,p0,p1]=ps[i];
+    if(ps[i+1]) getBuf(ps[i+1][0]).catch(()=>{});
+    const d=await playRange(name, Math.max(0,a-p0), Math.min(z,p1)-p0, my, p0);
+    if(d<0) return i===0 ? -1 : total;
+    if(my!==runId) return 0;
+    total+=d;
+  }
+  return total;
+}
 /* Pronuncia una frase: voce neurale se disponibile, altrimenti voce di sistema. */
 async function say(key, text, rate, us){
   const my=runId;
@@ -276,20 +294,25 @@ async function playSegment(seg, rate, my){
   else p.loadVideoById({ videoId:seg.videoId, startSeconds:seg.start });
   const yr = rate<0.9 ? 0.75 : 1;
   const len=(seg.end-seg.start)/yr*1000, t0=Date.now();
+  let started=false, blocked=false;
   await new Promise(res=>{
     const h=setInterval(()=>{
       if(my!==runId){ clearInterval(h); try{p.pauseVideo();}catch(e){} res(); return; }
+      const stt=p.getPlayerState ? p.getPlayerState() : -1;
+      if(stt===1) started=true;
+      if(!started && Date.now()-t0>3000){ clearInterval(h); blocked=true; res(); return; }
       try{ if(p.getPlaybackRate()!==yr) p.setPlaybackRate(yr); }catch(e){}
       const t=p.getCurrentTime ? p.getCurrentTime() : 0;
       if((t>=seg.end && t>0) || Date.now()-t0>len+10000){ clearInterval(h); p.pauseVideo(); res(); }
     },100);
   });
+  if(blocked){ setPhase("Il telefono blocca l'avvio del video: tocca una volta ▶ dentro il riquadro del video, mettilo in pausa, poi premi di nuovo Ascolta."); toast("Tocca una volta il video per attivarlo."); return -1; }
   return len;
 }
 const useOriginal = it => HAS_YT && ((it.type==="yt") || (it.tech && it.start!=null && S.settings.original));
 async function play(it, rate, my){
   track(it,"plays");
-  if(hasOrig(it) && S.settings.original && rate>=0.85){ const d=await playRange(origName(it.unit), it.x.ot, it.x.oe, my); if(d>=0) return d; }
+  if(hasOrig(it) && S.settings.original && rate>=0.85){ const d=await playTimeline(it.unit, it.x.ot, it.x.oe, my); if(d>=0) return d; toast("Audio originale non caricato: uso la voce chiara."); }
   return useOriginal(it) ? playSegment(it, rate, my) : say(it.id, it.en, rate, !!it.tech);
 }
 
@@ -322,6 +345,7 @@ async function shadowLoop(it){
     lastRef=null;
     const d = await play(it, rate, my);
     if(my!==runId) return;
+    if(d<0){ keepAwake(false); setBlind(false); return; }
     const gap = Math.round(Math.max(d,1200)*S.settings.gap)+400;
     setPhase("Tocca a te: ripeti ad alta voce, stessa intonazione e ritmo", gap);
     const ref=lastRef, refDur=d/1000;
@@ -341,14 +365,28 @@ async function shadowLoop(it){
      dell'audio appena ascoltato (voce originale TED o voce neurale) con allineamento DTW. */
 let micStream=null, srBroken=false;
 const judgeOn = () => HAS_MIC && S.settings.judge;
-async function mic(){
-  if(micStream && micStream.getTracks().some(t=>t.readyState==="live")) return micStream;
-  micStream=await navigator.mediaDevices.getUserMedia({ audio:{ echoCancellation:true, noiseSuppression:true } });
-  return micStream;
+let micP=null;
+function micError(e){
+  const n=e && e.name;
+  if(n==="NotAllowedError" || n==="SecurityError") return "Permesso del microfono negato. Su iPhone: tocca «aA» nella barra di Safari → Impostazioni sito web → Microfono: Consenti, poi ricarica la pagina.";
+  if(n==="NotFoundError") return "Nessun microfono trovato.";
+  if(n==="NotReadableError") return "Il microfono è usato da un'altra app (chiamata, registratore): chiudila e riprova.";
+  return "Microfono non disponibile ("+(n||"errore")+").";
 }
-function releaseMic(){ if(micStream){ micStream.getTracks().forEach(t=>t.stop()); micStream=null; } }
+/* Va chiamata dentro il tocco dell'utente (Safari chiede il permesso solo lì). */
+function mic(){
+  if(micStream && micStream.getTracks().some(t=>t.readyState==="live")) return Promise.resolve(micStream);
+  if(!micP){
+    audioSession("play-and-record");
+    micP=navigator.mediaDevices.getUserMedia({ audio:{ echoCancellation:true, noiseSuppression:true } })
+      .then(s=>{ micStream=s; micP=null; return s; })
+      .catch(e=>{ micP=null; audioSession("playback"); throw e; });
+  }
+  return micP;
+}
+function releaseMic(){ if(micStream){ micStream.getTracks().forEach(t=>t.stop()); micStream=null; audioSession("playback"); } }
 async function startCapture(){
-  let stream; try{ stream=await mic(); }catch(e){ toast("Microfono non disponibile: il voto della voce è disattivato."); S.settings.judge=false; return null; }
+  let stream; try{ stream=await mic(); }catch(e){ setPhase(micError(e)); toast("Voto della voce sospeso: "+micError(e)); return null; }
   const c=audioCtx(); const srcN=c.createMediaStreamSource(stream), an=c.createAnalyser(); an.fftSize=1024; srcN.connect(an);
   const buf=new Float32Array(an.fftSize), env=[];
   const h=setInterval(()=>{ an.getFloatTimeDomainData(buf); let s2=0; for(const v of buf) s2+=v*v; env.push(Math.sqrt(s2/buf.length)); },40);
@@ -419,17 +457,18 @@ async function toggleRecord(){
   const b=$("#btn-rec");
   if(rec && rec.state==="recording"){ rec.stop(); return; }
   try{
-    const stream=await navigator.mediaDevices.getUserMedia({ audio:true });
-    rec=new MediaRecorder(stream); recChunks=[];
+    const stream=await mic();
+    const type=["audio/mp4","audio/webm;codecs=opus","audio/webm"].find(t=>window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t));
+    rec=type?new MediaRecorder(stream,{ mimeType:type }):new MediaRecorder(stream); recChunks=[];
     rec.ondataavailable=e=>recChunks.push(e.data);
-    rec.onstop=()=>{ stream.getTracks().forEach(t=>t.stop());
+    rec.onstop=()=>{
       if(recUrl) URL.revokeObjectURL(recUrl);
       recUrl=URL.createObjectURL(new Blob(recChunks,{ type:rec.mimeType }));
       const bb=$("#btn-rec"); if(bb){ bb.textContent="🎙 Registrati"; bb.classList.remove("on"); }
       ["#btn-me","#btn-cmp"].forEach(s=>{ const x=$(s); if(x) x.disabled=false; });
     };
     rec.start(); if(b){ b.textContent="⏹ Stop"; b.classList.add("on"); }
-  }catch(e){ toast("Microfono non disponibile o permesso negato."); }
+  }catch(e){ toast(micError(e)); setPhase(micError(e)); }
 }
 function playMe(){ return new Promise(res=>{ if(!recUrl){ res(); return; } const a=new Audio(recUrl); a.onended=res; a.onerror=res; a.play().catch(res); }); }
 async function compare(it){ stopAll(); const my=runId; setPhase("Modello…"); await play(it, +S.settings.rate, my); if(my!==runId) return; setPhase("La tua voce…"); await playMe(); setPhase(""); }
@@ -769,7 +808,7 @@ function vCum(uid){
   <div class="row"><button class="mini" data-act="cumtx">📄 Mostra la trascrizione</button></div>
   <div class="ftx" id="cum-tx" hidden>${tx}</div>
   <p class="small muted">${u.src.orig?"Audio e trascrizione © TED, licenza CC BY-NC-ND 4.0.":"Video ufficiale tramite player YouTube."}</p>`;
-  if(u.src.orig) getBuf(origName(u)).catch(()=>toast("Audio originale non disponibile in questa vista."));
+  if(u.src.parts) prefetchOrig(u, 0, 1);
   else if(HAS_YT) ensurePlayer().then(p=>p.cueVideoById({ videoId:u.src.yt, startSeconds:Math.floor(u.full[0][2]) })).catch(()=>{});
 }
 async function cumPlay(from){
@@ -786,7 +825,7 @@ async function cumPlay(from){
     b.style.width=Math.max(0,Math.min(100,(pos-a0)/span*100))+"%"; l.textContent=`${clock(pos)} / ${clock(end)}`;
     const j=u.full.findIndex(x=>pos>=x[2] && pos<x[3]); z.textContent= j>=0 ? `pezzo ${j+1}${j===k?" (nuovo)":""}` : "";
   },250);
-  const d= yt ? await playSegment({ videoId:u.src.yt, start:from, end }, 1, my) : await playRange(origName(u), from, end, my);
+  const d= yt ? await playSegment({ videoId:u.src.yt, start:from, end }, 1, my) : await playTimeline(u, from, end, my);
   clearInterval(tick); keepAwake(false);
   if(d<0) toast("Audio originale non disponibile.");
   if(my===runId){ CUM.pos=0; const l=$("#cum-pos"); if(l) l.textContent=`fine · ${clock(end)}`; const t=$("#cum-blk"); if(t) t.textContent="Ora valuta quanto hai capito."; }
@@ -1107,7 +1146,7 @@ function cur(){ return view()==="review" ? item(R.q[R.idx]) : item(L.ids[L.idx])
 const ACTS={
   listen:()=>{ stopAll(); const my=runId; setPhase("Ascolto…"); play(cur(), +S.settings.rate, my).then(()=>{ if(my===runId) setPhase(""); }); },
   slow:()=>{ track(cur(),"slow"); stopAll(); const my=runId; setPhase("Ascolto lento…"); play(cur(), 0.7, my).then(()=>{ if(my===runId) setPhase(""); }); },
-  shadow:()=>{ track(cur(),"shadows"); shadowLoop(cur()); },
+  shadow:()=>{ track(cur(),"shadows"); if(judgeOn()) mic().catch(()=>{}); shadowLoop(cur()); },
   stop:()=>stopAll(),
   ita:()=>{ const t=$("#it-text"); if(t){ t.hidden=!t.hidden; if(!t.hidden){ const ev=evOf(cur().id); ev.ita=(ev.ita||0)+1; } } },
   blind:()=>{ const e=$("#en-text"); if(e){ const on=!e.classList.contains("blind"); if(!on) revealed(cur()); e.classList.toggle("blind",on); if(!on){ const tb=$("#tech-box"); if(tb) tb.hidden=false; const it=cur(); const cb=$("#comp-box"); if(cb && it && it.tech && S.comp[it.id]==null) cb.hidden=false; } } },
