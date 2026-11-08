@@ -143,3 +143,12 @@ button.on-ok{outline:2px solid var(--ok)}
 .czfix{color:var(--ok);font-weight:600}
 .big.kw{letter-spacing:.01em}
 .kwh{color:var(--muted);opacity:.6}
+.vote .vw,.vote .tips,.vote > div{flex-basis:100%;margin:2px 0}
+.vote .tips{padding-left:18px}
+.qopts{display:flex;flex-direction:column;gap:6px}
+.qopt{text-align:left;white-space:normal;line-height:1.35}
+.qopt.sel{outline:2px solid var(--link)}
+.qopt.on-ok{outline:2px solid var(--ok);background:color-mix(in srgb,var(--ok) 15%,transparent)}
+.qopt.on-bad{outline:2px solid var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+.qwhy{margin-top:8px}
+.gx code{font-size:15px;letter-spacing:1px}

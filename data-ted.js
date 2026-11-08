@@ -1327,6 +1327,179 @@ const TED_UNITS = [
     637.47,
     908.26
    ]
+  ],
+  "quiz": [
+   [
+    {
+     "q": "Perché il mondo di 540 milioni di anni fa era “buio”, secondo Fei-Fei Li?",
+     "o": [
+      "Perché la luce del sole non arrivava nell'oceano",
+      "Perché nessun essere vivente aveva ancora occhi per vedere",
+      "Perché la Terra era coperta da nuvole di cenere",
+      "Perché non esistevano ancora le piante"
+     ],
+     "a": 1,
+     "why": "It wasn't dark due to a lack of light. It was dark because of a lack of sight."
+    },
+    {
+     "q": "Quali furono i primi organismi capaci di percepire la luce?",
+     "o": [
+      "Le meduse",
+      "I pesci primitivi",
+      "I trilobiti",
+      "Le alghe"
+     ],
+     "a": 2,
+     "why": "trilobites, the first organisms that could sense light, emerged"
+    },
+    {
+     "q": "Quali tre forze, secondo lei, hanno dato inizio all'AI moderna?",
+     "o": [
+      "Reti neurali, GPU e grandi quantità di dati",
+      "Internet, smartphone e cloud",
+      "Robot, sensori e satelliti",
+      "Linguaggio, logica e matematica"
+     ],
+     "a": 0,
+     "why": "a family of algorithms called neural networks… graphic processing units, or GPUs. And big data."
+    },
+    {
+     "q": "Cosa rispose Andrej Karpathy quando lei gli chiese di far fare ai computer “il contrario” (dal testo all'immagine)?",
+     "o": [
+      "Che era già pronto",
+      "Che era impossibile",
+      "Che serviva più denaro",
+      "Che ci avrebbe lavorato Google"
+     ],
+     "a": 1,
+     "why": "And Andrej said, \"Ha ha, that's impossible.\""
+    },
+    {
+     "q": "Che difetto mostra nel video generato dal loro modello Walt?",
+     "o": [
+      "Il cane ha cinque zampe",
+      "Il gatto passa sotto l'onda senza bagnarsi",
+      "La macchina vola",
+      "Il cielo cambia colore"
+     ],
+     "a": 1,
+     "why": "look at that cat's eye and the way it goes under the wave without ever getting wet"
+    }
+   ],
+   [
+    {
+     "q": "Qual è il nuovo messaggio che Fei-Fei Li aggiunge a quello degli anni precedenti?",
+     "o": [
+      "Vedere non basta: vedere serve per fare e imparare",
+      "L'AI deve smettere di guardare le immagini",
+      "Le foto sono più importanti dei video",
+      "I robot non devono imparare"
+     ],
+     "a": 0,
+     "why": "Simply seeing is not enough. Seeing is for doing and learning."
+    },
+    {
+     "q": "Cosa chiede al pubblico di fare guardando la foto del bicchiere?",
+     "o": [
+      "Contare gli oggetti",
+      "Alzare la mano se sente l'impulso di fare qualcosa",
+      "Chiudere gli occhi",
+      "Indovinare il colore"
+     ],
+     "a": 1,
+     "why": "Raise your hand if you feel like you want to do something."
+    },
+    {
+     "q": "Cosa ha sviluppato il gruppo di Google citato nel talk?",
+     "o": [
+      "Un robot cuoco",
+      "Un algoritmo che trasforma molte foto in uno spazio 3D",
+      "Un nuovo tipo di GPU",
+      "Un'app per tradurre le lingue"
+     ],
+     "a": 1,
+     "why": "a group of researchers from Google are able to develop an algorithm to take a bunch of photos and translate that into 3D space"
+    },
+    {
+     "q": "Come si chiama il progetto del suo laboratorio che insegna ai robot ad agire in ambienti simulati?",
+     "o": [
+      "ImageNet",
+      "Walt",
+      "Behavior",
+      "Sora"
+     ],
+     "a": 2,
+     "why": "in a project led by my lab called Behavior"
+    },
+    {
+     "q": "Che cosa prepara il braccio robotico seguendo istruzioni verbali?",
+     "o": [
+      "Un caffè",
+      "Dei panini",
+      "Una pizza",
+      "Un'insalata di frutta"
+     ],
+     "a": 1,
+     "why": "Or making sandwiches, using bread, lettuce, tomatoes"
+    }
+   ],
+   [
+    {
+     "q": "In quale settore porta l'esempio principale di applicazione?",
+     "o": [
+      "Agricoltura",
+      "Sanità",
+      "Edilizia",
+      "Trasporti"
+     ],
+     "a": 1,
+     "why": "Let's take health care as an example."
+    },
+    {
+     "q": "Cosa rilevano i sensori intelligenti negli ospedali?",
+     "o": [
+      "La temperatura dei pazienti",
+      "I medici che entrano nelle stanze senza lavarsi bene le mani",
+      "Il rumore nei corridoi",
+      "Le scorte di farmaci"
+     ],
+     "a": 1,
+     "why": "smart sensors that can detect clinicians going into patient rooms without properly washing their hands"
+    },
+    {
+     "q": "Che cosa cucina il braccio robotico controllato dal cervello?",
+     "o": [
+      "Una pizza",
+      "Un sukiyaki giapponese",
+      "Una zuppa di verdure",
+      "Dei panini"
+     ],
+     "a": 1,
+     "why": "the robotic arm is cooking a Japanese sukiyaki meal controlled only by the brain electrical signal"
+    },
+    {
+     "q": "Come vengono raccolti i segnali del cervello in quello studio?",
+     "o": [
+      "Con un impianto chirurgico",
+      "Con una cuffia EEG, in modo non invasivo",
+      "Con una telecamera",
+      "Con un sensore sul polso"
+     ],
+     "a": 1,
+     "why": "non-invasively collected through an EEG cap"
+    },
+    {
+     "q": "Qual è la condizione che indica per realizzare bene questo futuro?",
+     "o": [
+      "Sviluppare tecnologie che mettano sempre le persone al centro",
+      "Ridurre i costi delle GPU",
+      "Vietare i robot in casa",
+      "Lasciare decidere solo alle aziende"
+     ],
+     "a": 0,
+     "why": "develop technologies that always put humans in the center"
+    }
+   ]
   ]
  },
  {
@@ -2873,6 +3046,179 @@ const TED_UNITS = [
     585.87,
     864.14
    ]
+  ],
+  "quiz": [
+   [
+    {
+     "q": "Quali sono le tre capacità a cui Boston Dynamics punta per i suoi robot?",
+     "o": [
+      "Velocità, forza e prezzo basso",
+      "Equilibrio e mobilità dinamica, manipolazione in movimento, percezione in movimento",
+      "Volo, nuoto e salto",
+      "Parola, ascolto e memoria"
+     ],
+     "a": 1,
+     "why": "One is balance and dynamic mobility, the second one is mobile manipulation, and the third one is mobile perception."
+    },
+    {
+     "q": "Cosa mostra Raibert sul palco per spiegare l'equilibrio?",
+     "o": [
+      "Si mette in equilibrio su una gamba",
+      "Fa salire un robot sulle scale",
+      "Lancia una palla",
+      "Corre sul palco"
+     ],
+     "a": 0,
+     "why": "I'm standing here, balancing… OK, how about now?"
+    },
+    {
+     "q": "Che cosa stanno sperimentando con Spot nelle case dei dipendenti?",
+     "o": [
+      "La pulizia dei pavimenti",
+      "La consegna di pacchi con robot a zampe",
+      "La sorveglianza notturna",
+      "La cura del giardino"
+     ],
+     "a": 1,
+     "why": "what about plain old legged-robot delivery? So we've been taking our robot to our employees' homes"
+    },
+    {
+     "q": "A che punto sono con l'accesso alle case nella zona di Boston?",
+     "o": [
+      "Riescono nel 100% dei casi",
+      "Circa il 70% del percorso",
+      "Meno del 10%",
+      "Non hanno ancora provato"
+     ],
+     "a": 1,
+     "why": "But we're doing very well, about 70 percent of the way."
+    },
+    {
+     "q": "A quale velocità umana arriva Atlas nello spostare scatole?",
+     "o": [
+      "Il doppio di un essere umano",
+      "Circa due terzi della velocità media umana",
+      "Un decimo",
+      "La stessa velocità"
+     ],
+     "a": 1,
+     "why": "We're getting up to about two-thirds of the speed that a human operates on average."
+    }
+   ],
+   [
+    {
+     "q": "Che cosa ha di particolare il robot Handle?",
+     "o": [
+      "Vola",
+      "È metà animale e ha gambe con le ruote",
+      "È piccolissimo",
+      "Parla"
+     ],
+     "a": 1,
+     "why": "it's sort of half like an animal, and it's half something else with these leg-like things and wheels"
+    },
+    {
+     "q": "Quanti chili (libbre) può trasportare Handle, secondo Raibert?",
+     "o": [
+      "10 libbre",
+      "50 libbre",
+      "100 libbre",
+      "1.000 libbre"
+     ],
+     "a": 2,
+     "why": "It can carry 100 pounds."
+    },
+    {
+     "q": "Qual è la “religione” di Raibert sulla progettazione dei robot?",
+     "o": [
+      "Prima il software, poi l'hardware",
+      "Progettazione olistica: software, hardware e comportamento insieme",
+      "Copiare gli animali in tutto",
+      "Usare solo componenti standard"
+     ],
+     "a": 1,
+     "why": "you have to do a holistic design, where you're designing the software, the hardware and the behavior all at one time"
+    },
+    {
+     "q": "Quale tecnologia usano per costruire parti dei robot simili all'anatomia di un animale?",
+     "o": [
+      "La stampa 3D",
+      "Il legno",
+      "La fusione dell'acciaio",
+      "Il vetro"
+     ],
+     "a": 0,
+     "why": "Using the miracle of 3-D printing, we're starting to build parts of robots"
+    },
+    {
+     "q": "Quanto pesa il robot più nuovo (che non mostra ancora)?",
+     "o": [
+      "400 libbre",
+      "190 libbre",
+      "165 libbre",
+      "100 libbre"
+     ],
+     "a": 2,
+     "why": "which weighs just 165 pounds, with all the same strength and capabilities"
+    }
+   ],
+   [
+    {
+     "q": "Come capisce Spot dove mettere le zampe sugli ostacoli?",
+     "o": [
+      "Glielo dice Seth passo per passo",
+      "Con una mappa del terreno costruita dalle telecamere in tempo reale",
+      "Con un GPS",
+      "Tocca prima il terreno con il braccio"
+     ],
+     "a": 1,
+     "why": "This is a terrain map, where the data from the cameras is being developed in real time"
+    },
+    {
+     "q": "Cosa indicano i punti rossi nella mappa del terreno?",
+     "o": [
+      "I punti migliori dove appoggiarsi",
+      "I punti dove il robot non vuole mettere le zampe",
+      "Le persone del pubblico",
+      "La batteria scarica"
+     ],
+     "a": 1,
+     "why": "showing the red spots, which are where it doesn't want to step"
+    },
+    {
+     "q": "Che cosa chiede Raibert a Spot alla fine della demo?",
+     "o": [
+      "Di ballare",
+      "Di portargli una bibita",
+      "Di aprire una porta",
+      "Di salutare il pubblico"
+     ],
+     "a": 1,
+     "why": "I'm feeling a little thirsty. Could you get me a soda?"
+    },
+    {
+     "q": "Perché Raibert è andato a Fukushima?",
+     "o": [
+      "Per una vacanza",
+      "Per vedere la situazione: servono macchine che entrino nei luoghi contaminati",
+      "Per vendere robot all'esercito",
+      "Per un'altra conferenza"
+     ],
+     "a": 1,
+     "why": "there's just a huge need for machines that can go into some of the dirty places and help remediate that"
+    },
+    {
+     "q": "Cosa risponde sulla domanda dei robot militari?",
+     "o": [
+      "Che non ha mai ricevuto fondi militari",
+      "Che l'esercito ha finanziato molto la robotica, ma non lo considera il lato oscuro",
+      "Che vieterà l'uso militare",
+      "Che non vuole rispondere"
+     ],
+     "a": 1,
+     "why": "the military has been a big funder of robotics. I don't think the military is the dark side myself"
+    }
+   ]
   ]
  },
  {
@@ -3958,6 +4304,122 @@ const TED_UNITS = [
     "And sure, animals are alive. Robots are not. And I can tell you, from working with roboticists, that we're pretty far away from developing robots that can feel anything. But we feel for them, and that matters, because if we're trying to integrate robots into these shared spaces, we need to understand that people will treat them differently than other devices, and that in some cases, for example, the case of a soldier who becomes emotionally attached to the robot that they work with, that can be anything from inefficient to dangerous. But in other cases, it can actually be useful to foster this emotional connection to robots. We're already seeing some great use cases, for example, robots working with autistic children to engage them in ways that we haven't seen previously, or robots working with teachers to engage kids in learning with new results. And it's not just for kids. Early studies show that robots can help doctors and patients in health care settings. This is the PARO baby seal robot. It's used in nursing homes and with dementia patients. It's been around for a while. And I remember, years ago, being at a party and telling someone about this robot, and her response was, \"Oh my gosh. That's horrible. I can't believe we're giving people robots instead of human care.\" And this is a really common response, and I think it's absolutely correct, because that would be terrible. But in this case, it's not what this robot replaces. What this robot replaces is animal therapy in contexts where we can't use real animals but we can use robots, because people will consistently treat them more like an animal than a device. Acknowledging this emotional connection to robots can also help us anticipate challenges as these devices move into more intimate areas of people's lives. For example, is it OK if your child's teddy bear robot records private conversations? Is it OK if your sex robot has compelling in-app purchases? Because robots plus capitalism equals questions around consumer protection and privacy. And those aren't the only reasons that our behavior around these machines could matter. A few years after that first initial experience I had with this baby dinosaur robot, I did a workshop with my friend Hannes Gassert. And we took five of these baby dinosaur robots and we gave them to five teams of people. And we had them name them and play with them and interact with them for about an hour. And then we unveiled a hammer and a hatchet and we told them to torture and kill the robots. And this turned out to be a little more dramatic than we expected it to be, because none of the participants would even so much as strike these baby dinosaur robots, so we had to improvise a little, and at some point, we said, \"OK, you can save your team's robot if you destroy another team's robot.\" And even that didn't work. They couldn't do it. So finally, we said, \"We're going to destroy all of the robots unless someone takes a hatchet to one of them.\" And this guy stood up, and he took the hatchet, and the whole room winced as he brought the hatchet down on the robot's neck, and there was this half-joking, half-serious moment of silence in the room for this fallen robot. So that was a really interesting experience. Now, it wasn't a controlled study, obviously, but it did lead to some later research that I did at MIT with Palash Nandy and Cynthia Breazeal, where we had people come into the lab and smash these HEXBUGs that move around in a really lifelike way, like insects. So instead of choosing something cute that people are drawn to, we chose something more basic, and what we found was that high-empathy people would hesitate more to hit the HEXBUGS. Now this is just a little study, but it's part of a larger body of research that is starting to indicate that there may be a connection between people's tendencies for empathy and their behavior around robots. But my question for the coming era of human-robot interaction is not: \"Do we empathize with robots?\" It's: \"Can robots change people's empathy?\" Is there reason to, for example, prevent your child from kicking a robotic dog, not just out of respect for property, but because the child might be more likely to kick a real dog? And again, it's not just kids. This is the violent video games question, but it's on a completely new level because of this visceral physicality that we respond more intensely to than to images on a screen. When we behave violently towards robots, specifically robots that are designed to mimic life, is that a healthy outlet for violent behavior or is that training our cruelty muscles? We don't know ... But the answer to this question has the potential to impact human behavior, it has the potential to impact social norms, it has the potential to inspire rules around what we can and can't do with certain robots, similar to our animal cruelty laws. Because even if robots can't feel, our behavior towards them might matter for us. And regardless of whether we end up changing our rules, robots might be able to help us come to a new understanding of ourselves. Most of what I've learned over the past 10 years has not been about technology at all. It's been about human psychology and empathy and how we relate to others. Because when a child is kind to a Roomba, when a soldier tries to save a robot on the battlefield, or when a group of people refuses to harm a robotic baby dinosaur, those robots aren't just motors and gears and algorithms. They're reflections of our own humanity. Thank you.",
     312.97,
     701.74
+   ]
+  ],
+  "quiz": [
+   [
+    {
+     "q": "Che cosa faceva il dinosauro robot Pleo quando lo si teneva a testa in giù?",
+     "o": [
+      "Si spegneva",
+      "Cominciava a piangere",
+      "Rideva",
+      "Cantava"
+     ],
+     "a": 1,
+     "why": "And when you held it upside down, it would start to cry."
+    },
+    {
+     "q": "Perché la sua reazione al robot era interessante, secondo lei?",
+     "o": [
+      "Perché non sapeva come funzionasse",
+      "Perché sapeva esattamente come funzionava ma si sentiva comunque spinta a essere gentile",
+      "Perché il robot era rotto",
+      "Perché il suo amico piangeva"
+     ],
+     "a": 1,
+     "why": "I knew exactly how this machine worked, and yet I still felt compelled to be kind to it"
+    },
+    {
+     "q": "Perché il colonnello fermò il test del robot sminatore?",
+     "o": [
+      "Il robot era troppo costoso",
+      "Era troppo disumano vedere il robot danneggiato trascinarsi",
+      "Il robot non trovava le mine",
+      "Pioveva"
+     ],
+     "a": 1,
+     "why": "it's too inhumane to watch this damaged robot drag itself along the minefield"
+    },
+    {
+     "q": "Cosa fanno le persone con il robot aspirapolvere Roomba?",
+     "o": [
+      "Lo rompono",
+      "Gli danno un nome e si dispiacciono quando resta bloccato",
+      "Lo ignorano",
+      "Lo regalano"
+     ],
+     "a": 1,
+     "why": "will cause people to name the Roomba and feel bad for the Roomba when it gets stuck under the couch"
+    },
+    {
+     "q": "Qual è, secondo lei, l'analogia migliore per il nostro rapporto futuro con i robot?",
+     "o": [
+      "Il rapporto con le automobili",
+      "Il rapporto con gli animali",
+      "Il rapporto con i computer",
+      "Il rapporto con i giocattoli"
+     ],
+     "a": 1,
+     "why": "the best analogy we have for this is our relationship with animals"
+    }
+   ],
+   [
+    {
+     "q": "Perché un legame emotivo con un robot può essere pericoloso, per esempio per un soldato?",
+     "o": [
+      "Perché il robot può ferirlo",
+      "Perché può renderlo inefficiente o metterlo in pericolo",
+      "Perché costa di più",
+      "Perché il robot si arrabbia"
+     ],
+     "a": 1,
+     "why": "a soldier who becomes emotionally attached to the robot… that can be anything from inefficient to dangerous"
+    },
+    {
+     "q": "Che cosa sostituisce, secondo lei, la foca robot PARO?",
+     "o": [
+      "L'assistenza umana",
+      "La terapia con gli animali, dove gli animali veri non si possono usare",
+      "I medicinali",
+      "Le infermiere"
+     ],
+     "a": 1,
+     "why": "What this robot replaces is animal therapy in contexts where we can't use real animals"
+    },
+    {
+     "q": "Che cosa successe nel workshop quando chiesero di distruggere i dinosauri robot?",
+     "o": [
+      "Tutti li distrussero subito",
+      "Nessuno voleva colpirli; alla fine uno solo lo fece",
+      "Li vendettero",
+      "Li portarono a casa"
+     ],
+     "a": 1,
+     "why": "none of the participants would even so much as strike these baby dinosaur robots… And this guy stood up, and he took the hatchet"
+    },
+    {
+     "q": "Che cosa scoprirono con gli HEXBUG al MIT?",
+     "o": [
+      "Le persone più empatiche esitavano di più a colpirli",
+      "Nessuno esitava",
+      "I bambini erano più crudeli",
+      "Gli HEXBUG si difendevano"
+     ],
+     "a": 0,
+     "why": "high-empathy people would hesitate more to hit the HEXBUGS"
+    },
+    {
+     "q": "Qual è la vera domanda che Kate Darling pone per il futuro?",
+     "o": [
+      "Se i robot possono provare emozioni",
+      "Se i robot possono cambiare l'empatia delle persone",
+      "Se i robot costeranno meno",
+      "Se i robot sostituiranno il lavoro"
+     ],
+     "a": 1,
+     "why": "It's: \"Can robots change people's empathy?\""
+    }
    ]
   ]
  }
