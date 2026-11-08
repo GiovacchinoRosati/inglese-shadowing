@@ -319,7 +319,8 @@ async function play(it, rate, my){
 function stopAll(){
   runId++;
   if("speechSynthesis" in window) speechSynthesis.cancel();
-  stopNeural();
+  stopNeural(); clearInterval(turnTimer);
+  { const tt=document.getElementById("turn"); if(tt && !tt.classList.contains("idle")){ tt.className="turn idle"; tt.querySelector(".tl").textContent="In pausa"; setLevel(0); } }
   try{ ytPlayer && ytPlayer.pauseVideo && ytPlayer.pauseVideo(); }catch(e){}
   if(rec && rec.state==="recording") rec.stop();
   setPhase("");
@@ -341,20 +342,25 @@ async function shadowLoop(it){
     const rate = n===1 ? base : Math.max(0.6, base-0.15 + 0.3*k/(n-1));
     const blind = S.settings.blindLast && n>1 && k===n-1;
     setBlind(blind);
-    setPhase(`Ascolta ${k+1}/${n} · velocità ${rate.toFixed(2)}${blind?" · senza testo":""} — sussurra insieme alla voce`);
+    setPhase(`Giro ${k+1} di ${n} · velocità ${rate.toFixed(2)}${blind?" · senza testo":""}`);
+    setTurn("listen","ASCOLTA — non parlare");
     lastRef=null;
     const d = await play(it, rate, my);
     if(my!==runId) return;
     if(d<0){ keepAwake(false); setBlind(false); return; }
     const gap = Math.round(Math.max(d,1200)*S.settings.gap)+400;
-    setPhase("Tocca a te: ripeti ad alta voce, stessa intonazione e ritmo", gap);
     const ref=lastRef, refDur=d/1000;
+    beep();
+    await sleep(180);
     const cap = judgeOn() ? await startCapture() : null;
+    setPhase("Ripeti la frase ad alta voce, stessa intonazione e ritmo", gap);
+    setTurn("speak", cap ? "PARLA ORA — ti sto ascoltando" : "PARLA ORA", gap);
     await sleep(gap);
+    setTurn("idle", cap ? "Stop — sto valutando…" : "Stop");
     if(cap){ const res=await cap.stop(); if(my!==runId) return; showVote(it, k+1, scoreVoice(it, res, ref, refDur)); }
   }
   if(my!==runId) return;
-  keepAwake(false); setBlind(false); setPhase(judgeOn() ? "Ciclo completato. I voti sono qui sotto." : "Ciclo completato. Registrati e confronta, oppure verifica la pronuncia.");
+  keepAwake(false); setBlind(false); beep(520,160); setTurn("done","Fine dello shadowing: non devi più parlare"); setPhase(judgeOn() ? "I voti sono qui sotto." : "Registrati e confronta, oppure verifica la pronuncia.");
   markActivity(); save();
 }
 
@@ -379,17 +385,17 @@ function mic(){
   if(!micP){
     audioSession("play-and-record");
     micP=navigator.mediaDevices.getUserMedia({ audio:{ echoCancellation:true, noiseSuppression:true } })
-      .then(s=>{ micStream=s; micP=null; return s; })
+      .then(s=>{ micStream=s; micP=null; micBadge(); return s; })
       .catch(e=>{ micP=null; audioSession("playback"); throw e; });
   }
   return micP;
 }
-function releaseMic(){ if(micStream){ micStream.getTracks().forEach(t=>t.stop()); micStream=null; audioSession("playback"); } }
+function releaseMic(){ if(micStream){ micStream.getTracks().forEach(t=>t.stop()); micStream=null; audioSession("playback"); } micBadge(); }
 async function startCapture(){
   let stream; try{ stream=await mic(); }catch(e){ setPhase(micError(e)); toast("Voto della voce sospeso: "+micError(e)); return null; }
   const c=audioCtx(); const srcN=c.createMediaStreamSource(stream), an=c.createAnalyser(); an.fftSize=1024; srcN.connect(an);
   const buf=new Float32Array(an.fftSize), env=[];
-  const h=setInterval(()=>{ an.getFloatTimeDomainData(buf); let s2=0; for(const v of buf) s2+=v*v; env.push(Math.sqrt(s2/buf.length)); },40);
+  const h=setInterval(()=>{ an.getFloatTimeDomainData(buf); let s2=0; for(const v of buf) s2+=v*v; const rms=Math.sqrt(s2/buf.length); env.push(rms); setLevel(rms); },40);
   let words=null, r=null;
   if(SR && !srBroken){
     try{ r=new SR(); r.lang="en-US"; r.continuous=true; r.interimResults=false; r.maxAlternatives=3;
@@ -398,7 +404,7 @@ async function startCapture(){
       r.start(); }catch(e){ srBroken=true; r=null; }
   }
   return { stop: async()=>{
-    clearInterval(h); try{ srcN.disconnect(); }catch(e){}
+    clearInterval(h); setLevel(0); try{ srcN.disconnect(); }catch(e){}
     if(r){ try{ r.stop(); }catch(e){} await sleep(900); }
     const said = words ? words.map(alts=>alts[0]).join(" ") : null;
     return { env, said, alts: words };
@@ -464,10 +470,10 @@ async function toggleRecord(){
     rec.onstop=()=>{
       if(recUrl) URL.revokeObjectURL(recUrl);
       recUrl=URL.createObjectURL(new Blob(recChunks,{ type:rec.mimeType }));
-      const bb=$("#btn-rec"); if(bb){ bb.textContent="🎙 Registrati"; bb.classList.remove("on"); }
+      const bb=$("#btn-rec"); if(bb){ bb.textContent="🎙 Registrati"; bb.classList.remove("on"); } setTurn("done","Registrazione finita: ascoltala con «La mia voce»");
       ["#btn-me","#btn-cmp"].forEach(s=>{ const x=$(s); if(x) x.disabled=false; });
     };
-    rec.start(); if(b){ b.textContent="⏹ Stop"; b.classList.add("on"); }
+    rec.start(); if(b){ b.textContent="⏹ Stop"; b.classList.add("on"); } setTurn("speak","PARLA ORA — registrazione in corso, premi ⏹ Stop per finire");
   }catch(e){ toast(micError(e)); setPhase(micError(e)); }
 }
 function playMe(){ return new Promise(res=>{ if(!recUrl){ res(); return; } const a=new Audio(recUrl); a.onended=res; a.onerror=res; a.play().catch(res); }); }
@@ -715,6 +721,7 @@ const ytLink = (id,t) => `https://www.youtube.com/watch?v=${encodeURIComponent(i
 function techBox(it){
   if(!it.tech) return "";
   const x=it.x, s=it.unit.src;
+  if(!x.sound){ return `<p class="small muted" style="margin-top:12px">Traduzione ufficiale TED (allineata per tempo). ${esc(s.name)}, ${esc(s.date)}.</p>`; }
   const isTed = it.unit.track==="ted";
   const when = x.t==null ? "" : isTed ? ` (circa da ${mmss(x.t)})` : s.approx ? ` (capitolo da ${mmss(x.t)})` : ` da ${mmss(x.t)}`;
   return `<dl class="rules tech">
@@ -747,6 +754,7 @@ function vTechUnit(u){
 
 /* ----- TED: percorso progressivo a pezzi con ascolto cumulativo dell'originale ----- */
 function progOf(u){ return S.prog[u.id] || (S.prog[u.id]={ b:0, day:null }); }
+const shadowed = id => !!S.cards[id] || !!(S.ev[id] && S.ev[id].sh);
 function blockIds(u,k){ const [,,a,z]=u.full[k]; return u.s.map((x,i)=>[`${u.id}-${i+1}`, (x[3]||{}).ot ?? (x[3]||{}).t]).filter(([,t])=>t!=null && t>=a-0.5 && t<z-0.5).map(([id])=>id); }
 function tedState(u){
   const p=progOf(u), N=u.full.length, today=dayKey();
@@ -754,7 +762,7 @@ function tedState(u){
   return { p, N, done, waiting, k: done?N-1:p.b };
 }
 function vTedUnit(u){
-  const st=tedState(u), src=u.src, k=st.k, ids=blockIds(u,k), studied=ids.every(id=>S.cards[id]);
+  const st=tedState(u), src=u.src, k=st.k, ids=blockIds(u,k), studied=ids.every(shadowed);
   const blocks=u.full.map((b,j)=>{ const ok=j<st.p.b, now=j===st.p.b && !st.waiting && !st.done;
     return `<div class="sent row" style="justify-content:space-between"><span>${ok?"✓":now?"▶":"·"} Pezzo ${j+1} <span class="small muted">${clock(b[2])}–${clock(b[3])} · ${blockIds(u,j).length} frasi</span></span>${ok?`<span class="small muted">${["poco","metà","quasi tutto"][(S.full[u.id]&&S.full[u.id][j]||{}).r]||""}</span>`:""}</div>`; }).join("");
   let today;
@@ -762,8 +770,8 @@ function vTedUnit(u){
   else if(st.waiting) today=`<div class="card daily"><b>Oggi hai completato il pezzo ${st.p.b}.</b> Il pezzo ${st.p.b+1} si apre domani.
       <div class="row" style="margin-top:8px"><a class="btn" href="#" data-act="go" data-to="cum/${u.id}">🎧 Riascolta dall'inizio</a><button class="mini" data-act="tedforce" data-u="${u.id}">Vai avanti oggi</button></div></div>`;
   else today=`<div class="card daily"><div class="tag">Oggi</div><b>Pezzo ${k+1} di ${st.N}</b> <span class="small muted">(${clock(u.full[k][2])}–${clock(u.full[k][3])})</span>
-      <ol class="steps"><li>${ids.length?`<a class="btn ${studied?"":"pri"}" href="#" data-act="go" data-to="learn/${u.id}@${k}">${studied?"✓ ":""}Shadowing delle ${ids.length} frasi del pezzo</a>`:`Nessuna frase da studiare in questo pezzo.`}</li>
-      <li><a class="btn ${studied?"pri":""}" href="#" data-act="go" data-to="cum/${u.id}">🎧 Ascolto cumulativo: dall'inizio fino a ${clock(u.full[k][3])}</a></li></ol>
+      <ol class="steps"><li>${ids.length?`<a class="btn ${studied?"":"pri"}" href="#" data-act="go" data-to="learn/${u.id}@${k}">${studied?"✓ ":""}Shadowing di tutte le ${ids.length} frasi del pezzo, in ordine</a>`:`Nessuna frase da studiare in questo pezzo.`}</li>
+      <li><a class="btn ${studied?"pri":""}" href="#" data-act="cumgo" data-u="${u.id}">🎧 Riascolta tutto dall'inizio fino a ${clock(u.full[k][3])}</a></li></ol>
       <p class="small muted" style="margin:0">Ogni giorno un pezzo nuovo, e riascolti tutto dall'inizio con la voce originale, finché senti il discorso intero.</p></div>`;
   $("#app").innerHTML=`
   <p class="small"><a href="#" data-act="go" data-to="path">← Percorso</a></p>
@@ -793,7 +801,7 @@ function vCum(uid){
   <div class="card" ${canPlay?"":"hidden"}>
     <div class="row">
       <button class="pri" data-act="cumplay" data-from="${u.full[0][2]}">▶ Dall'inizio</button>
-      ${k>0?`<button data-act="cumplay" data-from="${newA}">▶ Solo il pezzo nuovo</button>`:""}
+      ${k>0?`<button class="mini" data-act="cumplay" data-from="${newA}">Solo il pezzo nuovo</button>`:""}
       <button data-act="cumresume">⏯ Riprendi</button>
       <button data-act="stop">■ Stop</button>
     </div>
@@ -884,7 +892,7 @@ function vLearnStart(arg){
   if(!arg && L && L.drill){ renderLearn(); return; }
   if(arg && arg.startsWith("yt:")){ const y=item(arg.slice(3)); if(!y){ go("yt"); return; } L={ ids:[y.id], idx:0, back:"yt" }; }
   else if(arg && arg.includes("@")){ const [uid,kk]=arg.split("@"), u=UNITS[unitIdx(uid)], k=+kk; if(!u || !u.full){ go("path"); return; }
-    const ids=blockIds(u,k), first=ids.findIndex(id=>!S.cards[id]); if(!ids.length){ go("cum/"+u.id); return; }
+    const ids=blockIds(u,k), first=ids.findIndex(id=>!shadowed(id)); if(!ids.length){ go("cum/"+u.id); return; }
     L={ ids, idx:first<0?0:first, unit:u, block:k, back:`unit/${u.id}` }; }
   else{ const u=UNITS[unitIdx(arg)]; if(!u || !unitUnlocked(unitIdx(arg))){ go("path"); return; }
     if(u.full){ go("unit/"+u.id); return; }
@@ -893,7 +901,8 @@ function vLearnStart(arg){
   renderLearn();
 }
 function controls(){
-  return `<div class="row">
+  return `  <div id="turn" class="turn idle" aria-live="polite"><span class="ti">●</span><span class="tl">${judgeOn()?"Premi «Shadowing»: ti dico io quando ascoltare e quando parlare":"Premi «Shadowing» per iniziare"}</span><span class="tm"><i></i></span></div>
+  <div class="row">
     <button data-act="listen">▶ Ascolta</button>
     <button data-act="slow">🐢 Lento</button>
     <button class="pri" data-act="shadow">🔁 Shadowing ×${S.settings.reps}</button>
@@ -916,6 +925,19 @@ function controls(){
   </div>
   <div id="phase" class="phase"></div><div id="votes" class="votes"></div><div id="pron"></div>`;
 }
+/* Stato del turno, ben visibile: ASCOLTA (non parlare) / PARLA ORA (microfono acceso, barra del volume) / fine. */
+let turnTimer=null;
+function setTurn(kind, label, ms){
+  const t=$("#turn"); if(!t) return;
+  t.className="turn "+kind; t.querySelector(".tl").textContent=label;
+  t.querySelector(".ti").textContent = kind==="speak" ? "🎙" : kind==="listen" ? "🔊" : "●";
+  clearInterval(turnTimer);
+  if(ms){ const end=Date.now()+ms; const upd=()=>{ const r=Math.max(0,Math.ceil((end-Date.now())/1000)); const l=t.querySelector(".tl"); if(l) l.textContent=`${label} · ${r}s`; if(r<=0) clearInterval(turnTimer); }; upd(); turnTimer=setInterval(upd,250); }
+  micBadge();
+}
+function setLevel(v){ const i=document.querySelector("#turn .tm i"); if(i) i.style.width=Math.min(100,Math.round(v*400))+"%"; }
+function micBadge(){ const b=document.getElementById("micbadge"); if(!b) return; const on=!!(micStream && micStream.getTracks().some(t=>t.readyState==="live")); b.hidden=!on; }
+function beep(freq=880, ms=120){ try{ const c=audioCtx(); const o=c.createOscillator(), g=c.createGain(); o.frequency.value=freq; g.gain.value=0.08; o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+ms/1000); }catch(e){} if(navigator.vibrate) try{ navigator.vibrate(60); }catch(e){} }
 function itemCard(it, showEn=true){
   const vid = it.type==="yt" || (it.tech && it.start!=null && HAS_YT);
   return `${!vid?"": HAS_YT?`<div class="yt-wrap"><div id="yt-player"></div></div>`:`<p class="small"><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=${esc(it.videoId)}&t=${Math.floor(it.start)}s">Apri lo spezzone su YouTube</a> · qui viene letto dalla voce sintetica</p>`}
@@ -925,7 +947,7 @@ function itemCard(it, showEn=true){
 function renderLearn(){
   L.t0=Date.now();
   stopAll(); if(recUrl){ URL.revokeObjectURL(recUrl); recUrl=null; }
-  const it=item(L.ids[L.idx]), learned=!!S.cards[it.id], last=L.idx===L.ids.length-1;
+  const it=item(L.ids[L.idx]), learned=shadowed(it.id), last=L.idx===L.ids.length-1;
   $("#app").innerHTML=`
   <p class="small"><a href="#" data-act="go" data-to="${L.back}">← Esci</a> · Frase ${L.idx+1}/${L.ids.length}</p>
   <div class="card">
@@ -941,8 +963,9 @@ function renderLearn(){
   </div>
   <div class="row">
     <button data-act="prev" ${L.idx?"":"disabled"}>← Precedente</button>
-    <button class="pri" data-act="done">${learned?"Avanti →":"Acquisita, programma i richiami →"}</button>
-    ${learned?`<span class="small muted">già nei ripassi</span>`:""}
+    <button class="pri" data-act="done">${learned?"Avanti →": it.unit && it.unit.track==="ted" && it.x && !it.x.key ? "Fatto, frase successiva →" : "Acquisita, programma i richiami →"}</button>
+    ${learned?`<span class="small muted">${S.cards[it.id]?"già nei ripassi":"già fatta"}</span>`:""}
+    ${L.block!=null?`<span class="small muted">Pezzo ${L.block+1}: frase ${L.idx+1} di ${L.ids.length}</span>`:""}
   </div>`;
   prefetch(it);
   if((it.type==="yt" || it.tech && it.start!=null) && HAS_YT) ensurePlayer().then(p=>p.cueVideoById({ videoId:it.videoId, startSeconds:it.start })).catch(()=>{});
@@ -950,7 +973,9 @@ function renderLearn(){
 function learnDone(){
   const id=L.ids[L.idx];
   { const ev=evOf(id); ev.ms=(ev.ms||0)+Math.min(Date.now()-(L.t0||Date.now()), 600000); }
-  if(!S.cards[id]){ S.cards[id]=newCard(); markActivity(); save(); }
+  const itx=SENT[id];
+  if(itx && itx.unit.track==="ted" && itx.x && !itx.x.key){ const ev=evOf(id); if(!ev.sh){ ev.sh=1; markActivity(); save(); } }
+  else if(!S.cards[id]){ S.cards[id]=newCard(); markActivity(); save(); }
   if(L.idx<L.ids.length-1){ L.idx++; renderLearn(); return; }
   stopAll();
   const u=L.unit, nu=nextUnit(u?trackOf(u):"grammar");
@@ -958,7 +983,7 @@ function learnDone(){
   if(u && L.block!=null){
     $("#app").innerHTML=`<div class="card"><h1>Frasi del pezzo ${L.block+1} studiate</h1>
       <p>Ora ascolta il discorso originale dall'inizio fino alla fine di questo pezzo.</p>
-      <div class="row"><a class="btn pri" href="#" data-act="go" data-to="cum/${u.id}">🎧 Ascolto cumulativo</a></div></div>`;
+      <div class="row"><a class="btn pri" href="#" data-act="cumgo" data-u="${u.id}">🎧 Riascolta dall'inizio fino a qui</a></div></div>`;
     $("#due-badge").textContent=dueIds().length||""; return;
   }
   if(u && (u.track==="ted"||u.track==="tech")){
@@ -1178,6 +1203,7 @@ const ACTS={
     await initSync(); toast(SYNC.gh?"Collegato a GitHub.":"Collegamento non riuscito: controlla nome del repository e permessi del token."); vSettings(); },
   ghoff:()=>{ lsSet("gh-token",""); SYNC.gh=false; syncLabel("Solo su questo dispositivo"); vSettings(); toast("Token rimosso da questo telefono."); },
   cumplay:b=>cumPlay(+b.dataset.from),
+  cumgo:b=>{ go("cum/"+b.dataset.u); if(CUM) cumPlay(CUM.u.full[0][2]); },
   cumresume:()=>cumPlay(CUM && CUM.pos>CUM.u.full[0][2]+1 ? Math.max(CUM.u.full[0][2],CUM.pos-2) : CUM.u.full[0][2]),
   cumtx:b=>{ const x=$("#cum-tx"); x.hidden=!x.hidden; b.textContent=x.hidden?"📄 Mostra la trascrizione":"📄 Nascondi la trascrizione"; if(!x.hidden && CUM){ const f=fullOf(CUM.u.id); f["peek"+CUM.k]=true; } },
   cumrate:b=>{ if(!CUM) return; const { u, k }=CUM, f=fullOf(u.id), st=tedState(u);

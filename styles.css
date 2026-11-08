@@ -121,3 +121,16 @@ button.on-ok{outline:2px solid var(--ok)}
 .vote b{font-size:20px;font-variant-numeric:tabular-nums}
 .vote b.ok{color:var(--ok)} .vote b.mid{color:var(--link)} .vote b.low{color:var(--bad)}
 .vote .small.muted{flex-basis:100%}
+
+.turn{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 4px;padding:12px 14px;border-radius:12px;font-weight:600;font-size:17px;border:2px solid var(--line);background:var(--bg);color:var(--muted)}
+.turn .ti{font-size:22px;line-height:1}
+.turn .tl{flex:1;min-width:0}
+.turn .tm{flex-basis:100%;height:8px;background:var(--line);border-radius:4px;overflow:hidden;display:none}
+.turn .tm i{display:block;height:100%;width:0;background:var(--ok);transition:width .08s linear}
+.turn.listen{border-color:var(--link);color:var(--link)}
+.turn.speak{border-color:var(--bad);color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--card));animation:pulse 1.2s ease-in-out infinite}
+.turn.speak .tm{display:block}
+.turn.done{border-color:var(--ok);color:var(--ok)}
+@keyframes pulse{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--bad) 18%,transparent)}}
+.micbadge{font-size:12px;font-weight:600;color:#fff;background:var(--bad);border-radius:10px;padding:2px 8px}
+@media (prefers-reduced-motion: reduce){ .turn.speak{animation:none} }
