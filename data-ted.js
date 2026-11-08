@@ -1,7 +1,7 @@
 /* GENERATO da tools/build_ted.py a partire da tools/ted_spec.json: non modificare a mano. */
 "use strict";
 LEVELS.TED = "Talk TED di oratori americani con la loro voce originale, in ordine di velocità reale. Un pezzo al giorno: shadowing delle frasi, poi ascolto cumulativo dall'inizio, finché senti il discorso intero.";
-const DAILY = {"date": "2026-11-07", "focus": "Nuovo metodo: un pezzo al giorno del talk di Angela Lee Duckworth (4 pezzi). Shadowing delle frasi con la voce originale, poi ascolto cumulativo dall'inizio.", "tip": "Nell'ascolto cumulativo non aprire la trascrizione prima di valutare: la valutazione onesta è il dato che uso per scegliere il ritmo dei prossimi talk."};
+const DAILY = {"date": "2026-11-08", "focus": "Ieri 24 frasi studiate (2 unità di grammatica, Huang, Nadella). Nell'ascolto integrale di Huang e Nadella hai indicato «poco»: è normale, il salto difficile è dal parlato frase per frase al discorso continuo. Oggi si passa al metodo a pezzi: TED 1 (Duckworth, 147 parole/min, più lenta e chiara dei podcast), pezzo 1 con ascolto cumulativo.", "tip": "Hai aperto la traduzione su quasi tutte le frasi. Oggi ascolta ogni frase almeno due volte prima di toccare 👁 Testo o 🇮🇹: è lì che si allena l'orecchio. Poi fai il dettato su 3 frasi a scelta."};
 const TED_UNITS = [
  {
   "id": "ted-01",
