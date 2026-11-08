@@ -629,7 +629,7 @@ function render(){
   const sy=document.getElementById("sync"); if(sy) sy.textContent=SYNC.status;
   document.querySelectorAll("#nav a").forEach(a=>a.classList.toggle("on", a.dataset.v===v || (v==="unit"||v==="learn") && a.dataset.v==="path"));
   const n=dueIds().length; $("#due-badge").textContent = n||"";
-  const views={ cum:vCum, full:vFull, stats:vStats, home:vHome, path:vPath, unit:vUnit, learn:vLearnStart, review:vReviewStart, yt:vYT, settings:vSettings };
+  const views={ first:vFirst, cloze:vCloze, cum:vCum, full:vFull, stats:vStats, home:vHome, path:vPath, unit:vUnit, learn:vLearnStart, review:vReviewStart, yt:vYT, settings:vSettings };
   (views[v]||vHome)(arg);
   window.scrollTo(0,0);
 }
@@ -757,15 +757,21 @@ function tedState(u){
 function vTedUnit(u){
   const st=tedState(u), src=u.src, k=st.k, ids=blockIds(u,k), studied=ids.every(shadowed);
   const blocks=u.full.map((b,j)=>{ const ok=j<st.p.b, now=j===st.p.b && !st.waiting && !st.done;
-    return `<div class="sent row" style="justify-content:space-between"><span>${ok?"✓":now?"▶":"·"} Pezzo ${j+1} <span class="small muted">${clock(b[2])}–${clock(b[3])} · ${blockIds(u,j).length} frasi</span></span>${ok?`<span class="small muted">${["poco","metà","quasi tutto"][(S.full[u.id]&&S.full[u.id][j]||{}).r]||""}</span>`:""}</div>`; }).join("");
+    return `<div class="sent row" style="justify-content:space-between"><span>${ok?"✓":now?"▶":"·"} Pezzo ${j+1} <span class="small muted">${clock(b[2])}–${clock(b[3])} · ${blockIds(u,j).length} frasi</span></span>${ok?`<span class="small muted">${(x=>x?`${x.r0!=null?["poco","metà","quasi tutto"][x.r0]+" → ":""}${["poco","metà","quasi tutto"][x.r]||""}`:"")((S.full[u.id]||{})[j])}</span>`:""}</div>`; }).join("");
   let today;
   if(st.done) today=`<div class="card daily"><b>Discorso completato.</b> <p class="small muted" style="margin:.3em 0 .6em">Riascoltalo intero ogni tanto: è il miglior test di comprensione.</p><a class="btn pri" href="#" data-act="go" data-to="cum/${u.id}">🎧 Ascolta tutto il discorso</a></div>`;
   else if(st.waiting) today=`<div class="card daily"><b>Oggi hai completato il pezzo ${st.p.b}.</b> Il pezzo ${st.p.b+1} si apre domani.
       <div class="row" style="margin-top:8px"><a class="btn" href="#" data-act="go" data-to="cum/${u.id}">🎧 Riascolta dall'inizio</a><button class="mini" data-act="tedforce" data-u="${u.id}">Vai avanti oggi</button></div></div>`;
-  else today=`<div class="card daily"><div class="tag">Oggi</div><b>Pezzo ${k+1} di ${st.N}</b> <span class="small muted">(${clock(u.full[k][2])}–${clock(u.full[k][3])})</span>
-      <ol class="steps"><li>${ids.length?`<a class="btn ${studied?"":"pri"}" href="#" data-act="go" data-to="learn/${u.id}@${k}">${studied?"✓ ":""}Shadowing di tutte le ${ids.length} frasi del pezzo, in ordine</a>`:`Nessuna frase da studiare in questo pezzo.`}</li>
-      <li><a class="btn ${studied?"pri":""}" href="#" data-act="cumgo" data-u="${u.id}">🎧 Riascolta tutto dall'inizio fino a ${clock(u.full[k][3])}</a></li></ol>
-      <p class="small muted" style="margin:0">Ogni giorno un pezzo nuovo, e riascolti tutto dall'inizio con la voce originale, finché senti il discorso intero.</p></div>`;
+  else { const f=(S.full[u.id]||{})[k]||{}, s1=f.r0!=null, s3=f.cloze!=null, next = !s1?1 : !studied?2 : !s3?3 : 4;
+    const step=(n,done,html)=>`<li class="${done?"stepdone":n===next?"stepnow":""}">${done?"✓ ":""}${html}</li>`;
+    today=`<div class="card daily"><div class="tag">Oggi</div><b>Pezzo ${k+1} di ${st.N}</b> <span class="small muted">(${clock(u.full[k][2])}–${clock(u.full[k][3])}, ${Math.round((u.full[k][3]-u.full[k][2])/60*10)/10} min)</span>
+      <ol class="steps">
+      ${step(1,s1,`<a class="btn ${next===1?"pri":""}" href="#" data-act="go" data-to="first/${u.id}">🎧 Primo ascolto del pezzo nuovo, senza testo</a>${s1?` <span class="small muted">capito: ${["poco","metà","quasi tutto"][f.r0]}</span>`:""}`)}
+      ${step(2,studied,ids.length?`<a class="btn ${next===2?"pri":""}" href="#" data-act="go" data-to="learn/${u.id}@${k}">🔁 Shadowing delle ${ids.length} frasi del pezzo, in ordine</a>`:`Nessuna frase in questo pezzo.`)}
+      ${step(3,s3,`<a class="btn ${next===3?"pri":""}" href="#" data-act="go" data-to="cloze/${u.id}">✍ Comprensione: completa le parole che senti</a>${s3?` <span class="small muted">${f.cloze}%</span>`:""}`)}
+      ${step(4,false,`<a class="btn ${next===4?"pri":""}" href="#" data-act="cumgo" data-u="${u.id}">🎧 Riascolta tutto dall'inizio fino a ${clock(u.full[k][3])}</a>`)}
+      </ol>
+      <p class="small muted" style="margin:0">Primo ascolto per capire quanto capisci oggi, poi lavoro sulle frasi, poi il riascolto: alla fine vedi la differenza.</p></div>`; }
   $("#app").innerHTML=`
   <p class="small"><a href="#" data-act="go" data-to="path">← Percorso</a></p>
   <h1>${esc(u.title)}</h1>
@@ -776,11 +782,78 @@ function vTedUnit(u){
   <p class="small muted">${src.orig?`Audio e trascrizione © TED, licenza <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>, uso personale non commerciale. <a target="_blank" rel="noopener" href="${esc(src.talk)}">Talk su TED.com</a>`:`Video ufficiale riprodotto con il player YouTube; frasi citate dalla <a target="_blank" rel="noopener" href="${esc(src.tx)}">trascrizione ufficiale</a>.`}</p>`;
 }
 let CUM=null;
+/* Passo 1: primo ascolto del pezzo nuovo, voce originale, senza testo. */
+function vFirst(uid){
+  const u=UNITS[unitIdx(uid)]; if(!u || !u.full){ go("path"); return; }
+  const st=tedState(u), k=st.k, a=u.full[k][2], z=u.full[k][3], f=(S.full[u.id]||{})[k]||{};
+  CUM={ u, k, pos:0, a0:a, end:z, first:true };
+  $("#app").innerHTML=`
+  <p class="small"><a href="#" data-act="go" data-to="unit/${u.id}">← ${esc(u.title.split(" · ")[0])}</a></p>
+  <h1>Primo ascolto · pezzo ${k+1}</h1>
+  <p class="muted">${Math.round((z-a)/60*10)/10} minuti di voce originale, senza testo e senza traduzione. Non fermarti sulle parole che non capisci: cerca il senso generale.</p>
+  <div class="card">
+    <div class="row"><button class="pri" data-act="cumplay" data-from="${a}">▶ Ascolta</button><button data-act="cumresume">⏯ Riprendi</button><button data-act="stop">■ Stop</button></div>
+    <div class="bar" style="margin-top:12px"><i id="cum-bar" style="width:0;background:var(--link)"></i></div>
+    <div class="row small" style="justify-content:space-between;margin-top:4px"><span id="cum-pos">${clock(a)} / ${clock(z)}</span><span id="cum-blk" class="muted"></span></div>
+  </div>
+  <div class="card">
+    <p style="margin:0 0 6px"><b>Dopo il primo ascolto, quanto hai capito?</b></p>
+    <div class="row">${[[2,"Quasi tutto"],[1,"Metà"],[0,"Poco"]].map(([v,l])=>`<button class="${f.r0===v?"on-ok":""}" data-act="firstrate" data-v="${v}">${l}</button>`).join("")}</div>
+    <p class="small muted" style="margin:.6em 0 0">È il punto di partenza: alla fine della giornata lo confronti con il riascolto.</p>
+  </div>`;
+  prefetchOrig(u, a, a+1);
+}
+/* Passo 3: comprensione all'ascolto — completa le parole mancanti (generato dalle frasi del pezzo). */
+function clozeItems(u,k){
+  const ids=blockIds(u,k).filter(id=>SENT[id].en.split(/\s+/).length>=7);
+  const pick=[...ids.filter(id=>SENT[id].x.key), ...ids.filter(id=>!SENT[id].x.key)].slice(0,8).sort((a,b)=>SENT[a].x.ot-SENT[b].x.ot);
+  return pick.map(id=>{
+    const words=SENT[id].en.split(/\s+/);
+    const cand=words.map((w,i)=>[i,w.replace(/[^A-Za-z'’-]/g,"")]).filter(([i,w])=>i>0 && w.length>=4 && !FUNC.has(w.toLowerCase().replace(/[’']/g,"")));
+    cand.sort((a,b)=>b[1].length-a[1].length);
+    const holes=[]; for(const c of cand){ if(holes.every(h=>Math.abs(h[0]-c[0])>1)) holes.push(c); if(holes.length===2) break; }
+    return { id, words, holes:holes.sort((a,b)=>a[0]-b[0]) };
+  });
+}
+function lev(a,b){ const d=Array.from({length:a.length+1},(_,i)=>[i,...Array(b.length).fill(0)]); for(let j=1;j<=b.length;j++) d[0][j]=j;
+  for(let i=1;i<=a.length;i++) for(let j=1;j<=b.length;j++) d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1)); return d[a.length][b.length]; }
+function vCloze(uid){
+  const u=UNITS[unitIdx(uid)]; if(!u || !u.full){ go("path"); return; }
+  const k=tedState(u).k, items=clozeItems(u,k);
+  CUM={ u, k, cloze:items };
+  $("#app").innerHTML=`
+  <p class="small"><a href="#" data-act="go" data-to="unit/${u.id}">← ${esc(u.title.split(" · ")[0])}</a></p>
+  <h1>Comprensione · pezzo ${k+1}</h1>
+  <p class="muted">Ascolta ogni frase con la voce originale e scrivi le parole mancanti. Riascolta quante volte vuoi.</p>
+  ${items.map((it,n)=>`<div class="card cz">
+    <div class="row" style="margin-bottom:6px"><button class="mini" data-act="czplay" data-n="${n}">▶ Originale</button><button class="mini" data-act="czslow" data-n="${n}">🐢 Lenta</button></div>
+    <p class="czs">${it.words.map((w,i)=>{ const h=it.holes.find(x=>x[0]===i); if(!h) return esc(w);
+      const pre=w.slice(0,w.indexOf(h[1])), post=w.slice(w.indexOf(h[1])+h[1].length);
+      return `${esc(pre)}<input class="czin" data-n="${n}" data-i="${i}" size="${Math.max(4,h[1].length)}" autocomplete="off" autocapitalize="off" spellcheck="false">${esc(post)}`; }).join(" ")}</p>
+  </div>`).join("")}
+  <div class="row"><button class="pri" data-act="czcheck">Correggi</button></div>
+  <div id="czout"></div>`;
+  prefetchOrig(u, u.full[k][2], u.full[k][3]);
+}
+function clozeCheck(){
+  const { u, k, cloze }=CUM; let ok=0, tot=0; const missed=[];
+  cloze.forEach((it,n)=>it.holes.forEach(([i,w])=>{ tot++;
+    const inp=document.querySelector(`.czin[data-n="${n}"][data-i="${i}"]`), v=(inp.value||"").trim().toLowerCase().replace(/[’]/g,"'"), t=w.toLowerCase().replace(/[’]/g,"'");
+    const good = v===t || (t.length>=5 && lev(v,t)<=1);
+    if(good) ok++; else missed.push(t.replace(/'/g,""));
+    inp.classList.toggle("ok",good); inp.classList.toggle("bad",!good); if(!good){ inp.insertAdjacentHTML("afterend",` <span class="czfix">${esc(w)}</span>`); inp.disabled=true; }
+  }));
+  const pct=tot?Math.round(ok/tot*100):0, f=fullOf(u.id); f[k]=Object.assign(f[k]||{}, { cloze:pct });
+  missed.forEach(w=>{ S.miss[w]=(S.miss[w]||0)+1; }); markActivity(); save();
+  $("#czout").innerHTML=`<div class="card"><b>${pct}%</b> delle parole riconosciute (${ok} su ${tot}). ${pct>=80?"Ottimo.":pct>=50?"Buono: riascolta le frasi con le parole sbagliate.":"Normale al primo tentativo: riascolta le frasi in versione lenta."}
+    <div class="row" style="margin-top:8px"><a class="btn pri" href="#" data-act="cumgo" data-u="${u.id}">🎧 Ultimo passo: riascolta dall'inizio</a></div></div>`;
+}
 function vCum(uid){
   const u=UNITS[unitIdx(uid)]; if(!u || !u.full){ go("path"); return; }
   const st=tedState(u), k=st.k, end=u.full[k][3], newA=u.full[k][2];
   const rated=(S.full[u.id]||{})[k];
   CUM={ u, k, pos:0 };
+  const r0=((S.full[u.id]||{})[k]||{}).r0;
   const blockText=(b,j)=> b[1] ? markStudied(u,b[1]) : blockIds(u,j).map(id=>`<mark>${esc(SENT[id].en)}</mark>`).join(" … ");
   const tx=u.full.slice(0,k+1).map((b,j)=>`<p class="${j===k?"newblk":""}"><span class="small muted">Pezzo ${j+1} · ${clock(b[2])}</span><br>${blockText(b,j)}</p>`).join("")
     + (u.src.orig?"":`<p class="small muted">Qui compaiono solo le frasi studiate; il testo completo è nella <a target="_blank" rel="noopener" href="${esc(u.src.tx)}">trascrizione ufficiale</a>.</p>`);
@@ -804,7 +877,7 @@ function vCum(uid){
   <div class="card">
     <p style="margin:0 0 6px"><b>${st.done?"Quanto hai capito del discorso?":"Quanto hai capito, soprattutto del pezzo nuovo?"}</b></p>
     <div class="row">${[[2,"Quasi tutto"],[1,"Metà"],[0,"Poco"]].map(([v,l])=>`<button class="${rated&&rated.r===v?"on-ok":""}" data-act="cumrate" data-v="${v}">${l}</button>`).join("")}</div>
-    <p class="small muted" style="margin:.6em 0 0">${st.done?"":"La valutazione chiude il pezzo di oggi: domani si apre il successivo."}</p>
+    <p class="small muted" style="margin:.6em 0 0">${st.done?"":`${r0!=null?`Al primo ascolto avevi detto «${["poco","metà","quasi tutto"][r0]}». `:""}La valutazione chiude il pezzo di oggi: domani si apre il successivo.`}</p>
   </div>
   <div class="row"><button class="mini" data-act="cumtx">📄 Mostra la trascrizione</button></div>
   <div class="ftx" id="cum-tx" hidden>${tx}</div>
@@ -813,9 +886,9 @@ function vCum(uid){
   else if(HAS_YT) ensurePlayer().then(p=>p.cueVideoById({ videoId:u.src.yt, startSeconds:Math.floor(u.full[0][2]) })).catch(()=>{});
 }
 async function cumPlay(from){
-  if(!CUM) return; const { u, k }=CUM, end=u.full[k][3];
+  if(!CUM) return; const { u, k }=CUM, end=CUM.end ?? u.full[k][3];
   stopAll(); const my=runId; keepAwake(true);
-  const yt=!u.src.orig, a0=u.full[0][2], span=end-a0;
+  const yt=!u.src.orig, a0=CUM.a0 ?? u.full[0][2], span=end-a0;
   const tick=setInterval(()=>{
     if(my!==runId) return;
     let pos;
@@ -975,8 +1048,8 @@ function learnDone(){
   if(L.drill){ L=null; $("#app").innerHTML=`<div class="card"><h1>Allenamento completato</h1><p>I risultati dei dettati aggiornano le tue difficoltà.</p><div class="row"><a class="btn pri" href="#" data-act="go" data-to="stats">Difficoltà</a><a class="btn" href="#" data-act="go" data-to="home">Oggi</a></div></div>`; return; }
   if(u && L.block!=null){
     $("#app").innerHTML=`<div class="card"><h1>Frasi del pezzo ${L.block+1} studiate</h1>
-      <p>Ora ascolta il discorso originale dall'inizio fino alla fine di questo pezzo.</p>
-      <div class="row"><a class="btn pri" href="#" data-act="cumgo" data-u="${u.id}">🎧 Riascolta dall'inizio fino a qui</a></div></div>`;
+      <p>Ora l'esercizio di comprensione, poi il riascolto dall'inizio.</p>
+      <div class="row"><a class="btn pri" href="#" data-act="go" data-to="cloze/${u.id}">✍ Comprensione</a><a class="btn" href="#" data-act="cumgo" data-u="${u.id}">🎧 Riascolta dall'inizio</a></div></div>`;
     $("#due-badge").textContent=dueIds().length||""; return;
   }
   if(u && (u.track==="ted"||u.track==="tech")){
@@ -1196,16 +1269,21 @@ const ACTS={
     await initSync(); toast(SYNC.gh?"Collegato a GitHub.":"Collegamento non riuscito: controlla nome del repository e permessi del token."); vSettings(); },
   ghoff:()=>{ lsSet("gh-token",""); SYNC.gh=false; syncLabel("Solo su questo dispositivo"); vSettings(); toast("Token rimosso da questo telefono."); },
   cumplay:b=>cumPlay(+b.dataset.from),
+  firstrate:b=>{ if(!CUM) return; const f=fullOf(CUM.u.id); f[CUM.k]=Object.assign(f[CUM.k]||{}, { r0:+b.dataset.v, at0:Date.now() }); markActivity(); save(); stopAll(); toast("Registrato. Ora lo shadowing delle frasi."); go("unit/"+CUM.u.id); },
+  czplay:b=>{ const it=CUM.cloze[+b.dataset.n], x=SENT[it.id]; stopAll(); playTimeline(CUM.u, x.x.ot, x.x.oe, runId); },
+  czslow:b=>{ const it=CUM.cloze[+b.dataset.n], x=SENT[it.id]; stopAll(); say(x.id, x.en, 0.7, true); },
+  czcheck:()=>clozeCheck(),
   cumgo:b=>{ go("cum/"+b.dataset.u); if(CUM) cumPlay(CUM.u.full[0][2]); },
-  cumresume:()=>cumPlay(CUM && CUM.pos>CUM.u.full[0][2]+1 ? Math.max(CUM.u.full[0][2],CUM.pos-2) : CUM.u.full[0][2]),
+  cumresume:()=>{ if(!CUM) return; const a0=CUM.a0 ?? CUM.u.full[0][2]; cumPlay(CUM.pos>a0+1 ? Math.max(a0,CUM.pos-2) : a0); },
   cumtx:b=>{ const x=$("#cum-tx"); x.hidden=!x.hidden; b.textContent=x.hidden?"📄 Mostra la trascrizione":"📄 Nascondi la trascrizione"; if(!x.hidden && CUM){ const f=fullOf(CUM.u.id); f["peek"+CUM.k]=true; } },
   cumrate:b=>{ if(!CUM) return; const { u, k }=CUM, f=fullOf(u.id), st=tedState(u);
-    f[k]={ r:+b.dataset.v, at:Date.now(), peek: !!f["peek"+k] };
+    f[k]=Object.assign(f[k]||{}, { r:+b.dataset.v, at:Date.now(), peek: !!f["peek"+k] });
     if(!st.done && st.p.b===k){ st.p.b=k+1; st.p.day=dayKey(); }
     markActivity(); save(); stopAll();
     const fin=progOf(u).b>=u.full.length;
     $("#app").innerHTML=`<div class="card"><h1>${fin?"Hai ascoltato tutto il discorso":"Pezzo "+(k+1)+" completato"}</h1>
-      <p>${fin?"Da domani entra il prossimo talk. Le frasi studiate restano nei ripassi.":"Domani si apre il pezzo "+(k+2)+": lo studi in shadowing e riascolti tutto dall'inizio."}</p>
+      ${f[k].r0!=null?`<p><b>Primo ascolto: ${["poco","metà","quasi tutto"][f[k].r0]} → riascolto: ${["poco","metà","quasi tutto"][f[k].r]}</b>${f[k].r>f[k].r0?" — lo shadowing ha funzionato.":f[k].r===f[k].r0?"":""}${f[k].cloze!=null?` · comprensione parole ${f[k].cloze}%`:""}</p>`:""}
+      <p>${fin?"Da domani entra il prossimo talk. Le frasi studiate restano nei ripassi.":"Domani si apre il pezzo "+(k+2)+": primo ascolto, shadowing, comprensione e riascolto dall'inizio."}</p>
       <div class="row"><a class="btn pri" href="#" data-act="go" data-to="home">Oggi</a><a class="btn" href="#" data-act="go" data-to="unit/${u.id}">Il talk</a></div></div>`; },
   tedforce:b=>{ const u=UNITS[unitIdx(b.dataset.u)]; progOf(u).force=dayKey(); save(); vTedUnit(u); },
   frate:b=>{ const f=fullOf(b.dataset.u), k=b.dataset.k, tx=$("#ftx-"+k); f[k]={ r:+b.dataset.v, at:Date.now(), peek: !!(tx && !tx.hidden) || !!(f[k]&&f[k].peek) }; markActivity(); save();

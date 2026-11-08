@@ -22,40 +22,30 @@ const TED_UNITS = [
     [
      "orig/ted-01-p1",
      0.0,
-     87.62
+     142.23
     ],
     [
      "orig/ted-01-p2",
-     87.62,
-     179.03
-    ],
-    [
-     "orig/ted-01-p3",
-     179.03,
+     142.23,
      298.35
     ],
     [
-     "orig/ted-01-p4",
+     "orig/ted-01-p3",
      298.35,
-     359.72
+     493.53
     ],
     [
-     "orig/ted-01-p5",
-     359.72,
-     522.62
-    ],
-    [
-     "orig/ted-01-p6",
-     522.62,
+     "orig/ted-01-p4",
+     493.53,
      637.47
     ],
     [
-     "orig/ted-01-p7",
+     "orig/ted-01-p5",
      637.47,
      788.62
     ],
     [
-     "orig/ted-01-p8",
+     "orig/ted-01-p6",
      788.62,
      908.26
     ]
@@ -1336,38 +1326,26 @@ const TED_UNITS = [
   "full": [
    [
     0,
-    "Let me show you something. To be precise, I'm going to show you nothing. This was the world 540 million years ago. Pure, endless darkness. It wasn't dark due to a lack of light. It was dark because of a lack of sight. Although sunshine did filter 1,000 meters beneath the surface of ocean, a light permeated from hydrothermal vents to seafloor, brimming with life, there was not a single eye to be found in these ancient waters. No retinas, no corneas, no lenses. So all this light, all this life went unseen. There was a time that the very idea of seeing didn't exist. It [had] simply never been done before. Until it was. So for reasons we're only beginning to understand, trilobites, the first organisms that could sense light, emerged. They're the first inhabitants of this reality that we take for granted. First to discover that there is something other than oneself. A world of many selves.",
+    "Let me show you something. To be precise, I'm going to show you nothing. This was the world 540 million years ago. Pure, endless darkness. It wasn't dark due to a lack of light. It was dark because of a lack of sight. Although sunshine did filter 1,000 meters beneath the surface of ocean, a light permeated from hydrothermal vents to seafloor, brimming with life, there was not a single eye to be found in these ancient waters. No retinas, no corneas, no lenses. So all this light, all this life went unseen. There was a time that the very idea of seeing didn't exist. It [had] simply never been done before. Until it was. So for reasons we're only beginning to understand, trilobites, the first organisms that could sense light, emerged. They're the first inhabitants of this reality that we take for granted. First to discover that there is something other than oneself. A world of many selves. The ability to see is thought to have ushered in Cambrian explosion, a period in which a huge variety of animal species entered fossil records. What began as a passive experience, the simple act of letting light in, soon became far more active. The nervous system began to evolve. Sight turning to insight. Seeing became understanding. Understanding led to actions. And all these gave rise to intelligence. Today, we're no longer satisfied with just nature's gift of visual intelligence. Curiosity urges us to create machines to see just as intelligently as we can, if not better.",
     0.0,
-    87.7
+    141.43
    ],
    [
-    88,
-    "The ability to see is thought to have ushered in Cambrian explosion, a period in which a huge variety of animal species entered fossil records. What began as a passive experience, the simple act of letting light in, soon became far more active. The nervous system began to evolve. Sight turning to insight. Seeing became understanding. Understanding led to actions. And all these gave rise to intelligence. Today, we're no longer satisfied with just nature's gift of visual intelligence. Curiosity urges us to create machines to see just as intelligently as we can, if not better. Nine years ago, on this stage, I delivered an early progress report on computer vision, a subfield of artificial intelligence. Three powerful forces converged for the first time. Aa family of algorithms called neural networks. Fast, specialized hardware called graphic processing units, or GPUs. And big data. Like the 15 million images that my lab spent years curating called ImageNet. Together, they ushered in the age of modern AI.",
-    87.62,
-    178.01
-   ],
-   [
-    179,
-    "We've come a long way. Back then, just putting labels on images was a big breakthrough. But the speed and accuracy of these algorithms just improved rapidly. The annual ImageNet challenge, led by my lab, gauged the performance of this progress. And on this plot, you're seeing the annual improvement and milestone models. We went a step further and created algorithms that can segment objects or predict the dynamic relationships among them in these works done by my students and collaborators. And there's more. Recall last time I showed you the first computer-vision algorithm that can describe a photo in human natural language. That was work done with my brilliant former student, Andrej Karpathy. At that time, I pushed my luck and said, \"Andrej, can we make computers to do the reverse?\" And Andrej said, \"Ha ha, that's impossible.\" Well, as you can see from this post, recently the impossible has become possible. That's thanks to a family of diffusion models that powers today's generative AI algorithm, which can take human-prompted sentences and turn them into photos and videos of something that's entirely new. Many of you have seen the recent impressive results of Sora by OpenAI. But even without the enormous number of GPUs, my student and our collaborators have developed a generative video model called Walt months before Sora. And you're seeing some of these results. There is room for improvement. I mean, look at that cat's eye and the way it goes under the wave without ever getting wet. What a cat-astrophe.",
-    179.03,
+    142,
+    "Nine years ago, on this stage, I delivered an early progress report on computer vision, a subfield of artificial intelligence. Three powerful forces converged for the first time. Aa family of algorithms called neural networks. Fast, specialized hardware called graphic processing units, or GPUs. And big data. Like the 15 million images that my lab spent years curating called ImageNet. Together, they ushered in the age of modern AI. We've come a long way. Back then, just putting labels on images was a big breakthrough. But the speed and accuracy of these algorithms just improved rapidly. The annual ImageNet challenge, led by my lab, gauged the performance of this progress. And on this plot, you're seeing the annual improvement and milestone models. We went a step further and created algorithms that can segment objects or predict the dynamic relationships among them in these works done by my students and collaborators. And there's more. Recall last time I showed you the first computer-vision algorithm that can describe a photo in human natural language. That was work done with my brilliant former student, Andrej Karpathy. At that time, I pushed my luck and said, \"Andrej, can we make computers to do the reverse?\" And Andrej said, \"Ha ha, that's impossible.\" Well, as you can see from this post, recently the impossible has become possible. That's thanks to a family of diffusion models that powers today's generative AI algorithm, which can take human-prompted sentences and turn them into photos and videos of something that's entirely new. Many of you have seen the recent impressive results of Sora by OpenAI. But even without the enormous number of GPUs, my student and our collaborators have developed a generative video model called Walt months before Sora. And you're seeing some of these results. There is room for improvement. I mean, look at that cat's eye and the way it goes under the wave without ever getting wet. What a cat-astrophe.",
+    142.23,
     300.62
    ],
    [
     300,
-    "And if past is prologue, we will learn from these mistakes and create a future we imagine. And in this future, we want AI to do everything it can for us, or to help us. For years I have been saying that taking a picture is not the same as seeing and understanding. Today, I would like to add to that. Simply seeing is not enough. Seeing is for doing and learning. When we act upon this world in 3D space and time, we learn, and we learn to see and do better. Nature has created this virtuous cycle of seeing and doing powered by “spatial intelligence.” To illustrate to you what your spatial intelligence is doing constantly, look at this picture. Raise your hand if you feel like you want to do something.",
+    "And if past is prologue, we will learn from these mistakes and create a future we imagine. And in this future, we want AI to do everything it can for us, or to help us. For years I have been saying that taking a picture is not the same as seeing and understanding. Today, I would like to add to that. Simply seeing is not enough. Seeing is for doing and learning. When we act upon this world in 3D space and time, we learn, and we learn to see and do better. Nature has created this virtuous cycle of seeing and doing powered by “spatial intelligence.” To illustrate to you what your spatial intelligence is doing constantly, look at this picture. Raise your hand if you feel like you want to do something. In the last split of a second, your brain looked at the geometry of this glass, its place in 3D space, its relationship with the table, the cat and everything else. And you can predict what's going to happen next. The urge to act is innate to all beings with spatial intelligence, which links perception with action. And if we want to advance AI beyond its current capabilities, we want more than AI that can see and talk. We want AI that can do. Indeed, we're making exciting progress. The recent milestones in spatial intelligence is teaching computers to see, learn, do and learn to see and do better. This is not easy. It took nature millions of years to evolve spatial intelligence, which depends on the eye taking light, project 2D images on the retina and the brain to translate these data into 3D information. Only recently, a group of researchers from Google are able to develop an algorithm to take a bunch of photos and translate that into 3D space, like the examples we're showing here. My student and our collaborators have taken a step further and created an algorithm that takes one input image and turn that into 3D shape. Here are more examples. Recall, we talked about computer programs that can take a human sentence and turn it into videos. A group of researchers in University of Michigan have figured out a way to translate that line of sentence into 3D room layout, like shown here. And my colleagues at Stanford and their students have developed an algorithm that takes one image and generates infinitely plausible spaces for viewers to explore.",
     298.35,
-    359.76
+    492.6
    ],
    [
-    360,
-    "In the last split of a second, your brain looked at the geometry of this glass, its place in 3D space, its relationship with the table, the cat and everything else. And you can predict what's going to happen next. The urge to act is innate to all beings with spatial intelligence, which links perception with action. And if we want to advance AI beyond its current capabilities, we want more than AI that can see and talk. We want AI that can do. Indeed, we're making exciting progress. The recent milestones in spatial intelligence is teaching computers to see, learn, do and learn to see and do better. This is not easy. It took nature millions of years to evolve spatial intelligence, which depends on the eye taking light, project 2D images on the retina and the brain to translate these data into 3D information. Only recently, a group of researchers from Google are able to develop an algorithm to take a bunch of photos and translate that into 3D space, like the examples we're showing here. My student and our collaborators have taken a step further and created an algorithm that takes one input image and turn that into 3D shape. Here are more examples. Recall, we talked about computer programs that can take a human sentence and turn it into videos. A group of researchers in University of Michigan have figured out a way to translate that line of sentence into 3D room layout, like shown here. And my colleagues at Stanford and their students have developed an algorithm that takes one image and generates infinitely plausible spaces for viewers to explore. These are prototypes of the first budding signs of a future possibility. One in which the human race can take our entire world and translate it into digital forms and model the richness and nuances. What nature did to us implicitly in our individual minds, spatial intelligence technology can hope to do for our collective consciousness.",
-    359.72,
-    522.88
-   ],
-   [
-    523,
-    "As the progress of spatial intelligence accelerates, a new era in this virtuous cycle is taking place in front of our eyes. This back and forth is catalyzing robotic learning, a key component for any embodied intelligence system that needs to understand and interact with the 3D world. A decade ago, ImageNet from my lab enabled a database of millions of high-quality photos to help train computers to see. Today, we're doing the same with behaviors and actions to train computers and robots how to act in the 3D world. But instead of collecting static images, we develop simulation environments powered by 3D spatial models so that the computers can have infinite varieties of possibilities to learn to act. And you're just seeing a small number of examples to teach our robots in a project led by my lab called Behavior. We’re also making exciting progress in robotic language intelligence. Using large language model-based input, my students and our collaborators are among the first teams that can show a robotic arm performing a variety of tasks based on verbal instructions, like opening this drawer or unplugging a charged phone. Or making sandwiches, using bread, lettuce, tomatoes and even putting a napkin for the user. Typically I would like a little more for my sandwich, but this is a good start.",
-    522.62,
+    493,
+    "These are prototypes of the first budding signs of a future possibility. One in which the human race can take our entire world and translate it into digital forms and model the richness and nuances. What nature did to us implicitly in our individual minds, spatial intelligence technology can hope to do for our collective consciousness. As the progress of spatial intelligence accelerates, a new era in this virtuous cycle is taking place in front of our eyes. This back and forth is catalyzing robotic learning, a key component for any embodied intelligence system that needs to understand and interact with the 3D world. A decade ago, ImageNet from my lab enabled a database of millions of high-quality photos to help train computers to see. Today, we're doing the same with behaviors and actions to train computers and robots how to act in the 3D world. But instead of collecting static images, we develop simulation environments powered by 3D spatial models so that the computers can have infinite varieties of possibilities to learn to act. And you're just seeing a small number of examples to teach our robots in a project led by my lab called Behavior. We’re also making exciting progress in robotic language intelligence. Using large language model-based input, my students and our collaborators are among the first teams that can show a robotic arm performing a variety of tasks based on verbal instructions, like opening this drawer or unplugging a charged phone. Or making sandwiches, using bread, lettuce, tomatoes and even putting a napkin for the user. Typically I would like a little more for my sandwich, but this is a good start.",
+    493.53,
     635.74
    ],
    [
@@ -1403,51 +1381,31 @@ const TED_UNITS = [
     [
      "orig/ted-02-p1",
      0.0,
-     77.39
-    ],
-    [
-     "orig/ted-02-p2",
-     77.39,
      166.62
     ],
     [
-     "orig/ted-02-p3",
+     "orig/ted-02-p2",
      166.62,
-     225.62
-    ],
-    [
-     "orig/ted-02-p4",
-     225.62,
      317.62
     ],
     [
-     "orig/ted-02-p5",
+     "orig/ted-02-p3",
      317.62,
-     438.3
+     481.62
+    ],
+    [
+     "orig/ted-02-p4",
+     481.62,
+     585.87
+    ],
+    [
+     "orig/ted-02-p5",
+     585.87,
+     698.62
     ],
     [
      "orig/ted-02-p6",
-     438.3,
-     574.62
-    ],
-    [
-     "orig/ted-02-p7",
-     574.62,
-     659.19
-    ],
-    [
-     "orig/ted-02-p8",
-     659.19,
-     756.57
-    ],
-    [
-     "orig/ted-02-p9",
-     756.57,
-     836.87
-    ],
-    [
-     "orig/ted-02-p10",
-     836.87,
+     698.62,
      864.14
     ]
    ],
@@ -2947,62 +2905,38 @@ const TED_UNITS = [
   "full": [
    [
     28,
-    "That's SpotMini. He'll be back in a little while. I -- I love building robots. And my long-term goal is to build robots that can do what people and animals do. And there's three things in particular that we're interested in. One is balance and dynamic mobility, the second one is mobile manipulation, and the third one is mobile perception. So, dynamic mobility and balance -- I'm going to do a demo for you. I'm standing here, balancing. I can see you're not very impressed. OK, how about now? How about now?",
+    "That's SpotMini. He'll be back in a little while. I -- I love building robots. And my long-term goal is to build robots that can do what people and animals do. And there's three things in particular that we're interested in. One is balance and dynamic mobility, the second one is mobile manipulation, and the third one is mobile perception. So, dynamic mobility and balance -- I'm going to do a demo for you. I'm standing here, balancing. I can see you're not very impressed. OK, how about now? How about now? Those simple capabilities mean that people can go almost anywhere on earth, on any kind of terrain. We want to capture that for robots. What about manipulation? I'm holding this clicker in my hand; I'm not even looking at it, and I can manipulate it without any problem. But even more important, I can move my body while I hold the manipulator, the clicker, and stabilize and coordinate my body, and I can even walk around. And that means I can move around in the world and expand the range of my arms and my hands and really be able to handle almost anything. So that's mobile manipulation. And all of you can do this. Third is perception. I'm looking at a room with over 1,000 people in it, and my amazing visual system can see every one of you -- you're all stable in space, even when I move my head, even when I move around. That kind of mobile perception is really important for robots that are going to move and act out in the world. I'm going to give you a little status report on where we are in developing robots toward these ends. The first three robots are all dynamically stabilized robots. This one goes back a little over 10 years ago -- \"BigDog.\" It's got a gyroscope that helps stabilize it. It's got sensors and a control computer.",
     0.0,
-    77.24
-   ],
-   [
-    78,
-    "Those simple capabilities mean that people can go almost anywhere on earth, on any kind of terrain. We want to capture that for robots. What about manipulation? I'm holding this clicker in my hand; I'm not even looking at it, and I can manipulate it without any problem. But even more important, I can move my body while I hold the manipulator, the clicker, and stabilize and coordinate my body, and I can even walk around. And that means I can move around in the world and expand the range of my arms and my hands and really be able to handle almost anything. So that's mobile manipulation. And all of you can do this. Third is perception. I'm looking at a room with over 1,000 people in it, and my amazing visual system can see every one of you -- you're all stable in space, even when I move my head, even when I move around. That kind of mobile perception is really important for robots that are going to move and act out in the world. I'm going to give you a little status report on where we are in developing robots toward these ends. The first three robots are all dynamically stabilized robots. This one goes back a little over 10 years ago -- \"BigDog.\" It's got a gyroscope that helps stabilize it. It's got sensors and a control computer.",
-    77.39,
     166.92
    ],
    [
     167,
-    "Here's a Cheetah robot that's running with a galloping gait, where it recycles its energy, it bounces on the ground, and it's computing all the time in order to keep itself stabilized and propelled. And here's a bigger robot that's got such good locomotion using its legs, that it can go in deep snow. This is about 10 inches deep, and it doesn't really have any trouble. This is Spot, a new generation of robot -- just slightly older than the one that came out onstage. And we've been asking the question -- you've all heard about drone delivery: Can we deliver packages to your houses with drones? Well, what about plain old legged-robot delivery? So we've been taking our robot to our employees' homes to see whether we could get in -- the various access ways. And believe me, in the Boston area, there's every manner of stairway twists and turns. So it's a real challenge. But we're doing very well, about 70 percent of the way.",
+    "Here's a Cheetah robot that's running with a galloping gait, where it recycles its energy, it bounces on the ground, and it's computing all the time in order to keep itself stabilized and propelled. And here's a bigger robot that's got such good locomotion using its legs, that it can go in deep snow. This is about 10 inches deep, and it doesn't really have any trouble. This is Spot, a new generation of robot -- just slightly older than the one that came out onstage. And we've been asking the question -- you've all heard about drone delivery: Can we deliver packages to your houses with drones? Well, what about plain old legged-robot delivery? So we've been taking our robot to our employees' homes to see whether we could get in -- the various access ways. And believe me, in the Boston area, there's every manner of stairway twists and turns. So it's a real challenge. But we're doing very well, about 70 percent of the way. And here's mobile manipulation, where we've put an arm on the robot, and it's finding its way through the door. Now, one of the important things about making autonomous robots is to make them not do just exactly what you say, but make them deal with the uncertainty of what happens in the real world. So we have Steve there, one of the engineers, giving the robot a hard time. And the fact that the programming still tolerates all that disturbance -- it does what it's supposed to. Here's another example, where Eric is tugging on the robot as it goes up the stairs. And believe me, getting it to do what it's supposed to do in those circumstances is a real challenge, but the result is something that's going to generalize and make robots much more autonomous than they would be otherwise. This is Atlas, a humanoid robot. It's a third-generation humanoid that we've been building. I'll tell you a little bit about the hardware design later. And we've been saying: How close to human levels of performance and speed could we get in an ordinary task, like moving boxes around on a conveyor? We're getting up to about two-thirds of the speed that a human operates on average. And this robot is using both hands, it's using its body, it's stepping, so it's really an example of dynamic stability, mobile manipulation and mobile perception. Here --",
     166.62,
-    225.92
-   ],
-   [
-    226,
-    "And here's mobile manipulation, where we've put an arm on the robot, and it's finding its way through the door. Now, one of the important things about making autonomous robots is to make them not do just exactly what you say, but make them deal with the uncertainty of what happens in the real world. So we have Steve there, one of the engineers, giving the robot a hard time. And the fact that the programming still tolerates all that disturbance -- it does what it's supposed to. Here's another example, where Eric is tugging on the robot as it goes up the stairs. And believe me, getting it to do what it's supposed to do in those circumstances is a real challenge, but the result is something that's going to generalize and make robots much more autonomous than they would be otherwise. This is Atlas, a humanoid robot. It's a third-generation humanoid that we've been building. I'll tell you a little bit about the hardware design later. And we've been saying: How close to human levels of performance and speed could we get in an ordinary task, like moving boxes around on a conveyor? We're getting up to about two-thirds of the speed that a human operates on average. And this robot is using both hands, it's using its body, it's stepping, so it's really an example of dynamic stability, mobile manipulation and mobile perception. Here --",
-    225.62,
     317.92
    ],
    [
     318,
-    "We actually have two Atlases. Now, everything doesn't go exactly the way it's supposed to. And here's our latest robot, called \"Handle.\" Handle is interesting, because it's sort of half like an animal, and it's half something else with these leg-like things and wheels. It's got its arms on in kind of a funny way, but it really does some remarkable things. It can carry 100 pounds. It's probably going to lift more than that, but so far we've done 100. It's got some pretty good rough-terrain capability, even though it has wheels. And Handle loves to put on a show. I'm going to give you a little bit of robot religion. A lot of people think that a robot is a machine where there's a computer that's telling it what to do, and the computer is listening through its sensors. But that's really only half of the story. The real story is that the computer is on one side, making suggestions to the robot, and on the other side are the physics of the world. And that physics involves gravity, friction, bouncing into things. In order to have a successful robot, my religion is that you have to do a holistic design, where you're designing the software, the hardware and the behavior all at one time, and all these parts really intermesh and cooperate with each other. And when you get the perfect design, you get a real harmony between all those parts interacting with each other. So it's half software and half hardware, plus the behavior.",
+    "We actually have two Atlases. Now, everything doesn't go exactly the way it's supposed to. And here's our latest robot, called \"Handle.\" Handle is interesting, because it's sort of half like an animal, and it's half something else with these leg-like things and wheels. It's got its arms on in kind of a funny way, but it really does some remarkable things. It can carry 100 pounds. It's probably going to lift more than that, but so far we've done 100. It's got some pretty good rough-terrain capability, even though it has wheels. And Handle loves to put on a show. I'm going to give you a little bit of robot religion. A lot of people think that a robot is a machine where there's a computer that's telling it what to do, and the computer is listening through its sensors. But that's really only half of the story. The real story is that the computer is on one side, making suggestions to the robot, and on the other side are the physics of the world. And that physics involves gravity, friction, bouncing into things. In order to have a successful robot, my religion is that you have to do a holistic design, where you're designing the software, the hardware and the behavior all at one time, and all these parts really intermesh and cooperate with each other. And when you get the perfect design, you get a real harmony between all those parts interacting with each other. So it's half software and half hardware, plus the behavior. We've done some work lately on the hardware, where we tried to go -- the picture on the left is a conventional design, where you have parts that are all bolted together, conductors, tubes, connectors. And on the right is a more integrated thing; it's supposed to look like an anatomy drawing. Using the miracle of 3-D printing, we're starting to build parts of robots that look a lot more like the anatomy of an animal. So that's an upper-leg part that has hydraulic pathways -- actuators, filters -- all embedded, all printed as one piece, and the whole structure is developed with a knowledge of what the loads and behavior are going to be, which is available from data recorded from robots and simulations and things like that.",
     317.62,
-    437.09
+    481.92
    ],
    [
-    438,
-    "We've done some work lately on the hardware, where we tried to go -- the picture on the left is a conventional design, where you have parts that are all bolted together, conductors, tubes, connectors. And on the right is a more integrated thing; it's supposed to look like an anatomy drawing. Using the miracle of 3-D printing, we're starting to build parts of robots that look a lot more like the anatomy of an animal. So that's an upper-leg part that has hydraulic pathways -- actuators, filters -- all embedded, all printed as one piece, and the whole structure is developed with a knowledge of what the loads and behavior are going to be, which is available from data recorded from robots and simulations and things like that. So it's a data-driven hardware design. And using processes like that, not only the upper leg but some other things, we've gotten our robots to go from big, behemoth, bulky, slow, bad robots -- that one on the right, weighing almost 400 pounds -- down to the one in the middle which was just in the video, weighs about 190 pounds, just a little bit more than me, and we have a new one, which is working but I'm not going to show it to you yet, on the left, which weighs just 165 pounds, with all the same strength and capabilities. So these things are really getting better very quickly. So it's time for Spot to come back out, and we're going to demonstrate a little bit of mobility, dexterity and perception. This is Seth Davis, who's my robot wrangler today, and he's giving Spot some general direction by steering it around, but all the coordination of the legs and the sensors is done by the robot's computers on board. The robot can walk with a number of different gaits; it's got a gyro, or a solid-state gyro, an IMU on board. Obviously, it's got a battery, and things like that. One of the cool things about a legged robot is, it's omnidirectional. In addition to going forward, it can go sideways, it can turn in place. And this robot is a little bit of a show-off. It loves to use its dynamic gaits, like running --",
-    438.3,
-    574.92
+    482,
+    "So it's a data-driven hardware design. And using processes like that, not only the upper leg but some other things, we've gotten our robots to go from big, behemoth, bulky, slow, bad robots -- that one on the right, weighing almost 400 pounds -- down to the one in the middle which was just in the video, weighs about 190 pounds, just a little bit more than me, and we have a new one, which is working but I'm not going to show it to you yet, on the left, which weighs just 165 pounds, with all the same strength and capabilities. So these things are really getting better very quickly. So it's time for Spot to come back out, and we're going to demonstrate a little bit of mobility, dexterity and perception. This is Seth Davis, who's my robot wrangler today, and he's giving Spot some general direction by steering it around, but all the coordination of the legs and the sensors is done by the robot's computers on board. The robot can walk with a number of different gaits; it's got a gyro, or a solid-state gyro, an IMU on board. Obviously, it's got a battery, and things like that. One of the cool things about a legged robot is, it's omnidirectional. In addition to going forward, it can go sideways, it can turn in place. And this robot is a little bit of a show-off. It loves to use its dynamic gaits, like running -- And it's got one more. Now if it were really a show-off, it would be hopping on one foot, but, you know.",
+    481.62,
+    586.44
    ],
    [
-    575,
-    "And it's got one more. Now if it were really a show-off, it would be hopping on one foot, but, you know. Now, Spot has a set of cameras here, stereo cameras, and we have a feed up in the center. It's kind of dark out in the audience, but it's going to use those cameras in order to look at the terrain right in front of it, while it goes over these obstacles back here. For this demo, Seth is steering, but the robot's doing all its own terrain planning. This is a terrain map, where the data from the cameras is being developed in real time, showing the red spots, which are where it doesn't want to step, and the green spots are the good places. And here it's treating them like stepping-stones. So it's trying to stay up on the blocks, and it adjusts its stride, and there's a ton of planning that has to go into an operation like that, and it does all that planning in real time, where it adjusts the steps a little bit longer or a little bit shorter. Now we're going to change it into a different mode, where it's just going to treat the blocks like terrain and decide whether to step up or down as it goes. So this is using dynamic balance and mobile perception, because it has to coordinate what it sees along with how it's moving.",
-    574.62,
-    659.39
+    586,
+    "Now, Spot has a set of cameras here, stereo cameras, and we have a feed up in the center. It's kind of dark out in the audience, but it's going to use those cameras in order to look at the terrain right in front of it, while it goes over these obstacles back here. For this demo, Seth is steering, but the robot's doing all its own terrain planning. This is a terrain map, where the data from the cameras is being developed in real time, showing the red spots, which are where it doesn't want to step, and the green spots are the good places. And here it's treating them like stepping-stones. So it's trying to stay up on the blocks, and it adjusts its stride, and there's a ton of planning that has to go into an operation like that, and it does all that planning in real time, where it adjusts the steps a little bit longer or a little bit shorter. Now we're going to change it into a different mode, where it's just going to treat the blocks like terrain and decide whether to step up or down as it goes. So this is using dynamic balance and mobile perception, because it has to coordinate what it sees along with how it's moving. The other thing Spot has is a robot arm. Some of you may see that as a head and a neck, but believe me, it's an arm. Seth is driving it around. He's actually driving the hand and the body is following. So the two are coordinated in the way I was talking about before -- in the way people can do that. In fact, one of the cool things Spot can do we call, \"chicken-head mode,\" and it keeps its head in one place in space, and it moves its body all around. There's a variation of this that's called \"twerking\" -- but we're not going to use that today.",
+    585.87,
+    698.92
    ],
    [
-    660,
-    "The other thing Spot has is a robot arm. Some of you may see that as a head and a neck, but believe me, it's an arm. Seth is driving it around. He's actually driving the hand and the body is following. So the two are coordinated in the way I was talking about before -- in the way people can do that. In fact, one of the cool things Spot can do we call, \"chicken-head mode,\" and it keeps its head in one place in space, and it moves its body all around. There's a variation of this that's called \"twerking\" -- but we're not going to use that today. So, Spot: I'm feeling a little thirsty. Could you get me a soda? For this demo, Seth is not doing any driving. We have a LIDAR on the back of the robot, and it's using these props we've put on the stage to localize itself. It's gone over to that location. Now it's using a camera that's in its hand to find the cup, picks it up -- and again, Seth's not driving. We've planned out a path for it to go -- it looked like it was going off the path -- and now Seth's going to take over control again, because I'm a little bit chicken about having it do this by itself. Thank you, Spot. So, Spot: How do you feel about having just finished your TED performance?",
-    659.19,
-    756.59
-   ],
-   [
-    756,
-    "Me, too! Thank you all, and thanks to the team at Boston Dynamics, who did all the hard work behind this. Helen Walters: Marc, come back in the middle. Thank you so much. Come over here, I have questions. So, you mentioned the UPS and the package delivery. What are the other applications that you see for your robots? Marc Raibert: You know, I think that robots that have the capabilities I've been talking about are going to be incredibly useful. About a year ago, I went to Fukushima to see what the situation was there, and there's just a huge need for machines that can go into some of the dirty places and help remediate that. I think it won't be too long until we have robots like this in our homes, and one of the big needs is to take care of the aging and invalids. I think that it won't be too long till we're using robots to help take care of our parents, or probably more likely, have our children help take care of us. And there's a bunch of other things. I think the sky's the limit. Many of the ideas we haven't thought of yet, and people like you will help us think of new applications.",
-    756.57,
-    836.66
-   ],
-   [
-    838,
-    "HW: So what about the dark side? What about the military? Are they interested? MR: Sure, the military has been a big funder of robotics. I don't think the military is the dark side myself, but I think, as with all advanced technology, it can be used for all kinds of things. HW: Awesome. Thank you so much. MR: OK, you're welcome. Thank you.",
-    836.87,
+    699,
+    "So, Spot: I'm feeling a little thirsty. Could you get me a soda? For this demo, Seth is not doing any driving. We have a LIDAR on the back of the robot, and it's using these props we've put on the stage to localize itself. It's gone over to that location. Now it's using a camera that's in its hand to find the cup, picks it up -- and again, Seth's not driving. We've planned out a path for it to go -- it looked like it was going off the path -- and now Seth's going to take over control again, because I'm a little bit chicken about having it do this by itself. Thank you, Spot. So, Spot: How do you feel about having just finished your TED performance? Me, too! Thank you all, and thanks to the team at Boston Dynamics, who did all the hard work behind this. Helen Walters: Marc, come back in the middle. Thank you so much. Come over here, I have questions. So, you mentioned the UPS and the package delivery. What are the other applications that you see for your robots? Marc Raibert: You know, I think that robots that have the capabilities I've been talking about are going to be incredibly useful. About a year ago, I went to Fukushima to see what the situation was there, and there's just a huge need for machines that can go into some of the dirty places and help remediate that. I think it won't be too long until we have robots like this in our homes, and one of the big needs is to take care of the aging and invalids. I think that it won't be too long till we're using robots to help take care of our parents, or probably more likely, have our children help take care of us. And there's a bunch of other things. I think the sky's the limit. Many of the ideas we haven't thought of yet, and people like you will help us think of new applications. HW: So what about the dark side? What about the military? Are they interested? MR: Sure, the military has been a big funder of robotics. I don't think the military is the dark side myself, but I think, as with all advanced technology, it can be used for all kinds of things. HW: Awesome. Thank you so much. MR: OK, you're welcome. Thank you.",
+    698.62,
     864.14
    ]
   ]
@@ -3026,31 +2960,16 @@ const TED_UNITS = [
     [
      "orig/ted-03-p1",
      0.0,
-     98.83
-    ],
-    [
-     "orig/ted-03-p2",
-     98.83,
      189.94
     ],
     [
-     "orig/ted-03-p3",
+     "orig/ted-03-p2",
      189.94,
-     266.62
+     328.01
     ],
     [
-     "orig/ted-03-p4",
-     266.62,
-     361.39
-    ],
-    [
-     "orig/ted-03-p5",
-     361.39,
-     463.1
-    ],
-    [
-     "orig/ted-03-p6",
-     463.1,
+     "orig/ted-03-p3",
+     328.01,
      499.73
     ]
    ],
@@ -4020,38 +3939,20 @@ const TED_UNITS = [
   "full": [
    [
     5,
-    "When I was a kid, the disaster we worried about most was a nuclear war. That's why we had a barrel like this down in our basement, filled with cans of food and water. When the nuclear attack came, we were supposed to go downstairs, hunker down, and eat out of that barrel. Today the greatest risk of global catastrophe doesn't look like this. Instead, it looks like this. If anything kills over 10 million people in the next few decades, it's most likely to be a highly infectious virus rather than a war. Not missiles, but microbes. Now, part of the reason for this is that we've invested a huge amount in nuclear deterrents. But we've actually invested very little in a system to stop an epidemic. We're not ready for the next epidemic. Let's look at Ebola. I'm sure all of you read about it in the newspaper, lots of tough challenges. I followed it carefully through the case analysis tools we use to track polio eradication. And as you look at what went on, the problem wasn't that there was a system that didn't work well enough, the problem was that we didn't have a system at all. In fact, there's some pretty obvious key missing pieces.",
+    "When I was a kid, the disaster we worried about most was a nuclear war. That's why we had a barrel like this down in our basement, filled with cans of food and water. When the nuclear attack came, we were supposed to go downstairs, hunker down, and eat out of that barrel. Today the greatest risk of global catastrophe doesn't look like this. Instead, it looks like this. If anything kills over 10 million people in the next few decades, it's most likely to be a highly infectious virus rather than a war. Not missiles, but microbes. Now, part of the reason for this is that we've invested a huge amount in nuclear deterrents. But we've actually invested very little in a system to stop an epidemic. We're not ready for the next epidemic. Let's look at Ebola. I'm sure all of you read about it in the newspaper, lots of tough challenges. I followed it carefully through the case analysis tools we use to track polio eradication. And as you look at what went on, the problem wasn't that there was a system that didn't work well enough, the problem was that we didn't have a system at all. In fact, there's some pretty obvious key missing pieces. We didn't have a group of epidemiologists ready to go, who would have gone, seen what the disease was, seen how far it had spread. The case reports came in on paper. It was very delayed before they were put online and they were extremely inaccurate. We didn't have a medical team ready to go. We didn't have a way of preparing people. Now, Médecins Sans Frontières did a great job orchestrating volunteers. But even so, we were far slower than we should have been getting the thousands of workers into these countries. And a large epidemic would require us to have hundreds of thousands of workers. There was no one there to look at treatment approaches. No one to look at the diagnostics. No one to figure out what tools should be used. As an example, we could have taken the blood of survivors, processed it, and put that plasma back in people to protect them. But that was never tried. So there was a lot that was missing. And these things are really a global failure. The WHO is funded to monitor epidemics, but not to do these things I talked about. Now, in the movies it's quite different. There's a group of handsome epidemiologists ready to go, they move in, they save the day, but that's just pure Hollywood.",
     0.0,
-    98.17
-   ],
-   [
-    99,
-    "We didn't have a group of epidemiologists ready to go, who would have gone, seen what the disease was, seen how far it had spread. The case reports came in on paper. It was very delayed before they were put online and they were extremely inaccurate. We didn't have a medical team ready to go. We didn't have a way of preparing people. Now, Médecins Sans Frontières did a great job orchestrating volunteers. But even so, we were far slower than we should have been getting the thousands of workers into these countries. And a large epidemic would require us to have hundreds of thousands of workers. There was no one there to look at treatment approaches. No one to look at the diagnostics. No one to figure out what tools should be used. As an example, we could have taken the blood of survivors, processed it, and put that plasma back in people to protect them. But that was never tried. So there was a lot that was missing. And these things are really a global failure. The WHO is funded to monitor epidemics, but not to do these things I talked about. Now, in the movies it's quite different. There's a group of handsome epidemiologists ready to go, they move in, they save the day, but that's just pure Hollywood.",
-    98.83,
     189.92
    ],
    [
     190,
-    "The failure to prepare could allow the next epidemic to be dramatically more devastating than Ebola Let's look at the progression of Ebola over this year. About 10,000 people died, and nearly all were in the three West African countries. There's three reasons why it didn't spread more. The first is that there was a lot of heroic work by the health workers. They found the people and they prevented more infections. The second is the nature of the virus. Ebola does not spread through the air. And by the time you're contagious, most people are so sick that they're bedridden. Third, it didn't get into many urban areas. And that was just luck. If it had gotten into a lot more urban areas, the case numbers would have been much larger. So next time, we might not be so lucky. You can have a virus where people feel well enough while they're infectious that they get on a plane or they go to a market. The source of the virus could be a natural epidemic like Ebola, or it could be bioterrorism. So there are things that would literally make things a thousand times worse.",
+    "The failure to prepare could allow the next epidemic to be dramatically more devastating than Ebola Let's look at the progression of Ebola over this year. About 10,000 people died, and nearly all were in the three West African countries. There's three reasons why it didn't spread more. The first is that there was a lot of heroic work by the health workers. They found the people and they prevented more infections. The second is the nature of the virus. Ebola does not spread through the air. And by the time you're contagious, most people are so sick that they're bedridden. Third, it didn't get into many urban areas. And that was just luck. If it had gotten into a lot more urban areas, the case numbers would have been much larger. So next time, we might not be so lucky. You can have a virus where people feel well enough while they're infectious that they get on a plane or they go to a market. The source of the virus could be a natural epidemic like Ebola, or it could be bioterrorism. So there are things that would literally make things a thousand times worse. In fact, let's look at a model of a virus spread through the air, like the Spanish Flu back in 1918. So here's what would happen: It would spread throughout the world very, very quickly. And you can see over 30 million people died from that epidemic. So this is a serious problem. We should be concerned. But in fact, we can build a really good response system. We have the benefits of all the science and technology that we talk about here. We've got cell phones to get information from the public and get information out to them. We have satellite maps where we can see where people are and where they're moving. We have advances in biology that should dramatically change the turnaround time to look at a pathogen and be able to make drugs and vaccines that fit for that pathogen. So we can have tools, but those tools need to be put into an overall global health system. And we need preparedness.",
     189.94,
-    267.07
+    328.95
    ],
    [
-    267,
-    "In fact, let's look at a model of a virus spread through the air, like the Spanish Flu back in 1918. So here's what would happen: It would spread throughout the world very, very quickly. And you can see over 30 million people died from that epidemic. So this is a serious problem. We should be concerned. But in fact, we can build a really good response system. We have the benefits of all the science and technology that we talk about here. We've got cell phones to get information from the public and get information out to them. We have satellite maps where we can see where people are and where they're moving. We have advances in biology that should dramatically change the turnaround time to look at a pathogen and be able to make drugs and vaccines that fit for that pathogen. So we can have tools, but those tools need to be put into an overall global health system. And we need preparedness. The best lessons, I think, on how to get prepared are again, what we do for war. For soldiers, we have full-time, waiting to go. We have reserves that can scale us up to large numbers. NATO has a mobile unit that can deploy very rapidly. NATO does a lot of war games to check, are people well trained? Do they understand about fuel and logistics and the same radio frequencies? So they are absolutely ready to go. So those are the kinds of things we need to deal with an epidemic.",
-    266.62,
-    360.74
-   ],
-   [
-    361,
-    "What are the key pieces? First, we need strong health systems in poor countries. That's where mothers can give birth safely, kids can get all their vaccines. But, also where we'll see the outbreak very early on. We need a medical reserve corps: lots of people who've got the training and background who are ready to go, with the expertise. And then we need to pair those medical people with the military. taking advantage of the military's ability to move fast, do logistics and secure areas. We need to do simulations, germ games, not war games, so that we see where the holes are. The last time a germ game was done in the United States was back in 2001, and it didn't go so well. So far the score is germs: 1, people: 0. Finally, we need lots of advanced R&D in areas of vaccines and diagnostics. There are some big breakthroughs, like the Adeno-associated virus, that could work very, very quickly. Now I don't have an exact budget for what this would cost, but I'm quite sure it's very modest compared to the potential harm. The World Bank estimates that if we have a worldwide flu epidemic, global wealth will go down by over three trillion dollars and we'd have millions and millions of deaths. These investments offer significant benefits beyond just being ready for the epidemic. The primary healthcare, the R&D, those things would reduce global health equity and make the world more just as well as more safe.",
-    361.39,
-    462.31
-   ],
-   [
-    463,
-    "So I think this should absolutely be a priority. There's no need to panic. We don't have to hoard cans of spaghetti or go down into the basement. But we need to get going, because time is not on our side. In fact, if there's one positive thing that can come out of the Ebola epidemic, it's that it can serve as an early warning, a wake-up call, to get ready. If we start now, we can be ready for the next epidemic. Thank you.",
-    463.1,
+    329,
+    "The best lessons, I think, on how to get prepared are again, what we do for war. For soldiers, we have full-time, waiting to go. We have reserves that can scale us up to large numbers. NATO has a mobile unit that can deploy very rapidly. NATO does a lot of war games to check, are people well trained? Do they understand about fuel and logistics and the same radio frequencies? So they are absolutely ready to go. So those are the kinds of things we need to deal with an epidemic. What are the key pieces? First, we need strong health systems in poor countries. That's where mothers can give birth safely, kids can get all their vaccines. But, also where we'll see the outbreak very early on. We need a medical reserve corps: lots of people who've got the training and background who are ready to go, with the expertise. And then we need to pair those medical people with the military. taking advantage of the military's ability to move fast, do logistics and secure areas. We need to do simulations, germ games, not war games, so that we see where the holes are. The last time a germ game was done in the United States was back in 2001, and it didn't go so well. So far the score is germs: 1, people: 0. Finally, we need lots of advanced R&D in areas of vaccines and diagnostics. There are some big breakthroughs, like the Adeno-associated virus, that could work very, very quickly. Now I don't have an exact budget for what this would cost, but I'm quite sure it's very modest compared to the potential harm. The World Bank estimates that if we have a worldwide flu epidemic, global wealth will go down by over three trillion dollars and we'd have millions and millions of deaths. These investments offer significant benefits beyond just being ready for the epidemic. The primary healthcare, the R&D, those things would reduce global health equity and make the world more just as well as more safe. So I think this should absolutely be a priority. There's no need to panic. We don't have to hoard cans of spaghetti or go down into the basement. But we need to get going, because time is not on our side. In fact, if there's one positive thing that can come out of the Ebola epidemic, it's that it can serve as an early warning, a wake-up call, to get ready. If we start now, we can be ready for the next epidemic. Thank you.",
+    328.01,
     499.73
    ]
   ]
@@ -4075,36 +3976,21 @@ const TED_UNITS = [
     [
      "orig/ted-04-p1",
      0.0,
-     86.54
+     174.76
     ],
     [
      "orig/ted-04-p2",
-     86.54,
-     212.9
+     174.76,
+     377.04
     ],
     [
      "orig/ted-04-p3",
-     212.9,
-     312.97
-    ],
-    [
-     "orig/ted-04-p4",
-     312.97,
-     427.0
-    ],
-    [
-     "orig/ted-04-p5",
-     427.0,
+     377.04,
      507.38
     ],
     [
-     "orig/ted-04-p6",
+     "orig/ted-04-p4",
      507.38,
-     602.0
-    ],
-    [
-     "orig/ted-04-p7",
-     602.0,
      701.74
     ]
    ],
@@ -5155,44 +5041,26 @@ const TED_UNITS = [
   "full": [
    [
     4,
-    "There was a day, about 10 years ago, when I asked a friend to hold a baby dinosaur robot upside down. It was this toy called a Pleo that I had ordered, and I was really excited about it because I've always loved robots. And this one has really cool technical features. It had motors and touch sensors and it had an infrared camera. And one of the things it had was a tilt sensor, so it knew what direction it was facing. And when you held it upside down, it would start to cry. And I thought this was super cool, so I was showing it off to my friend, and I said, \"Oh, hold it up by the tail. See what it does.\" So we're watching the theatrics of this robot struggle and cry out. And after a few seconds, it starts to bother me a little, and I said, \"OK, that's enough now. Let's put him back down.\" And then I pet the robot to make it stop crying. And that was kind of a weird experience for me. For one thing, I wasn't the most maternal person at the time. Although since then I've become a mother, nine months ago, and I've learned that babies also squirm when you hold them upside down.",
+    "There was a day, about 10 years ago, when I asked a friend to hold a baby dinosaur robot upside down. It was this toy called a Pleo that I had ordered, and I was really excited about it because I've always loved robots. And this one has really cool technical features. It had motors and touch sensors and it had an infrared camera. And one of the things it had was a tilt sensor, so it knew what direction it was facing. And when you held it upside down, it would start to cry. And I thought this was super cool, so I was showing it off to my friend, and I said, \"Oh, hold it up by the tail. See what it does.\" So we're watching the theatrics of this robot struggle and cry out. And after a few seconds, it starts to bother me a little, and I said, \"OK, that's enough now. Let's put him back down.\" And then I pet the robot to make it stop crying. And that was kind of a weird experience for me. For one thing, I wasn't the most maternal person at the time. Although since then I've become a mother, nine months ago, and I've learned that babies also squirm when you hold them upside down. But my response to this robot was also interesting because I knew exactly how this machine worked, and yet I still felt compelled to be kind to it. And that observation sparked a curiosity that I've spent the past decade pursuing. Why did I comfort this robot? And one of the things I discovered was that my treatment of this machine was more than just an awkward moment in my living room, that in a world where we're increasingly integrating robots into our lives, an instinct like that might actually have consequences, because the first thing that I discovered is that it's not just me. In 2007, the Washington Post reported that the United States military was testing this robot that defused land mines. And the way it worked was it was shaped like a stick insect and it would walk around a minefield on its legs, and every time it stepped on a mine, one of the legs would blow up, and it would continue on the other legs to blow up more mines. And the colonel who was in charge of this testing exercise ends up calling it off, because, he says, it's too inhumane to watch this damaged robot drag itself along the minefield. Now, what would cause a hardened military officer and someone like myself to have this response to robots?",
     0.0,
-    85.61
+    175.08
    ],
    [
-    86,
-    "But my response to this robot was also interesting because I knew exactly how this machine worked, and yet I still felt compelled to be kind to it. And that observation sparked a curiosity that I've spent the past decade pursuing. Why did I comfort this robot? And one of the things I discovered was that my treatment of this machine was more than just an awkward moment in my living room, that in a world where we're increasingly integrating robots into our lives, an instinct like that might actually have consequences, because the first thing that I discovered is that it's not just me. In 2007, the Washington Post reported that the United States military was testing this robot that defused land mines. And the way it worked was it was shaped like a stick insect and it would walk around a minefield on its legs, and every time it stepped on a mine, one of the legs would blow up, and it would continue on the other legs to blow up more mines. And the colonel who was in charge of this testing exercise ends up calling it off, because, he says, it's too inhumane to watch this damaged robot drag itself along the minefield. Now, what would cause a hardened military officer and someone like myself to have this response to robots? Well, of course, we're primed by science fiction and pop culture to really want to personify these things, but it goes a little bit deeper than that. It turns out that we're biologically hardwired to project intent and life onto any movement in our physical space that seems autonomous to us. So people will treat all sorts of robots like they're alive. These bomb-disposal units get names. They get medals of honor. They've had funerals for them with gun salutes. And research shows that we do this even with very simple household robots, like the Roomba vacuum cleaner.",
-    86.54,
-    212.85
+    175,
+    "Well, of course, we're primed by science fiction and pop culture to really want to personify these things, but it goes a little bit deeper than that. It turns out that we're biologically hardwired to project intent and life onto any movement in our physical space that seems autonomous to us. So people will treat all sorts of robots like they're alive. These bomb-disposal units get names. They get medals of honor. They've had funerals for them with gun salutes. And research shows that we do this even with very simple household robots, like the Roomba vacuum cleaner. It's just a disc that roams around your floor to clean it, but just the fact it's moving around on its own will cause people to name the Roomba and feel bad for the Roomba when it gets stuck under the couch. And we can design robots specifically to evoke this response, using eyes and faces or movements that people automatically, subconsciously associate with states of mind. And there's an entire body of research called human-robot interaction that really shows how well this works. So for example, researchers at Stanford University found out that it makes people really uncomfortable when you ask them to touch a robot's private parts. So from this, but from many other studies, we know, we know that people respond to the cues given to them by these lifelike machines, even if they know that they're not real. Now, we're headed towards a world where robots are everywhere. Robotic technology is moving out from behind factory walls. It's entering workplaces, households. And as these machines that can sense and make autonomous decisions and learn enter into these shared spaces, I think that maybe the best analogy we have for this is our relationship with animals. Thousands of years ago, we started to domesticate animals, and we trained them for work and weaponry and companionship. And throughout history, we've treated some animals like tools or like products, and other animals, we've treated with kindness and we've given a place in society as our companions. I think it's plausible we might start to integrate robots in similar ways. And sure, animals are alive. Robots are not. And I can tell you, from working with roboticists, that we're pretty far away from developing robots that can feel anything. But we feel for them, and that matters, because if we're trying to integrate robots into these shared spaces, we need to understand that people will treat them differently than other devices, and that in some cases, for example, the case of a soldier who becomes emotionally attached to the robot that they work with, that can be anything from inefficient to dangerous. But in other cases, it can actually be useful to foster this emotional connection to robots. We're already seeing some great use cases, for example, robots working with autistic children to engage them in ways that we haven't seen previously, or robots working with teachers to engage kids in learning with new results. And it's not just for kids. Early studies show that robots can help doctors and patients in health care settings.",
+    174.76,
+    376.13
    ],
    [
-    213,
-    "It's just a disc that roams around your floor to clean it, but just the fact it's moving around on its own will cause people to name the Roomba and feel bad for the Roomba when it gets stuck under the couch. And we can design robots specifically to evoke this response, using eyes and faces or movements that people automatically, subconsciously associate with states of mind. And there's an entire body of research called human-robot interaction that really shows how well this works. So for example, researchers at Stanford University found out that it makes people really uncomfortable when you ask them to touch a robot's private parts. So from this, but from many other studies, we know, we know that people respond to the cues given to them by these lifelike machines, even if they know that they're not real. Now, we're headed towards a world where robots are everywhere. Robotic technology is moving out from behind factory walls. It's entering workplaces, households. And as these machines that can sense and make autonomous decisions and learn enter into these shared spaces, I think that maybe the best analogy we have for this is our relationship with animals. Thousands of years ago, we started to domesticate animals, and we trained them for work and weaponry and companionship. And throughout history, we've treated some animals like tools or like products, and other animals, we've treated with kindness and we've given a place in society as our companions. I think it's plausible we might start to integrate robots in similar ways.",
-    212.9,
-    313.63
-   ],
-   [
-    313,
-    "And sure, animals are alive. Robots are not. And I can tell you, from working with roboticists, that we're pretty far away from developing robots that can feel anything. But we feel for them, and that matters, because if we're trying to integrate robots into these shared spaces, we need to understand that people will treat them differently than other devices, and that in some cases, for example, the case of a soldier who becomes emotionally attached to the robot that they work with, that can be anything from inefficient to dangerous. But in other cases, it can actually be useful to foster this emotional connection to robots. We're already seeing some great use cases, for example, robots working with autistic children to engage them in ways that we haven't seen previously, or robots working with teachers to engage kids in learning with new results. And it's not just for kids. Early studies show that robots can help doctors and patients in health care settings. This is the PARO baby seal robot. It's used in nursing homes and with dementia patients. It's been around for a while. And I remember, years ago, being at a party and telling someone about this robot, and her response was, \"Oh my gosh. That's horrible. I can't believe we're giving people robots instead of human care.\" And this is a really common response, and I think it's absolutely correct, because that would be terrible. But in this case, it's not what this robot replaces. What this robot replaces is animal therapy in contexts where we can't use real animals but we can use robots, because people will consistently treat them more like an animal than a device.",
-    312.97,
-    426.58
-   ],
-   [
-    427,
-    "Acknowledging this emotional connection to robots can also help us anticipate challenges as these devices move into more intimate areas of people's lives. For example, is it OK if your child's teddy bear robot records private conversations? Is it OK if your sex robot has compelling in-app purchases? Because robots plus capitalism equals questions around consumer protection and privacy. And those aren't the only reasons that our behavior around these machines could matter. A few years after that first initial experience I had with this baby dinosaur robot, I did a workshop with my friend Hannes Gassert. And we took five of these baby dinosaur robots and we gave them to five teams of people. And we had them name them and play with them and interact with them for about an hour. And then we unveiled a hammer and a hatchet and we told them to torture and kill the robots. And this turned out to be a little more dramatic than we expected it to be, because none of the participants would even so much as strike these baby dinosaur robots, so we had to improvise a little, and at some point, we said, \"OK, you can save your team's robot if you destroy another team's robot.\"",
-    427.0,
+    377,
+    "This is the PARO baby seal robot. It's used in nursing homes and with dementia patients. It's been around for a while. And I remember, years ago, being at a party and telling someone about this robot, and her response was, \"Oh my gosh. That's horrible. I can't believe we're giving people robots instead of human care.\" And this is a really common response, and I think it's absolutely correct, because that would be terrible. But in this case, it's not what this robot replaces. What this robot replaces is animal therapy in contexts where we can't use real animals but we can use robots, because people will consistently treat them more like an animal than a device. Acknowledging this emotional connection to robots can also help us anticipate challenges as these devices move into more intimate areas of people's lives. For example, is it OK if your child's teddy bear robot records private conversations? Is it OK if your sex robot has compelling in-app purchases? Because robots plus capitalism equals questions around consumer protection and privacy. And those aren't the only reasons that our behavior around these machines could matter. A few years after that first initial experience I had with this baby dinosaur robot, I did a workshop with my friend Hannes Gassert. And we took five of these baby dinosaur robots and we gave them to five teams of people. And we had them name them and play with them and interact with them for about an hour. And then we unveiled a hammer and a hatchet and we told them to torture and kill the robots. And this turned out to be a little more dramatic than we expected it to be, because none of the participants would even so much as strike these baby dinosaur robots, so we had to improvise a little, and at some point, we said, \"OK, you can save your team's robot if you destroy another team's robot.\"",
+    377.04,
     507.73
    ],
    [
     508,
-    "And even that didn't work. They couldn't do it. So finally, we said, \"We're going to destroy all of the robots unless someone takes a hatchet to one of them.\" And this guy stood up, and he took the hatchet, and the whole room winced as he brought the hatchet down on the robot's neck, and there was this half-joking, half-serious moment of silence in the room for this fallen robot. So that was a really interesting experience. Now, it wasn't a controlled study, obviously, but it did lead to some later research that I did at MIT with Palash Nandy and Cynthia Breazeal, where we had people come into the lab and smash these HEXBUGs that move around in a really lifelike way, like insects. So instead of choosing something cute that people are drawn to, we chose something more basic, and what we found was that high-empathy people would hesitate more to hit the HEXBUGS. Now this is just a little study, but it's part of a larger body of research that is starting to indicate that there may be a connection between people's tendencies for empathy and their behavior around robots. But my question for the coming era of human-robot interaction is not: \"Do we empathize with robots?\" It's: \"Can robots change people's empathy?\" Is there reason to, for example, prevent your child from kicking a robotic dog, not just out of respect for property, but because the child might be more likely to kick a real dog?",
+    "And even that didn't work. They couldn't do it. So finally, we said, \"We're going to destroy all of the robots unless someone takes a hatchet to one of them.\" And this guy stood up, and he took the hatchet, and the whole room winced as he brought the hatchet down on the robot's neck, and there was this half-joking, half-serious moment of silence in the room for this fallen robot. So that was a really interesting experience. Now, it wasn't a controlled study, obviously, but it did lead to some later research that I did at MIT with Palash Nandy and Cynthia Breazeal, where we had people come into the lab and smash these HEXBUGs that move around in a really lifelike way, like insects. So instead of choosing something cute that people are drawn to, we chose something more basic, and what we found was that high-empathy people would hesitate more to hit the HEXBUGS. Now this is just a little study, but it's part of a larger body of research that is starting to indicate that there may be a connection between people's tendencies for empathy and their behavior around robots. But my question for the coming era of human-robot interaction is not: \"Do we empathize with robots?\" It's: \"Can robots change people's empathy?\" Is there reason to, for example, prevent your child from kicking a robotic dog, not just out of respect for property, but because the child might be more likely to kick a real dog? And again, it's not just kids. This is the violent video games question, but it's on a completely new level because of this visceral physicality that we respond more intensely to than to images on a screen. When we behave violently towards robots, specifically robots that are designed to mimic life, is that a healthy outlet for violent behavior or is that training our cruelty muscles? We don't know ... But the answer to this question has the potential to impact human behavior, it has the potential to impact social norms, it has the potential to inspire rules around what we can and can't do with certain robots, similar to our animal cruelty laws. Because even if robots can't feel, our behavior towards them might matter for us. And regardless of whether we end up changing our rules, robots might be able to help us come to a new understanding of ourselves. Most of what I've learned over the past 10 years has not been about technology at all. It's been about human psychology and empathy and how we relate to others. Because when a child is kind to a Roomba, when a soldier tries to save a robot on the battlefield, or when a group of people refuses to harm a robotic baby dinosaur, those robots aren't just motors and gears and algorithms. They're reflections of our own humanity. Thank you.",
     507.38,
-    600.59
-   ],
-   [
-    602,
-    "And again, it's not just kids. This is the violent video games question, but it's on a completely new level because of this visceral physicality that we respond more intensely to than to images on a screen. When we behave violently towards robots, specifically robots that are designed to mimic life, is that a healthy outlet for violent behavior or is that training our cruelty muscles? We don't know ... But the answer to this question has the potential to impact human behavior, it has the potential to impact social norms, it has the potential to inspire rules around what we can and can't do with certain robots, similar to our animal cruelty laws. Because even if robots can't feel, our behavior towards them might matter for us. And regardless of whether we end up changing our rules, robots might be able to help us come to a new understanding of ourselves. Most of what I've learned over the past 10 years has not been about technology at all. It's been about human psychology and empathy and how we relate to others. Because when a child is kind to a Roomba, when a soldier tries to save a robot on the battlefield, or when a group of people refuses to harm a robotic baby dinosaur, those robots aren't just motors and gears and algorithms. They're reflections of our own humanity. Thank you.",
-    602.0,
     701.74
    ]
   ]

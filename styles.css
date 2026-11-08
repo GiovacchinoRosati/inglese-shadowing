@@ -134,3 +134,10 @@ button.on-ok{outline:2px solid var(--ok)}
 @keyframes pulse{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--bad) 18%,transparent)}}
 .micbadge{font-size:12px;font-weight:600;color:#fff;background:var(--bad);border-radius:10px;padding:2px 8px}
 @media (prefers-reduced-motion: reduce){ .turn.speak{animation:none} }
+.steps li.stepdone{color:var(--muted)}
+.steps li.stepnow{font-weight:600}
+.czs{font-family:var(--f-text);font-size:18px;line-height:2.1;margin:0}
+.czin{font:inherit;font-size:16px;border:none;border-bottom:2px solid var(--link);background:var(--bg);color:var(--ink);padding:0 4px;margin:0 2px;border-radius:4px 4px 0 0}
+.czin.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--bg))}
+.czin.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg));text-decoration:line-through}
+.czfix{color:var(--ok);font-weight:600}
