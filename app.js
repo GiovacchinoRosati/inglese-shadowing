@@ -629,7 +629,7 @@ function render(){
   const sy=document.getElementById("sync"); if(sy) sy.textContent=SYNC.status;
   document.querySelectorAll("#nav a").forEach(a=>a.classList.toggle("on", a.dataset.v===v || (v==="unit"||v==="learn") && a.dataset.v==="path"));
   const n=dueIds().length; $("#due-badge").textContent = n||"";
-  const views={ first:vFirst, cloze:vCloze, cum:vCum, full:vFull, stats:vStats, home:vHome, path:vPath, unit:vUnit, learn:vLearnStart, review:vReviewStart, yt:vYT, settings:vSettings };
+  const views={ gram:vGram, first:vFirst, cloze:vCloze, cum:vCum, full:vFull, stats:vStats, home:vHome, path:vPath, unit:vUnit, learn:vLearnStart, review:vReviewStart, yt:vYT, settings:vSettings };
   (views[v]||vHome)(arg);
   window.scrollTo(0,0);
 }
@@ -762,14 +762,15 @@ function vTedUnit(u){
   if(st.done) today=`<div class="card daily"><b>Discorso completato.</b> <p class="small muted" style="margin:.3em 0 .6em">Riascoltalo intero ogni tanto: è il miglior test di comprensione.</p><a class="btn pri" href="#" data-act="go" data-to="cum/${u.id}">🎧 Ascolta tutto il discorso</a></div>`;
   else if(st.waiting) today=`<div class="card daily"><b>Oggi hai completato il pezzo ${st.p.b}.</b> Il pezzo ${st.p.b+1} si apre domani.
       <div class="row" style="margin-top:8px"><a class="btn" href="#" data-act="go" data-to="cum/${u.id}">🎧 Riascolta dall'inizio</a><button class="mini" data-act="tedforce" data-u="${u.id}">Vai avanti oggi</button></div></div>`;
-  else { const f=(S.full[u.id]||{})[k]||{}, s1=f.r0!=null, s3=f.cloze!=null, next = !s1?1 : !studied?2 : !s3?3 : 4;
+  else { const f=(S.full[u.id]||{})[k]||{}, s1=f.r0!=null, sg=f.gram!=null, s3=f.cloze!=null, next = !s1?1 : !studied?2 : !sg?3 : !s3?4 : 5;
     const step=(n,done,html)=>`<li class="${done?"stepdone":n===next?"stepnow":""}">${done?"✓ ":""}${html}</li>`;
     today=`<div class="card daily"><div class="tag">Oggi</div><b>Pezzo ${k+1} di ${st.N}</b> <span class="small muted">(${clock(u.full[k][2])}–${clock(u.full[k][3])}, ${Math.round((u.full[k][3]-u.full[k][2])/60*10)/10} min)</span>
       <ol class="steps">
       ${step(1,s1,`<a class="btn ${next===1?"pri":""}" href="#" data-act="go" data-to="first/${u.id}">🎧 Primo ascolto del pezzo nuovo, senza testo</a>${s1?` <span class="small muted">capito: ${["poco","metà","quasi tutto"][f.r0]}</span>`:""}`)}
       ${step(2,studied,ids.length?`<a class="btn ${next===2?"pri":""}" href="#" data-act="go" data-to="learn/${u.id}@${k}">🔁 Shadowing delle ${ids.length} frasi del pezzo, in ordine</a>`:`Nessuna frase in questo pezzo.`)}
-      ${step(3,s3,`<a class="btn ${next===3?"pri":""}" href="#" data-act="go" data-to="cloze/${u.id}">✍ Comprensione: completa le parole che senti</a>${s3?` <span class="small muted">${f.cloze}%</span>`:""}`)}
-      ${step(4,false,`<a class="btn ${next===4?"pri":""}" href="#" data-act="cumgo" data-u="${u.id}">🎧 Riascolta tutto dall'inizio fino a ${clock(u.full[k][3])}</a>`)}
+      ${step(3,sg,`<a class="btn ${next===3?"pri":""}" href="#" data-act="go" data-to="gram/${u.id}">📘 Grammatica del pezzo: le strutture che usa</a>${sg?` <span class="small muted">${f.gram}%</span>`:""}`)}
+      ${step(4,s3,`<a class="btn ${next===4?"pri":""}" href="#" data-act="go" data-to="cloze/${u.id}">✍ Comprensione: completa le parole che senti</a>${s3?` <span class="small muted">${f.cloze}%</span>`:""}`)}
+      ${step(5,false,`<a class="btn ${next===5?"pri":""}" href="#" data-act="cumgo" data-u="${u.id}">🎧 Riascolta tutto dall'inizio fino a ${clock(u.full[k][3])}</a>`)}
       </ol>
       <p class="small muted" style="margin:0">Primo ascolto per capire quanto capisci oggi, poi lavoro sulle frasi, poi il riascolto: alla fine vedi la differenza.</p></div>`; }
   $("#app").innerHTML=`
@@ -953,6 +954,67 @@ function vFull(uid){
   if(HAS_YT && u.full) ensurePlayer().then(p=>p.cueVideoById({ videoId:src.yt, startSeconds:0 })).catch(()=>{});
 }
 
+/* ----- Grammatica del pezzo: strutture riconosciute nelle frasi ascoltate, spiegate con le unità del corso ----- */
+const PART="(?:\\w+ed|been|done|gone|seen|made|taken|given|known|grown|built|shown|become|come|had|got|gotten|found|taught|brought|thought|learnt|spent|left|written|run|begun|said|told|put|set|held|kept|led|felt|meant|met|sent|understood)";
+const GRAM=[
+ { k:"ppc", unit:"b1-04", name:"Present perfect continuous", re:new RegExp("\\b(?:have|has)\\s+been\\s+\\w+ing\\b|\\b\\w+'ve\\s+been\\s+\\w+ing\\b","i") },
+ { k:"pp", unit:"b1-03", name:"Present perfect", re:new RegExp("\\b(?:have|has|\\w+'ve)\\s+(?:(?:never|already|just|ever|always|also|not|actually|now)\\s+)?"+PART+"\\b","i") },
+ { k:"pastperf", unit:"b2-01", name:"Past perfect", re:new RegExp("\\bhad\\s+(?:(?:never|already|just|not)\\s+)?"+PART+"\\b","i") },
+ { k:"passive", unit:"b1-11", name:"Passivo", re:new RegExp("\\b(?:is|are|was|were|be|been|being)\\s+(?:(?:not|also|now|being)\\s+)?(?:\\w+ed|built|made|done|taken|given|shown|known|seen|driven|written|found|called|used|designed|powered|controlled|led)\\b(?!\\s+to\\b)","i") },
+ { k:"going", unit:"b1-05", name:"Futuro con going to", re:/\b(?:am|is|are|'m|'re|'s)\s+going\s+to\s+\w+/i },
+ { k:"will", unit:"b1-05", name:"Futuro con will", re:/\b(?:will|won't|\w+'ll)\s+(?:not\s+)?(?:be\s+)?\w+/i },
+ { k:"cond2", unit:"b1-07", name:"Condizionale (would)", re:/\b(?:would|\w+'d)\s+(?:not\s+)?(?:have\s+)?\w+/i },
+ { k:"if1", unit:"b1-06", name:"Frasi con if", re:/\bif\b[^,.;]+/i },
+ { k:"modal", unit:"b1-09", name:"Modali (can, could, might, may, must, should)", re:/\b(?:can|can't|cannot|could|might|may|must|should)\s+(?:not\s+)?(?:have\s+\w+|be\s+\w+|\w+)/i },
+ { k:"pastcont", unit:"b1-02", name:"Past continuous", re:/\b(?:was|were)\s+\w+ing\b/i },
+ { k:"prescont", unit:"b1-01", name:"Present continuous", re:/\b(?:am|is|are|'m|'re)\s+(?!going\b)\w{3,}ing\b/i },
+ { k:"rel", unit:"b1-14", name:"Frasi relative (who, which, whose, where)", re:/\b(?:who|which|whose)\s+\w+(?:\s+\w+)?/i },
+ { k:"comp", unit:"b1-10", name:"Comparativi e superlativi", re:/\b(?:\w+er|more\s+\w+|less\s+\w+)\s+than\b|\bthe\s+(?:most|least)\s+\w+|\bthe\s+\w+est\b/i },
+ { k:"usedto", unit:"b1-12", name:"Used to", re:/\bused\s+to\s+\w+/i },
+ { k:"ger", unit:"b1-13", name:"Gerundio dopo verbi e preposizioni", re:/\b(?:enjoy|avoid|finish|keep|keeps|kept|mind|start|started|stop|stopped|about|of|for|by|without|before|after)\s+\w{3,}ing\b/i }
+];
+function grammarOf(u,k){
+  const ids=blockIds(u,k), found={};
+  for(const id of ids){ const en=SENT[id].en; const taken=[];
+    for(const g of GRAM){ const m=en.match(g.re); if(!m) continue;
+      const a=m.index, z=a+m[0].length; if(taken.some(([x,y])=>a<y && z>x)) continue;
+      const mw=m[0].toLowerCase().split(/\s+/), last=mw[mw.length-1].replace(/[^a-z]/g,""), first=mw[0].replace(/[^a-z']/g,"");
+      if(g.k==="prescont" && /^(?:something|nothing|anything|everything|thing|during|bring|king|ring|sing|string|morning|evening|ceiling|spring|wing|swing)$/.test(last)) continue;
+      if((g.k==="pp" || g.k==="pastperf") && /\bto\s*$/i.test(en.slice(0,a))) continue;
+      if(g.k==="comp" && /^(?:other|rather|whether|either|neither|never|ever|over|under|after|together|however|matter|number|consider|order|later|water|paper|computer|power|answer|corner|center|enter|offer|cover|remember|member|letter|wonder|danger|finger|tower|matter|whatever|whenever|wherever|super|user|player|laser)$/.test(first)) continue;
+      taken.push([a,z]);
+      (found[g.k]||(found[g.k]={ g, ex:[] })).ex.push({ id, a, z }); } }
+  return Object.values(found).sort((x,y)=>y.ex.length-x.ex.length);
+}
+function vGram(uid){
+  const u=UNITS[unitIdx(uid)]; if(!u || !u.full){ go("path"); return; }
+  const k=tedState(u).k, gs=grammarOf(u,k), items=[];
+  const html=gs.map(({g,ex})=>{ const gu=UNITS[unitIdx(g.unit)];
+    const exs=ex.slice(0,3).map(e=>{ const n=items.length; items.push(e); const en=SENT[e.id].en;
+      return `<div class="gx"><button class="mini" data-act="gplay" data-n="${n}">▶</button> <span class="czs">${esc(en.slice(0,e.a))}<input class="czin gin" data-n="${n}" size="${Math.max(6,e.z-e.a)}" autocomplete="off" autocapitalize="off" spellcheck="false">${esc(en.slice(e.z))}</span></div>`; }).join("");
+    return `<div class="card"><div class="row" style="justify-content:space-between"><b>${esc(g.name)}</b><span class="small muted">${ex.length} nel pezzo</span></div>
+      ${gu?`<dl class="rules small" style="margin:8px 0"><dt>Forma</dt><dd>${esc(gu.f)}</dd><dt>Uso</dt><dd>${esc(gu.u)}</dd><dt>Trappola</dt><dd>${esc(gu.t)}</dd></dl>`:""}
+      ${exs}${gu?`<p class="small" style="margin:6px 0 0"><a href="#" data-act="go" data-to="unit/${gu.id}">Unità completa: ${esc(gu.title)}</a></p>`:""}</div>`; }).join("");
+  CUM={ u, k, gram:items };
+  $("#app").innerHTML=`
+  <p class="small"><a href="#" data-act="go" data-to="unit/${u.id}">← ${esc(u.title.split(" · ")[0])}</a></p>
+  <h1>Grammatica del pezzo ${k+1}</h1>
+  <p class="muted">Le strutture che ${esc(u.title.split(" · ")[0])} usa davvero in questo pezzo, dalla più frequente. Ascolta la frase originale e scrivi la parte mancante: è la struttura grammaticale.</p>
+  ${html || `<p class="muted">Nessuna struttura riconosciuta in questo pezzo.</p>`}
+  ${items.length?`<div class="row"><button class="pri" data-act="gcheck">Correggi</button></div><div id="gout"></div>`:""}`;
+  prefetchOrig(u, u.full[k][2], u.full[k][3]);
+}
+function gramCheck(){
+  const { u, k, gram }=CUM; let ok=0;
+  const norm2=v=>v.toLowerCase().replace(/[’]/g,"'").replace(/[^a-z' ]/g," ").replace(/\s+/g," ").trim();
+  gram.forEach((e,n)=>{ const inp=document.querySelector(`.gin[data-n="${n}"]`), want=SENT[e.id].en.slice(e.a,e.z);
+    const good = norm2(inp.value)===norm2(want) || (norm2(want).length>=8 && lev(norm2(inp.value),norm2(want))<=1);
+    if(good) ok++; inp.classList.toggle("ok",good); inp.classList.toggle("bad",!good);
+    if(!good && !inp.disabled){ inp.insertAdjacentHTML("afterend",` <span class="czfix">${esc(want)}</span>`); inp.disabled=true; } });
+  const pct=gram.length?Math.round(ok/gram.length*100):0, f=fullOf(u.id); f[k]=Object.assign(f[k]||{}, { gram:pct }); markActivity(); save();
+  $("#gout").innerHTML=`<div class="card"><b>${pct}%</b> (${ok} su ${gram.length}). <div class="row" style="margin-top:8px"><a class="btn pri" href="#" data-act="go" data-to="cloze/${u.id}">✍ Avanti: comprensione</a></div></div>`;
+}
+
 /* ----- Sessione di apprendimento ----- */
 function vLearnStart(arg){
   if(!arg && L && L.drill){ renderLearn(); return; }
@@ -1048,8 +1110,8 @@ function learnDone(){
   if(L.drill){ L=null; $("#app").innerHTML=`<div class="card"><h1>Allenamento completato</h1><p>I risultati dei dettati aggiornano le tue difficoltà.</p><div class="row"><a class="btn pri" href="#" data-act="go" data-to="stats">Difficoltà</a><a class="btn" href="#" data-act="go" data-to="home">Oggi</a></div></div>`; return; }
   if(u && L.block!=null){
     $("#app").innerHTML=`<div class="card"><h1>Frasi del pezzo ${L.block+1} studiate</h1>
-      <p>Ora l'esercizio di comprensione, poi il riascolto dall'inizio.</p>
-      <div class="row"><a class="btn pri" href="#" data-act="go" data-to="cloze/${u.id}">✍ Comprensione</a><a class="btn" href="#" data-act="cumgo" data-u="${u.id}">🎧 Riascolta dall'inizio</a></div></div>`;
+      <p>Ora la grammatica del pezzo, la comprensione e il riascolto dall'inizio.</p>
+      <div class="row"><a class="btn pri" href="#" data-act="go" data-to="gram/${u.id}">📘 Grammatica del pezzo</a><a class="btn" href="#" data-act="cumgo" data-u="${u.id}">🎧 Riascolta dall'inizio</a></div></div>`;
     $("#due-badge").textContent=dueIds().length||""; return;
   }
   if(u && (u.track==="ted"||u.track==="tech")){
@@ -1273,6 +1335,8 @@ const ACTS={
   czplay:b=>{ const it=CUM.cloze[+b.dataset.n], x=SENT[it.id]; stopAll(); playTimeline(CUM.u, x.x.ot, x.x.oe, runId); },
   czslow:b=>{ const it=CUM.cloze[+b.dataset.n], x=SENT[it.id]; stopAll(); say(x.id, x.en, 0.7, true); },
   czcheck:()=>clozeCheck(),
+  gcheck:()=>gramCheck(),
+  gplay:b=>{ const e=CUM.gram[+b.dataset.n], x=SENT[e.id]; stopAll(); playTimeline(CUM.u, x.x.ot, x.x.oe, runId); },
   cumgo:b=>{ go("cum/"+b.dataset.u); if(CUM) cumPlay(CUM.u.full[0][2]); },
   cumresume:()=>{ if(!CUM) return; const a0=CUM.a0 ?? CUM.u.full[0][2]; cumPlay(CUM.pos>a0+1 ? Math.max(a0,CUM.pos-2) : a0); },
   cumtx:b=>{ const x=$("#cum-tx"); x.hidden=!x.hidden; b.textContent=x.hidden?"📄 Mostra la trascrizione":"📄 Nascondi la trascrizione"; if(!x.hidden && CUM){ const f=fullOf(CUM.u.id); f["peek"+CUM.k]=true; } },
