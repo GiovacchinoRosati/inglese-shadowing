@@ -5,7 +5,7 @@ const HAS_MIC = HOST!=="artifact" && !!(navigator.mediaDevices && window.MediaRe
 const HAS_YT = false; // niente YouTube: pubblicità e minuti non sincronizzabili. Audio originale solo da TED (file ufficiali).
 /* ---------------- Stato e persistenza ---------------- */
 const LS_KEY = "shadowing-en-v1";
-const DEFAULTS = { cards:{}, yt:[], days:{}, dict:{}, comp:{}, miss:{}, ev:{}, full:{}, prog:{}, voice:{},
+const DEFAULTS = { cards:{}, yt:[], days:{}, dict:{}, comp:{}, miss:{}, ev:{}, full:{}, prog:{}, voice:{}, vhist:{},
   settings:{ voice:"", neural:true, original:true, judge:true, rate:0.9, reps:3, gap:1.3, blindLast:true, unlockAll:false, remindTime:"19:00" } };
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
 function load(){
@@ -391,6 +391,7 @@ async function shadowLoop(it){
 let micStream=null, srBroken=false;
 const judgeOn = () => HAS_MIC && S.settings.judge;
 let micP=null;
+let micErrorText="";
 function micError(e){
   const n=e && e.name;
   if(n==="NotAllowedError" || n==="SecurityError") return "Permesso del microfono negato. Su iPhone: tocca «aA» nella barra di Safari → Impostazioni sito web → Microfono: Consenti, poi ricarica la pagina.";
@@ -410,24 +411,50 @@ function mic(){
   return micP;
 }
 function releaseMic(){ if(micStream){ micStream.getTracks().forEach(t=>t.stop()); micStream=null; audioSession("playback"); } micBadge(); }
+/* Contesto audio dedicato alla misura del microfono. Su iPhone va creato e avviato dentro il tocco
+   (altrimenti resta sospeso e misura solo silenzio) e separato da quello che riproduce l'audio. */
+let capCtx=null, zeroRuns=0;
+function captureCtx(fresh){
+  const C=window.AudioContext||window.webkitAudioContext; if(!C) return null;
+  if(fresh && capCtx){ try{ capCtx.close(); }catch(e){} capCtx=null; }
+  if(!capCtx || capCtx.state==="closed") capCtx=new C();
+  if(capCtx.state==="suspended") capCtx.resume().catch(()=>{});
+  return capCtx;
+}
 async function startCapture(){
-  let stream; try{ stream=await mic(); }catch(e){ setPhase(micError(e)); toast("Voto della voce sospeso: "+micError(e)); return null; }
-  const c=audioCtx(); const srcN=c.createMediaStreamSource(stream), an=c.createAnalyser(); an.fftSize=1024; srcN.connect(an);
+  let stream; try{ stream=await mic(); }catch(e){ micErrorText=micError(e); setPhase(micErrorText); showVoteNote("Voto sospeso: "+micErrorText); return null; }
+  const c=captureCtx(); if(c.state==="suspended"){ try{ await c.resume(); }catch(e){} }
+  const srcN=c.createMediaStreamSource(stream), an=c.createAnalyser(); an.fftSize=1024; srcN.connect(an);
   const buf=new Float32Array(an.fftSize), env=[];
-  const h=setInterval(()=>{ an.getFloatTimeDomainData(buf); let s2=0; for(const v of buf) s2+=v*v; const rms=Math.sqrt(s2/buf.length); env.push(rms); setLevel(rms); },40);
-  let words=null, r=null;
+  const h=setInterval(()=>{ an.getFloatTimeDomainData(buf); let s2=0; for(const v of buf) s2+=v*v; const rms=Math.sqrt(s2/buf.length); env.push(rms); setLevel(rms*3); },40);
+  let words=null, r=null, srErr=null;
   if(SR && !srBroken){
     try{ r=new SR(); r.lang="en-US"; r.continuous=true; r.interimResults=false; r.maxAlternatives=3;
       const got=[]; r.onresult=e=>{ for(let i=e.resultIndex;i<e.results.length;i++) got.push([...e.results[i]].map(a=>a.transcript)); words=got; };
-      r.onerror=e=>{ if(e.error==="not-allowed"||e.error==="service-not-allowed"||e.error==="audio-capture") srBroken=true; };
+      r.onerror=e=>{ srErr=e.error; if(e.error==="not-allowed"||e.error==="service-not-allowed"||e.error==="audio-capture") srBroken=true; };
       r.start(); }catch(e){ srBroken=true; r=null; }
   }
   return { stop: async()=>{
     clearInterval(h); setLevel(0); try{ srcN.disconnect(); }catch(e){}
     if(r){ try{ r.stop(); }catch(e){} await sleep(900); }
     const said = words ? words.map(alts=>alts[0]).join(" ") : null;
-    return { env, said, alts: words };
+    const mx = env.length ? Math.max(...env) : 0;
+    // Misuratore muto (contesto sospeso o microfono preso dal riconoscimento vocale): al giro dopo si ricrea il contesto
+    // e, se succede di nuovo con il riconoscimento attivo e senza parole, lo si spegne per lasciare il microfono al misuratore.
+    if(mx===0){ zeroRuns++; captureCtx(true); if(zeroRuns>=2 && r && !words) srBroken=true; } else zeroRuns=0;
+    return { env, said, alts: words, dead: mx===0, srErr };
   } };
+}
+function showVoteNote(t){ const box=$("#votes"); if(box) box.insertAdjacentHTML("beforeend", `<div class="vote small muted">${esc(t)}</div>`); }
+/* Prova del microfono (Impostazioni): 4 secondi, mostra livello e parole riconosciute. */
+async function micTest(){
+  const out=$("#mictest-out"); if(!out) return;
+  captureCtx(); out.innerHTML="Parla in inglese per 4 secondi: «I am testing the microphone»…";
+  const cap=await startCapture(); if(!cap){ out.innerHTML=`<b>Microfono non disponibile.</b> ${esc(micErrorText||"")}`; return; }
+  await sleep(4000); const res=await cap.stop(); releaseMic();
+  const mx=res.env.length?Math.max(...res.env):0;
+  out.innerHTML=`<p style="margin:.3em 0">Livello massimo: <b>${(mx*1000).toFixed(0)}</b> ${mx===0?"— il misuratore non riceve audio (riprova: la seconda prova ricrea il collegamento).":mx<0.004?"— molto basso: parla più vicino al telefono.":"— ok."}</p>
+    <p style="margin:.3em 0">Riconoscimento parole: ${res.said?`“${esc(res.said)}”`:SR?(srBroken?"spento su questo telefono (toglieva il microfono al misuratore): il voto userà solo il ritmo.":`nessuna parola${res.srErr?` (${esc(res.srErr)})`:""}.`):"non disponibile in questo browser: il voto userà solo il ritmo."}</p>`;
 }
 function refEnvelope(ref){
   if(!ref) return null;
@@ -452,7 +479,14 @@ function dtw(a,b){
 }
 function scoreVoice(it, res, ref, refDur){
   const me=trimNorm(res.env), mxRaw=res.env.length?Math.max(...res.env):0;
-  if(mxRaw<0.01 || me.length<5) return { silent:true };
+  const sorted=[...res.env].sort((a,b)=>a-b), floor=sorted.length?sorted[Math.floor(sorted.length*0.2)]:0;
+  const heard = !res.dead && mxRaw>0.004 && mxRaw>floor*3 && me.length>=5;
+  if(!heard){
+    // Il misuratore non ha sentito nulla ma il riconoscimento sì: voto solo sulle parole.
+    if(res.alts && res.alts.length){ const cands=[res.said, ...res.alts.flat()].filter(Boolean).map(t=>matchWords(it.en,t)), best=cands.reduce((a,b)=>b.score>a.score?b:a);
+      const w=Math.round(100*best.score); return { vote:w, words:w, rhythm:null, said:res.said, missed:best.words.filter((x,i)=>!best.ok.has(i)), okIdx:[...best.ok], wl:best.words, ratio:null, shape:null }; }
+    return { silent:true, dead:res.dead };
+  }
   const myDur=me.length*0.04, ro=trimNorm(refEnvelope(ref));
   const target = ro.length ? ro.length*0.04 : refDur*0.9;
   const durScore=Math.round(100*Math.exp(-Math.abs(Math.log(myDur/target))*2.5));
@@ -471,7 +505,8 @@ function scoreVoice(it, res, ref, refDur){
 /* Cosa correggere, in italiano, a partire dai numeri della ripetizione. */
 function voiceTips(v){
   const t=[];
-  if(v.ratio>1.3) t.push(`Troppo lento (${Math.round(v.ratio*100)}% della durata originale): lega le parole e non fermarti tra una e l'altra.`);
+  if(v.ratio==null){}
+  else if(v.ratio>1.3) t.push(`Troppo lento (${Math.round(v.ratio*100)}% della durata originale): lega le parole e non fermarti tra una e l'altra.`);
   else if(v.ratio>1.12) t.push("Un po' più lento dell'originale: accorcia le parole brevi (to, of, and) come fa l'oratore.");
   else if(v.ratio<0.75) t.push(`Troppo veloce o hai saltato un pezzo (${Math.round(v.ratio*100)}% della durata): ripeti la frase intera.`);
   else if(v.ratio<0.88) t.push("Un po' più veloce dell'originale: rispetta le pause dell'oratore.");
@@ -487,17 +522,20 @@ function voiceTips(v){
 }
 function showVote(it, rep, v, tag){
   const box=$("#votes"); if(!box) return;
-  if(v.silent){ box.insertAdjacentHTML("beforeend", `<div class="vote small muted">Giro ${rep}: non ti ho sentito. Parla più forte o più vicino al telefono, subito dopo il bip.</div>`); return; }
+  if(v.silent){ box.insertAdjacentHTML("beforeend", `<div class="vote small muted">Giro ${rep}: ${v.dead?"il microfono non ha dato segnale (problema tecnico, non tuo): riprovo al giro successivo. Se si ripete, usa «Prova il microfono» in Impostazioni.":"non ti ho sentito. Parla più forte o più vicino al telefono, subito dopo il bip."}</div>`); return; }
   const cls=v.vote>=80?"ok":v.vote>=60?"mid":"low";
   const ok=new Set(v.okIdx||[]);
   const colored = v.wl ? `<p class="words vw">${v.wl.map((w,i)=>`<span class="${ok.has(i)?"ok":"miss"}">${esc(w)}</span>`).join(" ")}</p>` : "";
   const tips=voiceTips(v);
-  box.insertAdjacentHTML("beforeend", `<div class="vote"><b class="${cls}">${v.vote}</b><span class="small">Giro ${rep}${tag?` (${tag})`:""} · ${v.words!=null?`parole ${v.words}% · `:""}ritmo ${v.rhythm}%</span>
+  box.insertAdjacentHTML("beforeend", `<div class="vote"><b class="${cls}">${v.vote}</b><span class="small">Giro ${rep}${tag?` (${tag})`:""} · ${v.words!=null?`parole ${v.words}%`:""}${v.words!=null&&v.rhythm!=null?" · ":""}${v.rhythm!=null?`ritmo ${v.rhythm}%`:""}</span>
     ${colored}${v.wl?`<div class="small muted">Verde: detta bene · rosso: non riconosciuta.</div>`:`<div class="small muted">Su questo telefono il riconoscimento delle parole non è disponibile: il voto misura solo durata, pause e accenti.</div>`}
     ${tips.length?`<ul class="tips small">${tips.map(x=>`<li>${x}</li>`).join("")}</ul>`:""}
     ${v.said?`<div class="small muted">Ho capito: “${esc(v.said)}”</div>`:""}</div>`);
   const r=S.voice[it.id]||(S.voice[it.id]={ n:0, best:0 });
+  if(r.first==null) r.first=v.vote;
   r.n++; r.last=v.vote; r.best=Math.max(r.best,v.vote); r.words=v.words; r.rhythm=v.rhythm; r.ratio=v.ratio; r.at=Date.now();
+  const hd=(S.vhist||(S.vhist={}))[dayKey()]||(S.vhist[dayKey()]={ n:0, sum:0, wn:0, w:0, rn:0, r:0, best:0 });
+  hd.n++; hd.sum+=v.vote; hd.best=Math.max(hd.best,v.vote); if(v.words!=null){ hd.wn++; hd.w+=v.words; } if(v.rhythm!=null){ hd.rn++; hd.r+=v.rhythm; }
   markActivity(); save();
 }
 
@@ -623,12 +661,28 @@ function aggregates(){
     .sort((a,b)=>((S.dict[a]||{}).score??100)-((S.dict[b]||{}).score??100));
   return { units, topMissed, hardIds };
 }
+/* Andamento del voto della voce, giorno per giorno. */
+function voiceTrend(){
+  const days=Object.entries(S.vhist||{}).filter(([,d])=>d.n>0).sort((a,b)=>a[0]<b[0]?-1:1)
+    .map(([k,d])=>({ day:k, n:d.n, avg:Math.round(d.sum/d.n), words:d.wn?Math.round(d.w/d.wn):null, rhythm:d.rn?Math.round(d.r/d.rn):null, best:d.best }));
+  const avgOf=a=>{ const n=a.reduce((x,d)=>x+d.n,0); return n?Math.round(a.reduce((x,d)=>x+d.avg*d.n,0)/n):null; };
+  const k=Math.min(3,Math.floor(days.length/2)), first=k?avgOf(days.slice(0,k)):null, last=avgOf(days.slice(-(k||1)));
+  return { days, first, last, delta: days.length>=4 && first!=null && last!=null ? last-first : null };
+}
+function voiceTrendHTML(){
+  const t=voiceTrend(); if(!t.days.length) return "";
+  const show=t.days.slice(-14), w=Math.max(8, Math.floor(280/show.length));
+  const bars=show.map(d=>`<div class="vbar" title="${d.day}: ${d.avg} (${d.n} ripetizioni)"><i style="height:${Math.max(4,d.avg)}%" class="${d.avg>=80?"ok":d.avg>=60?"mid":"low"}"></i><span>${d.avg}</span><small>${d.day.slice(8)}/${d.day.slice(5,7)}</small></div>`).join("");
+  return `<div class="card"><div class="tag">Voto della voce nel tempo</div>
+    <div class="vbars">${bars}</div>
+    <p class="small" style="margin:.5em 0 0">${t.delta!=null?`Primi giorni di studio: <b>${t.first}</b> → ultimi giorni: <b>${t.last}</b> (${t.delta>=0?"+":""}${t.delta}).`:`Media di oggi o dei primi giorni: ${t.last}. Il confronto compare dopo 4 giorni con voti.`} ${(d=>d?`Oggi: ${d.avg} su ${d.n} ripetizioni${d.words!=null?`, parole ${d.words}%`:""}${d.rhythm!=null?`, ritmo ${d.rhythm}%`:""}.`:"")(t.days.find(d=>d.day===dayKey()))}</p></div>`;
+}
 function coachSummary(){
   const a=aggregates();
   const evs=Object.values(S.ev).filter(e=>e.pre0!=null);
   const vv=Object.values(S.voice||{});
   const voiceAgg = vv.length ? { sentences:vv.length, avgLast:Math.round(vv.reduce((a,x)=>a+x.last,0)/vv.length), avgWords: (w=>w.length?Math.round(w.reduce((a,b)=>a+b,0)/w.length):null)(vv.map(x=>x.words).filter(x=>x!=null)), avgRhythm:Math.round(vv.reduce((a,x)=>a+(x.rhythm||0),0)/vv.length) } : null;
-  return { updated:Date.now(), learned:Object.keys(S.cards).length, streak:streak(), level:levelEstimate(), voice:voiceAgg,
+  return { updated:Date.now(), learned:Object.keys(S.cards).length, streak:streak(), level:levelEstimate(), voice:voiceAgg, voiceTrend:voiceTrend().days.slice(-30),
     voiceWeak:Object.entries(S.voice||{}).filter(([id,x])=>SENT[id] && x.best<65).slice(0,20).map(([id,x])=>({ id, en:SENT[id].en, best:x.best, words:x.words, rhythm:x.rhythm })),
     listening:{ items:evs.length, avgListensBeforeText: evs.length? +(evs.reduce((a,e)=>a+e.pre0,0)/evs.length).toFixed(2) : null, slowShare: evs.length? +(evs.filter(e=>e.slow0>0).length/evs.length).toFixed(2) : null },
     units:a.units, topMissed:a.topMissed,
@@ -649,7 +703,8 @@ function vStats(){
   <div class="row"><button class="pri" data-act="drill" ${a.hardIds.length?"":"disabled"}>Allenamento mirato (${Math.min(a.hardIds.length,10)} frasi)</button></div>
   ${(()=>{ const vv=Object.entries(S.voice||{}).filter(([id])=>SENT[id]); if(!vv.length) return HAS_MIC?`<h2>La tua voce</h2><p class="muted">Ancora nessun voto: fai uno shadowing e ripeti ad alta voce nelle pause.</p>`:""; const avg=k=>{ const a=vv.map(([,x])=>x[k]).filter(x=>x!=null); return a.length?Math.round(a.reduce((p,q)=>p+q,0)/a.length):null; };
     const weak=vv.sort((a,b)=>a[1].best-b[1].best).slice(0,5);
-    return `<h2>La tua voce</h2><div class="card"><div class="row"><div><div class="tag">Voto medio</div><div class="stat-big">${avg("last")}</div></div><div class="small">Parole ${avg("words")??"—"}% · Ritmo ${avg("rhythm")}% · ${vv.length} frasi</div></div>
+    const impr=vv.filter(([,x])=>x.first!=null && x.n>=2).map(([id,x])=>[id,x.best-x.first]).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    return `<h2>La tua voce</h2>${voiceTrendHTML()}${impr.length&&impr[0][1]>0?`<div class="card small"><div class="tag">Frasi migliorate di più (primo voto → migliore)</div>${impr.filter(x=>x[1]>0).map(([id,d])=>`<div>${esc(SENT[id].en.slice(0,70))}${SENT[id].en.length>70?"…":""} <b>${S.voice[id].first} → ${S.voice[id].best}</b></div>`).join("")}</div>`:""}<div class="card"><div class="row"><div><div class="tag">Voto medio</div><div class="stat-big">${avg("last")}</div></div><div class="small">Parole ${avg("words")!=null?avg("words")+"%":"—"} · Ritmo ${avg("rhythm")!=null?avg("rhythm")+"%":"—"} · ${vv.length} frasi</div></div>
       <p class="small muted" style="margin:.5em 0 0">Più difficili da riprodurre:</p>${weak.map(([id,x])=>`<div class="small">${esc(SENT[id].en.slice(0,70))}${SENT[id].en.length>70?"…":""} <b>${x.best}</b></div>`).join("")}</div>`; })()}
   <h2>Comprensione per oratore</h2>
   ${auth.length?`<div class="card tbl"><table><thead><tr><th>Oratore</th><th>Parole/min</th><th>Dettato</th><th>Capito al 1° ascolto</th></tr></thead><tbody>
@@ -691,6 +746,7 @@ function vHome(){
     <div class="stat"><span class="muted small">Ripassi in scadenza</span><b>${due}</b></div>
     <div class="stat"><span class="muted small">Serie di giorni</span><b>${streak()}</b></div>
     <div class="stat"><span class="muted small">Frasi acquisite</span><b>${learned}<span class="small muted">/${total}</span></b></div>
+    ${(t=>t.days.length?`<a class="stat" href="#" data-act="go" data-to="stats" style="text-decoration:none;color:inherit"><span class="muted small">Voto voce${t.delta!=null?" (andamento)":""}</span><b>${t.days[t.days.length-1].avg}${t.delta!=null?`<span class="small ${t.delta>=0?"ok":"low"}"> ${t.delta>=0?"+":""}${t.delta}</span>`:""}</b></a>`:"")(voiceTrend())}
     <a class="stat" href="#" data-act="go" data-to="stats" style="text-decoration:none;color:inherit"><span class="muted small">Ascolto stimato</span><b>${(()=>{ const l=levelEstimate(); return l.ready?l.band:"—"; })()}</b></a>
   </div>
   <div class="card">
@@ -1351,7 +1407,8 @@ function vSettings(){
       <div><label>Pausa per ripetere (× durata frase)</label><input type="number" id="s-gap" min="0.5" max="3" step="0.1" value="${st.gap}"></div>
     </div>
     <label><input type="checkbox" id="s-blind" ${st.blindLast?"checked":""}> Ultimo giro senza testo</label>
-    ${HAS_MIC?`<label><input type="checkbox" id="s-judge" ${st.judge?"checked":""}> Voto automatico della mia voce durante lo shadowing (nessuna registrazione salvata)</label>`:""}
+    ${HAS_MIC?`<label><input type="checkbox" id="s-judge" ${st.judge?"checked":""}> Voto automatico della mia voce durante lo shadowing (nessuna registrazione salvata)</label>
+    <div class="row" style="margin:6px 0"><button data-act="mictest">🎙 Prova il microfono</button></div><div id="mictest-out" class="small"></div>`:`<p class="small muted">Il voto della voce funziona nella versione sul telefono (GitHub Pages), non dentro claude.ai.</p>`}
     ${HAS_YT?`<label><input type="checkbox" id="s-orig" ${st.original?"checked":""}> Voci tech: usa l'audio originale di YouTube (altrimenti voce sintetica americana)</label>`:""}
     <label><input type="checkbox" id="s-unlock" ${st.unlockAll?"checked":""}> Sblocca tutte le unità (sconsigliato)</label>
     <div class="row" style="margin-top:10px"><button class="pri" data-act="ssave">Salva</button><button data-act="stest">▶ Prova voce</button></div>
@@ -1417,7 +1474,8 @@ function cur(){ return view()==="review" ? item(R.q[R.idx]) : item(L.ids[L.idx])
 const ACTS={
   listen:()=>{ stopAll(); const my=runId; setPhase("Ascolto…"); play(cur(), +S.settings.rate, my).then(()=>{ if(my===runId) setPhase(""); }); },
   slow:()=>{ track(cur(),"slow"); stopAll(); const my=runId; setPhase("Ascolto lento…"); play(cur(), 0.7, my).then(()=>{ if(my===runId) setPhase(""); }); },
-  shadow:()=>{ track(cur(),"shadows"); if(judgeOn()) mic().catch(()=>{}); shadowLoop(cur()); },
+  shadow:()=>{ track(cur(),"shadows"); if(judgeOn()){ captureCtx(); mic().catch(()=>{}); } shadowLoop(cur()); },
+  mictest:()=>micTest(),
   stop:()=>stopAll(),
   ita:()=>{ const t=$("#it-text"); if(t){ t.hidden=!t.hidden; if(!t.hidden){ const ev=evOf(cur().id); ev.ita=(ev.ita||0)+1; } } },
   blind:()=>{ const e=$("#en-text"); if(e){ const on=!e.classList.contains("blind"); if(!on) revealed(cur()); e.classList.toggle("blind",on); if(!on){ const tb=$("#tech-box"); if(tb) tb.hidden=false; const it=cur(); const cb=$("#comp-box"); if(cb && it && it.tech && S.comp[it.id]==null) cb.hidden=false; } } },

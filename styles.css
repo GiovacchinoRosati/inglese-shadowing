@@ -152,3 +152,9 @@ button.on-ok{outline:2px solid var(--ok)}
 .qopt.on-bad{outline:2px solid var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
 .qwhy{margin-top:8px}
 .gx code{font-size:15px;letter-spacing:1px}
+.vbars{display:flex;align-items:flex-end;gap:4px;height:120px;margin-top:8px;overflow-x:auto}
+.vbar{flex:1 0 16px;max-width:34px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font-size:10px}
+.vbar i{display:block;width:100%;border-radius:3px 3px 0 0;background:var(--link)}
+.vbar i.ok{background:var(--ok)} .vbar i.low{background:var(--bad)}
+.vbar span{font-weight:600} .vbar small{color:var(--muted,#888)}
+.stat .ok{color:var(--ok)} .stat .low{color:var(--bad)}
