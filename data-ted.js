@@ -1,7 +1,7 @@
 /* GENERATO da tools/build_ted.py a partire da tools/ted_spec.json: non modificare a mano. */
 "use strict";
 LEVELS.TED = "Talk TED di robotica, physical AI e intelligenza artificiale con la voce originale, in ordine di velocità reale. Un pezzo da circa 5 minuti al giorno: primo ascolto, shadowing, grammatica del testo, comprensione, poi riascolto di tutto dall'inizio.";
-const DAILY = {"date": "2026-11-18", "focus": "Fei-Fei Li resta il talk in corso. Per il voto della voce usa la versione sul telefono (giovacchinorosati.github.io): dentro claude.ai il microfono non è disponibile.", "tip": "Oggi scegli le 3 frasi più lunghe del pezzo e falle in shadowing fino a superare 70 di voto: il 4° giro con le sole parole chiave scatta da solo se servono."};
+const DAILY = {"date": "2026-11-19", "focus": "Fei-Fei Li resta il talk in corso. Quando chiudi l'ultimo pezzo, il giorno dopo entra Marc Raibert (Boston Dynamics, 150 parole/min): il salto di velocità è grande, quindi consolida bene il riascolto completo di Fei-Fei Li.", "tip": "Riascolta il talk dall'inizio fino all'ultimo pezzo completato (sezione «Riascolta dall'inizio» in Oggi o in Ripasso) senza testo, almeno una volta prima dello shadowing."};
 const TED_UNITS = [
  {
   "id": "ted-01",
