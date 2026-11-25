@@ -1,7 +1,7 @@
 /* GENERATO da tools/build_ted.py a partire da tools/ted_spec.json: non modificare a mano. */
 "use strict";
 LEVELS.TED = "Talk TED di robotica, physical AI e intelligenza artificiale con la voce originale, in ordine di velocità reale. Un pezzo da circa 5 minuti al giorno: primo ascolto, shadowing, grammatica del testo, comprensione, poi riascolto di tutto dall'inizio.";
-const DAILY = {"date": "2026-11-24", "focus": "Fei-Fei Li resta il talk in corso: continua con il pezzo successivo a quello chiuso. Ogni giornata completa (5 passi) apre il pezzo seguente il giorno dopo.", "tip": "Durante lo shadowing leggi i suggerimenti sotto il voto: se compare «troppo lento», lega le parole; se le parole rosse sono brevi (to, of, and), imita le riduzioni dell'originale."};
+const DAILY = {"date": "2026-11-25", "focus": "Fei-Fei Li resta il talk in corso. Metà settimana: verifica in «Oggi» quale pezzo è aperto e completa i suoi 5 passi.", "tip": "Nella comprensione a completamento, se sbagli una parola ascolta la frase in versione lenta e ripetila ad alta voce prima di passare alla successiva."};
 const TED_UNITS = [
  {
   "id": "ted-01",
